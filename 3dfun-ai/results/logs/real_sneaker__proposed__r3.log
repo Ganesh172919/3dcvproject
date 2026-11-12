@@ -1,0 +1,10 @@
+real/sneaker | proposed | rep 3 | draft
+  stage preprocessing     0.611s
+  stage depth             0.652s
+  stage volume            0.063s
+  stage geometry          0.176s
+  stage texture           0.959s
+  stage export            0.232s
+  stage render           18.653s
+  stage total            21.359s
+  seconds=21.37 peak=927MB tris=7852

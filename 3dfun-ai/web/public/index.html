@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3DFUN AI · Image to 3D Lab</title>
+<meta name="description" content="A student-built 3D computer vision lab for reconstructing objects from a single photo. Try and compare three local CPU models.">
+<meta name="theme-color" content="#ffffff">
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="stylesheet" href="/static/css/landing.css">
+<link rel="icon" href="/static/lab-icon.svg">
+<script type="importmap">
+{"imports":{"three":"/static/vendor/three.module.js","three/addons/":"/static/vendor/"}}
+</script>
+</head>
+<body class="landing">
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="topbar">
+  <a class="brand" href="/"><span class="brand-mark">3D</span> 3DFUN <span class="dim">AI</span></a>
+  <nav class="nav" aria-label="Primary">
+    <a href="#models">Models</a>
+    <a href="#course">Course project</a>
+    <a href="/app/benchmark">Benchmarks</a>
+  </nav>
+  <div class="topbar-right">
+    <a class="btn sm" href="/app/login">Sign in</a>
+    <a class="btn sm primary" href="/app/studio">Open studio</a>
+  </div>
+</header>
+<main class="lab-shell" id="content">
+  <section class="lab-hero" aria-labelledby="lab-title">
+    <div>
+      <p class="course-label">3D COMPUTER VISION · IIIT DHARWAD</p>
+      <h1 id="lab-title">From one photo<br>to a <span>3D model.</span></h1>
+      <p class="lead">Upload an object photo, compare three local reconstruction options, and inspect the mesh right in your browser.</p>
+      <button type="button" class="drop landing-drop" id="home-upload">
+        <span class="upload-mark" aria-hidden="true">↑</span>
+        <span><strong>Upload your image</strong><small>Drop a file here or browse</small></span>
+      </button>
+      <input id="home-file" type="file" accept="image/png,image/jpeg,image/webp,image/bmp,.bmp" hidden>
+      <p id="home-upload-status" class="form-error" role="status"></p>
+      <div class="row wrap gap8 mt8">
+        <a class="btn" href="/app/studio">Open image studio</a>
+        <a class="btn" href="#models">Compare models</a>
+      </div>
+      <ol class="lab-flow" aria-label="Studio workflow">
+        <li>Upload a photo</li><li>Choose a model</li><li>Inspect and export</li>
+      </ol>
+    </div>
+    <section class="lab-demo" aria-label="Interactive examples">
+      <header class="lab-demo-head">
+        <h2>Example reconstruction</h2>
+        <div class="view-tabs" role="group" aria-label="Example view">
+          <button type="button" id="example-photo" aria-pressed="false">Photo</button>
+          <button type="button" id="example-mesh" aria-pressed="true">3D model</button>
+        </div>
+      </header>
+      <div id="example-stage">
+        <img src="/site/examples/triposr-chair-preview.png" alt="Rendered mesh of a chair">
+      </div>
+      <div class="lab-demo-meta">
+        <strong id="example-name">Chair · TripoSR</strong>
+        <span id="example-status" role="status">Example output</span>
+      </div>
+      <div class="sample-strip" id="landing-samples" role="group" aria-label="Example objects"></div>
+      <div class="lab-demo-actions">
+        <a class="btn sm primary" id="example-run" href="/app/studio?sample=chair&amp;engine=triposr">Use this photo</a>
+        <a class="btn sm" id="example-download" href="/site/examples/chair.glb" download="chair.glb">Download GLB</a>
+        <a class="text-link" id="example-source" href="https://github.com/VAST-AI-Research/TripoSR/tree/107cefdc244c39106fa830359024f6a2f1c78871/examples">Image source</a>
+      </div>
+    </section>
+  </section>
+  <section class="lab-methods" id="models">
+    <h2>Models you can compare</h2>
+    <p>All three options run locally on the CPU. Try the same photo with each to see how the shape changes.</p>
+    <div class="lab-method-grid">
+      <article class="card">
+        <h3>TripoSR INT8</h3>
+        <p>Predicts a 3D density field from one image and colours the resulting mesh per vertex.</p>
+        <a href="/app/studio?sample=teapot&amp;engine=triposr">Try TripoSR with the teapot</a>
+      </article>
+      <article class="card">
+        <h3>Depth Anything V2</h3>
+        <p>Estimates relative depth. Our course pipeline uses it to build a closed mesh with a texture atlas.</p>
+        <a href="/app/studio?sample=teapot&amp;engine=local">Try Depth Anything with the teapot</a>
+      </article>
+      <article class="card">
+        <h3>MiDaS v2.1 Small</h3>
+        <p>Uses a different depth estimator with the same course pipeline so you can compare the geometry.</p>
+        <a href="/app/studio?sample=teapot&amp;engine=midas">Try MiDaS with the teapot</a>
+      </article>
+    </div>
+  </section>
+  <section class="lab-about" id="course">
+    <div>
+      <h2>About the course project</h2>
+      <p>We built this lab to explore what a single image can tell us about 3D shape. Our method removes the background, estimates relative depth, builds a silhouette-constrained volume, then extracts a mesh with marching cubes.</p>
+      <a class="btn" href="/app/benchmark">View benchmark results</a>
+    </div>
+    <div>
+      <details>
+        <summary>What makes a good input photo?</summary>
+        <p>Use one clearly framed object, a plain background or a transparent PNG, and a view that shows some of the object's depth.</p>
+      </details>
+      <details>
+        <summary>What can I download?</summary>
+        <p>GLB is included by default. You can also select glTF, OBJ, PLY or STL in the Studio. The mesh estimates hidden surfaces from a single view.</p>
+      </details>
+      <details>
+        <summary>Where does Gemini chat run?</summary>
+        <p>Reconstruction runs locally. Gemini sends chat messages to Google once you add your API key to the project's local configuration.</p>
+      </details>
+    </div>
+  </section>
+  <footer class="lab-footer">
+    <p>3DFUN AI · J Ganesh · M Jagadeshwar · B Varshith · Pranav Kashyap · C Sai Aravind</p>
+    <div class="row wrap gap12"><a href="/docs">API reference</a><a href="/app/chat">Gemini chat</a></div>
+  </footer>
+</main>
+<script type="module" src="/static/js/landing.js"></script>
+</body>
+</html>

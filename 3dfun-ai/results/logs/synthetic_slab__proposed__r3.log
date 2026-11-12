@@ -1,0 +1,11 @@
+synthetic/slab | proposed | rep 3 | draft
+  stage preprocessing     0.661s
+  stage depth             0.694s
+  stage volume            0.029s
+  stage geometry          0.161s
+  stage texture           1.056s
+  stage export            0.295s
+  stage render           22.899s
+  stage total            25.804s
+  seconds=25.83 peak=927MB tris=7716
+  chamfer=0.03626 f=0.1363 iou=0.0379 nc=0.8883

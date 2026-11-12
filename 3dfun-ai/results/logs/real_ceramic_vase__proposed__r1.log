@@ -1,0 +1,10 @@
+real/ceramic_vase | proposed | rep 1 | draft
+  stage preprocessing     0.624s
+  stage depth             0.688s
+  stage volume            0.050s
+  stage geometry          0.229s
+  stage texture           1.142s
+  stage export            0.398s
+  stage render           23.679s
+  stage total            26.826s
+  seconds=26.84 peak=936MB tris=8086

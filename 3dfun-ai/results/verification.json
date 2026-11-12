@@ -1,0 +1,152 @@
+[
+  {
+    "status": "PASS",
+    "check": "required files present",
+    "detail": "all present"
+  },
+  {
+    "status": "PASS",
+    "check": "no API keys or private keys in the tree",
+    "detail": "clean"
+  },
+  {
+    "status": "PASS",
+    "check": "large weights are git-ignored",
+    "detail": "4 weight files, pattern present"
+  },
+  {
+    "status": "PASS",
+    "check": "main_table.csv exists",
+    "detail": "3 method rows"
+  },
+  {
+    "status": "PASS",
+    "check": "both baselines present in the main table",
+    "detail": "proposed, tsdf, visual_hull"
+  },
+  {
+    "status": "PASS",
+    "check": "environment record complete",
+    "detail": "hardware, libs, seed, dataset, commit"
+  },
+  {
+    "status": "PASS",
+    "check": "timing repeated at least 3x per configuration",
+    "detail": "repetition counts observed: [3]"
+  },
+  {
+    "status": "PASS",
+    "check": "raw per-run rows recorded",
+    "detail": "225 rows"
+  },
+  {
+    "status": "PASS",
+    "check": "per-run logs written",
+    "detail": "225 logs for 75 configurations"
+  },
+  {
+    "status": "PASS",
+    "check": "summary means match the mean of the raw runs",
+    "detail": "max deviation 0.0000 s"
+  },
+  {
+    "status": "PASS",
+    "check": "every figure referenced by the paper exists",
+    "detail": "12 figures, 5 referenced"
+  },
+  {
+    "status": "PASS",
+    "check": "figures are non-trivial",
+    "detail": "all plots have content"
+  },
+  {
+    "status": "PASS",
+    "check": "paper has no undefined references",
+    "detail": "clean"
+  },
+  {
+    "status": "PASS",
+    "check": "no undefined citations",
+    "detail": "clean"
+  },
+  {
+    "status": "PASS",
+    "check": "no overfull hboxes",
+    "detail": "clean"
+  },
+  {
+    "status": "PASS",
+    "check": "paper length within 6-8 pages",
+    "detail": "8 pages"
+  },
+  {
+    "status": "PASS",
+    "check": "author block has all five students in order",
+    "detail": "5/5 in order=True"
+  },
+  {
+    "status": "PASS",
+    "check": "guide named in the paper",
+    "detail": "guide present"
+  },
+  {
+    "status": "PASS",
+    "check": "deck has 12-15 slides",
+    "detail": "15 slides"
+  },
+  {
+    "status": "PASS",
+    "check": "deck is 16:9",
+    "detail": "13.333 x 7.500 in (ratio 1.7777)"
+  },
+  {
+    "status": "PASS",
+    "check": "all slide shapes inside the canvas",
+    "detail": "clean"
+  },
+  {
+    "status": "PASS",
+    "check": "no text box appears clipped",
+    "detail": "clean"
+  },
+  {
+    "status": "PASS",
+    "check": "speaker notes on every slide",
+    "detail": "15/15 slides annotated"
+  },
+  {
+    "status": "PASS",
+    "check": "numbers in the paper trace to results/",
+    "detail": "120/120 matched"
+  },
+  {
+    "status": "PASS",
+    "check": "numbers in the report trace to results/",
+    "detail": "281/281 matched"
+  },
+  {
+    "status": "PASS",
+    "check": "numbers in the deck trace to results/",
+    "detail": "57/57 matched"
+  },
+  {
+    "status": "PASS",
+    "check": "report documents what was not evaluated",
+    "detail": "section present"
+  },
+  {
+    "status": "PASS",
+    "check": "all team members and the guide appear in the report",
+    "detail": "6/6"
+  },
+  {
+    "status": "PASS",
+    "check": "README documents reproduce and verify commands",
+    "detail": "commands present"
+  },
+  {
+    "status": "PASS",
+    "check": "test suite passes",
+    "detail": ".........................................                                [100%]"
+  }
+]

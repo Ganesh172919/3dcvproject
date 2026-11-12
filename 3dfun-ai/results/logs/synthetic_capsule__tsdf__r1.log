@@ -1,0 +1,4 @@
+synthetic/capsule | tsdf | rep 1 | draft
+  tsdf: 7999 faces in 1.41s
+  seconds=1.41 peak=927MB tris=7999
+  chamfer=0.06331 f=0.0730 iou=0.0300 nc=0.7189

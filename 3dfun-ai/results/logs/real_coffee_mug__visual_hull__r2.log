@@ -1,0 +1,3 @@
+real/coffee_mug | visual_hull | rep 2 | draft
+  visual_hull: 8000 faces in 2.02s
+  seconds=2.02 peak=936MB tris=8000

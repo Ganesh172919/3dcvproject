@@ -1,0 +1,46 @@
+{
+  "generated": "2026-11-09T02:30:19Z",
+  "host": "e2b.local",
+  "platform": "Linux-6.1.189+-x86_64-with-glibc2.41",
+  "python": "3.13.16",
+  "cpu": "Intel(R) Xeon(R) Processor @ 2.60GHz",
+  "cpu_count": 2,
+  "memory": {
+    "MemTotal": "2030416 kB",
+    "MemFree": "289040 kB",
+    "MemAvailable": "286184 kB",
+    "Buffers": "548 kB"
+  },
+  "gpu": "none (all runs are CPU-only)",
+  "seed": 20261108,
+  "git_commit": "uncommitted",
+  "dataset": {
+    "version": "1.0.0",
+    "checksum": "d76fef12",
+    "scenes": {
+      "synthetic": 13,
+      "real": 12,
+      "total": 25
+    }
+  },
+  "libraries": {
+    "numpy": "2.3.5",
+    "scipy": "1.17.1",
+    "cv2": "5.0.0",
+    "skimage": "0.26.0",
+    "open3d": "0.20.0",
+    "trimesh": "5.2.0",
+    "onnxruntime": "1.31.1",
+    "fast_simplification": "0.2.0",
+    "matplotlib": "3.10.7",
+    "PIL": "11.3.0",
+    "pandas": "2.2.3"
+  },
+  "env": {
+    "PYTHONHASHSEED": "20261108"
+  },
+  "notes": [
+    "CPU-only container: GPU-dependent baselines are not evaluated.",
+    "Every row in raw/runs.csv comes from an executed run of the method."
+  ]
+}

@@ -1,0 +1,3 @@
+real/houseplant | visual_hull | rep 3 | draft
+  visual_hull: 8000 faces in 2.70s
+  seconds=2.70 peak=943MB tris=8000

@@ -1,0 +1,3 @@
+real/toy_car | visual_hull | rep 2 | draft
+  visual_hull: 7999 faces in 2.41s
+  seconds=2.41 peak=943MB tris=7999

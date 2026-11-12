@@ -1,0 +1,110 @@
+\begin{table*}[t]
+\centering
+\caption{Quantitative comparison on the evaluation set. Geometric metrics are computed on the 13 scenes that have reference meshes (ICT-normalised, object width = 1); SSIM and silhouette IoU are computed on every image; time is wall clock per image on the CPU used for the experiments. Mean $\pm$ standard deviation over repeated runs.}
+\label{tab:main}
+\begin{tabular}{lccccccc}
+\toprule
+Method & Chamfer $\downarrow$ & F-score@1\% $\uparrow$ & IoU $\uparrow$ & NC $\uparrow$ & SSIM $\uparrow$ & Silhouette IoU $\uparrow$ & Time (s) \\
+\midrule
+3DFUN AI (ours) & 0.0639 $\pm$ 0.0372 & 0.148 $\pm$ 0.131 & 0.055 $\pm$ 0.042 & 0.796 $\pm$ 0.122 & 0.444 $\pm$ 0.079 & 0.426 $\pm$ 0.242 & 27.73 $\pm$ 5.26 \\
+TSDF fusion & 0.0962 $\pm$ 0.0268 & 0.053 $\pm$ 0.036 & 0.027 $\pm$ 0.023 & 0.607 $\pm$ 0.161 & 0.423 $\pm$ 0.072 & 0.436 $\pm$ 0.215 & 1.43 $\pm$ 0.24 \\
+Visual hull & 0.0728 $\pm$ 0.0231 & 0.098 $\pm$ 0.053 & 0.038 $\pm$ 0.017 & 0.714 $\pm$ 0.110 & 0.439 $\pm$ 0.073 & 0.463 $\pm$ 0.236 & 2.13 $\pm$ 0.32 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{table}[t]
+\centering
+\caption{Ablation of the proposed pipeline: one setting changed at a time, everything else identical, evaluated on the scenes with reference meshes. Mean $\pm$ std. Timing comparison excludes preview rendering.}
+\label{tab:ablation}
+\begin{tabular}{p{17mm}ccc}
+\toprule
+Config. & CD$\downarrow$ & F$\uparrow$ & IoU$\uparrow$ \\
+\midrule
+Full pipeline & 0.0639 $\pm$ 0.0382 & 0.148 $\pm$ 0.135 & 0.055 $\pm$ 0.043 \\
+Without constant slab core ($f{=}0$) & 0.1016 $\pm$ 0.0339 & 0.071 $\pm$ 0.037 & 0.023 $\pm$ 0.007 \\
+Without depth modulation ($g{=}0$) & 0.0811 $\pm$ 0.0264 & 0.112 $\pm$ 0.087 & 0.041 $\pm$ 0.029 \\
+Thin solids ($0.35W$) & 0.0910 $\pm$ 0.0290 & 0.102 $\pm$ 0.070 & 0.036 $\pm$ 0.028 \\
+Without Taubin smoothing & 0.0639 $\pm$ 0.0383 & 0.148 $\pm$ 0.134 & 0.055 $\pm$ 0.044 \\
+Coarse volumetric grid ($64^3$) & 0.0637 $\pm$ 0.0378 & 0.142 $\pm$ 0.127 & 0.054 $\pm$ 0.041 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Per-stage wall clock of the proposed pipeline at the draft preset (mean $\pm$ std over all timed runs).}
+\label{tab:stages}
+\begin{tabular}{lcc}
+\toprule
+Stage & Seconds & Share \\
+\midrule
+total & 27.70 & 100.1\% \\
+render & 24.56 & 88.7\% \\
+texture & 1.04 & 3.7\% \\
+depth & 0.71 & 2.6\% \\
+preprocessing & 0.71 & 2.6\% \\
+export & 0.38 & 1.4\% \\
+geometry & 0.21 & 0.7\% \\
+volume & 0.08 & 0.3\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Thickness sweep: the inflation thickness $t_{\max}=\kappa W$ is scaled by $\kappa$ while everything else is fixed, on the scenes with reference meshes. The preset used throughout this paper is $\kappa=0.70$, chosen on F-score and IoU; $\kappa=0.85$ reaches a marginally lower Chamfer but loses F-score.}
+\label{tab:sweep}
+\begin{tabular}{cccc}
+\toprule
+$\kappa$ & Chamfer $\downarrow$ & F-score $\uparrow$ & IoU $\uparrow$ \\
+\midrule
+0.25 & 0.1025 $\pm$ 0.0328 & 0.075 $\pm$ 0.042 & 0.028 $\pm$ 0.017 \\
+0.35 & 0.0910 $\pm$ 0.0278 & 0.102 $\pm$ 0.067 & 0.036 $\pm$ 0.027 \\
+0.42 & 0.0842 $\pm$ 0.0263 & 0.107 $\pm$ 0.077 & 0.042 $\pm$ 0.031 \\
+0.55 & 0.0749 $\pm$ 0.0286 & 0.103 $\pm$ 0.083 & 0.039 $\pm$ 0.028 \\
+0.70 & 0.0639 $\pm$ 0.0367 & 0.148 $\pm$ 0.130 & 0.055 $\pm$ 0.041 \\
+0.85 & 0.0569 $\pm$ 0.0349 & 0.127 $\pm$ 0.093 & 0.048 $\pm$ 0.030 \\
+1.00 & 0.0625 $\pm$ 0.0402 & 0.135 $\pm$ 0.104 & 0.052 $\pm$ 0.028 \\
+1.15 & 0.0672 $\pm$ 0.0428 & 0.116 $\pm$ 0.076 & 0.043 $\pm$ 0.023 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Evaluation set v1.0.0 (checksum \texttt{d76fef12}, seed 20261108). 13 procedurally defined scenes whose reference surface is known analytically (per-scene exceptions are discussed in the appendix), and the 12 real photographs are CC0-1.0 works without a geometric reference.}
+\label{tab:dataset}
+\small
+\begin{tabular}{llr}
+\toprule
+Scene & Split & Reference triangles \\
+\midrule
+synthetic/box & synthetic & 1200 \\
+synthetic/cylinder & synthetic & 1728 \\
+synthetic/cone & synthetic & 1920 \\
+synthetic/prism & synthetic & 8576 \\
+synthetic/sphere & synthetic & 9024 \\
+synthetic/stairs & synthetic & 36 \\
+synthetic/lamp & synthetic & 12 \\
+synthetic/frustum & synthetic & 1344 \\
+synthetic/capsule & synthetic & 3744 \\
+synthetic/ring & synthetic & 768 \\
+synthetic/slab & synthetic & 1200 \\
+synthetic/thin\_plate & synthetic & 1200 \\
+synthetic/tall\_box & synthetic & 1200 \\
+real/sneaker & real & -- \\
+real/water\_bottle & real & -- \\
+real/coffee\_mug & real & -- \\
+real/ceramic\_vase & real & -- \\
+real/basketball & real & -- \\
+real/headphones & real & -- \\
+real/rubber\_duck & real & -- \\
+real/toy\_car & real & -- \\
+real/houseplant & real & -- \\
+real/dumbbell & real & -- \\
+real/candle\_jar & real & -- \\
+real/cardboard\_box & real & -- \\
+\bottomrule
+\end{tabular}
+\end{table}

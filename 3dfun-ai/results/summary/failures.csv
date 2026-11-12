@@ -1,0 +1,226 @@
+entry_id,method,repetition,reason,chamfer,f_score,silhouette_iou,seconds
+synthetic/box,proposed,1,F-score below 0.50,0.02055165661973826,0.3248147510755992,0.7767310293936786,31.293531983999856
+synthetic/box,proposed,2,F-score below 0.50,0.02055165661973826,0.3248147510755992,0.7767310293936786,28.920604831000674
+synthetic/box,proposed,3,F-score below 0.50,0.02055165661973826,0.3248147510755992,0.7767310293936786,27.91347670400137
+synthetic/box,tsdf,1,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.12334674774695856,0.023805431619786613,0.6686796856976128,1.5046726280015719
+synthetic/box,tsdf,2,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.12334674774695856,0.023805431619786613,0.6686796856976128,1.4913528600009158
+synthetic/box,tsdf,3,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.12334674774695856,0.023805431619786613,0.6686796856976128,1.2314622009998857
+synthetic/box,visual_hull,1,F-score below 0.50; mesh not watertight,0.05879245920034848,0.19422604114400402,0.859807719902425,2.308625744000892
+synthetic/box,visual_hull,2,F-score below 0.50; mesh not watertight,0.05879245920034848,0.19422604114400402,0.859807719902425,1.9798001449998992
+synthetic/box,visual_hull,3,F-score below 0.50; mesh not watertight,0.05879245920034848,0.19422604114400402,0.859807719902425,2.356597469000917
+synthetic/cylinder,proposed,1,chamfer above 0.06; F-score below 0.50,0.08133619008363493,0.06632016338655775,0.7069174106801023,29.666838380000627
+synthetic/cylinder,proposed,2,chamfer above 0.06; F-score below 0.50,0.08133619008363493,0.06632016338655775,0.7069174106801023,28.14720527300051
+synthetic/cylinder,proposed,3,chamfer above 0.06; F-score below 0.50,0.08133619008363493,0.06632016338655775,0.7069174106801023,29.075138932999835
+synthetic/cylinder,tsdf,1,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.14368576786960569,0.006721311475409837,0.5874572940952213,1.3785488800003804
+synthetic/cylinder,tsdf,2,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.14368576786960569,0.006721311475409837,0.5874572940952213,1.5648038260005706
+synthetic/cylinder,tsdf,3,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.14368576786960569,0.006721311475409837,0.5874572940952213,1.4253385359988897
+synthetic/cylinder,visual_hull,1,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.07420089216331666,0.09617978669375317,0.7772709573343717,1.9739478070005134
+synthetic/cylinder,visual_hull,2,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.07420089216331666,0.09617978669375317,0.7772709573343717,2.0442797010000504
+synthetic/cylinder,visual_hull,3,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.07420089216331666,0.09617978669375317,0.7772709573343717,2.0266480520003824
+synthetic/cone,proposed,1,F-score below 0.50; silhouette IoU below 0.55,0.05981063265405273,0.04202076246334311,0.5306624152660979,28.799688130000504
+synthetic/cone,proposed,2,F-score below 0.50; silhouette IoU below 0.55,0.05981063265405273,0.04202076246334311,0.5306624152660979,30.60989150900059
+synthetic/cone,proposed,3,F-score below 0.50; silhouette IoU below 0.55,0.05981063265405273,0.04202076246334311,0.5306624152660979,28.284476537000955
+synthetic/cone,tsdf,1,chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight,0.06781135071865413,0.12941989002654533,0.5276381078398942,1.0778860039990832
+synthetic/cone,tsdf,2,chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight,0.06781135071865413,0.12941989002654533,0.5276381078398942,1.279883155000789
+synthetic/cone,tsdf,3,chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight,0.06781135071865413,0.12941989002654533,0.5276381078398942,1.25749691800047
+synthetic/cone,visual_hull,1,chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight,0.09501867340891841,0.046793536324786326,0.5070602418267107,2.041163890000462
+synthetic/cone,visual_hull,2,chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight,0.09501867340891841,0.046793536324786326,0.5070602418267107,2.060745561000658
+synthetic/cone,visual_hull,3,chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight,0.09501867340891841,0.046793536324786326,0.5070602418267107,2.1208497149982577
+synthetic/prism,proposed,1,chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55,0.10003559711701449,0.042912754804892254,0.5013081891376063,28.327652916999796
+synthetic/prism,proposed,2,chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55,0.10003559711701449,0.042912754804892254,0.5013081891376063,28.41141205999884
+synthetic/prism,proposed,3,chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55,0.10003559711701449,0.042912754804892254,0.5013081891376063,26.917588010001054
+synthetic/prism,tsdf,1,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.10575726793348483,0.043201307901907356,0.5882048054496316,1.2489969529997325
+synthetic/prism,tsdf,2,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.10575726793348483,0.043201307901907356,0.5882048054496316,1.3394491670005664
+synthetic/prism,tsdf,3,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.10575726793348483,0.043201307901907356,0.5882048054496316,1.188936233998902
+synthetic/prism,visual_hull,1,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.09547337135658246,0.040314978775015164,0.5540402484310896,1.8859983570000622
+synthetic/prism,visual_hull,2,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.09547337135658246,0.040314978775015164,0.5540402484310896,1.7445478110003023
+synthetic/prism,visual_hull,3,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.09547337135658246,0.040314978775015164,0.5540402484310896,1.9433533680003166
+synthetic/sphere,proposed,1,F-score below 0.50,0.04033239925223342,0.15288109875735775,0.7636462518590867,28.324722577001012
+synthetic/sphere,proposed,2,F-score below 0.50,0.04033239925223342,0.15288109875735775,0.7636462518590867,27.205390240998895
+synthetic/sphere,proposed,3,F-score below 0.50,0.04033239925223342,0.15288109875735775,0.7636462518590867,31.677902690998962
+synthetic/sphere,tsdf,1,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.11482832504645285,0.031698583146905296,0.7817102137767221,1.3199467770009505
+synthetic/sphere,tsdf,2,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.11482832504645285,0.031698583146905296,0.7817102137767221,1.4289554790011607
+synthetic/sphere,tsdf,3,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.11482832504645285,0.031698583146905296,0.7817102137767221,1.2650633499997639
+synthetic/sphere,visual_hull,1,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.09468515734368883,0.045671711229946524,0.7182297765491266,1.5843030159994669
+synthetic/sphere,visual_hull,2,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.09468515734368883,0.045671711229946524,0.7182297765491266,2.076860912000484
+synthetic/sphere,visual_hull,3,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.09468515734368883,0.045671711229946524,0.7182297765491266,1.7830827990001126
+synthetic/stairs,proposed,1,chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55,0.11586174610632607,0.03243941493456504,0.4461260986153391,22.403786118000426
+synthetic/stairs,proposed,2,chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55,0.11586174610632607,0.03243941493456504,0.4461260986153391,25.14357925100012
+synthetic/stairs,proposed,3,chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55,0.11586174610632607,0.03243941493456504,0.4461260986153391,20.19170863599902
+synthetic/stairs,tsdf,1,chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight,0.12355025291887028,0.02923142201834862,0.40084889845319766,0.9522782479998568
+synthetic/stairs,tsdf,2,chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight,0.12355025291887028,0.02923142201834862,0.40084889845319766,1.4380135699993843
+synthetic/stairs,tsdf,3,chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight,0.12355025291887028,0.02923142201834862,0.40084889845319766,1.3310497989987198
+synthetic/stairs,visual_hull,1,chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight,0.10478594917361009,0.03554779917469051,0.4931400490469923,2.0768766990004224
+synthetic/stairs,visual_hull,2,chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight,0.10478594917361009,0.03554779917469051,0.4931400490469923,1.7810535160006111
+synthetic/stairs,visual_hull,3,chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight,0.10478594917361009,0.03554779917469051,0.4931400490469923,1.9490967719993932
+synthetic/lamp,proposed,1,F-score below 0.50,0.018074670337133857,0.3717162254770224,0.8041500894798338,23.634539827999106
+synthetic/lamp,proposed,2,F-score below 0.50,0.018074670337133857,0.3717162254770224,0.8041500894798338,26.67443199599984
+synthetic/lamp,proposed,3,F-score below 0.50,0.018074670337133857,0.3717162254770224,0.8041500894798338,27.049072428999352
+synthetic/lamp,tsdf,1,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.09101034953762147,0.031278769230769235,0.6200597761868354,1.214625459000672
+synthetic/lamp,tsdf,2,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.09101034953762147,0.031278769230769235,0.6200597761868354,1.4966877979986748
+synthetic/lamp,tsdf,3,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.09101034953762147,0.031278769230769235,0.6200597761868354,1.3751668570002948
+synthetic/lamp,visual_hull,1,F-score below 0.50; mesh not watertight,0.0395344684802084,0.17075980221058756,0.7207946387175632,1.9564449849985976
+synthetic/lamp,visual_hull,2,F-score below 0.50; mesh not watertight,0.0395344684802084,0.17075980221058756,0.7207946387175632,2.102892058999714
+synthetic/lamp,visual_hull,3,F-score below 0.50; mesh not watertight,0.0395344684802084,0.17075980221058756,0.7207946387175632,1.6666709210003319
+synthetic/frustum,proposed,1,chamfer above 0.06; F-score below 0.50,0.07488412229353916,0.1376700216060497,0.8158428651239378,26.869060466999144
+synthetic/frustum,proposed,2,chamfer above 0.06; F-score below 0.50,0.07488412229353916,0.1376700216060497,0.8158428651239378,20.993953496999893
+synthetic/frustum,proposed,3,chamfer above 0.06; F-score below 0.50,0.07488412229353916,0.1376700216060497,0.8158428651239378,23.65158629799953
+synthetic/frustum,tsdf,1,F-score below 0.50; mesh not watertight,0.04610952087729689,0.12212585047871256,0.5949879827614786,1.0254542380007479
+synthetic/frustum,tsdf,2,F-score below 0.50; mesh not watertight,0.04610952087729689,0.12212585047871256,0.5949879827614786,1.3636907460004295
+synthetic/frustum,tsdf,3,F-score below 0.50; mesh not watertight,0.04610952087729689,0.12212585047871256,0.5949879827614786,1.2629041319996759
+synthetic/frustum,visual_hull,1,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.08900705022537753,0.07372138554216867,0.7056148856712311,1.6962176990000444
+synthetic/frustum,visual_hull,2,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.08900705022537753,0.07372138554216867,0.7056148856712311,1.6882292730006156
+synthetic/frustum,visual_hull,3,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.08900705022537753,0.07372138554216867,0.7056148856712311,1.833852769999794
+synthetic/capsule,proposed,1,F-score below 0.50; silhouette IoU below 0.55,0.026676607155933812,0.41601575917486205,0.456225549709969,23.194948042999386
+synthetic/capsule,proposed,2,F-score below 0.50; silhouette IoU below 0.55,0.026676607155933812,0.41601575917486205,0.456225549709969,24.835186647998853
+synthetic/capsule,proposed,3,F-score below 0.50; silhouette IoU below 0.55,0.026676607155933812,0.41601575917486205,0.456225549709969,22.637951983000676
+synthetic/capsule,tsdf,1,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.06331397480124855,0.07300837554880107,0.5797666272299162,1.4082524020013807
+synthetic/capsule,tsdf,2,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.06331397480124855,0.07300837554880107,0.5797666272299162,0.9904631289991812
+synthetic/capsule,tsdf,3,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.06331397480124855,0.07300837554880107,0.5797666272299162,1.3356797359992925
+synthetic/capsule,visual_hull,1,F-score below 0.50; mesh not watertight,0.04494541358863115,0.1684661823573017,0.6994884910485933,2.0668501900017873
+synthetic/capsule,visual_hull,2,F-score below 0.50; mesh not watertight,0.04494541358863115,0.1684661823573017,0.6994884910485933,1.835127709999142
+synthetic/capsule,visual_hull,3,F-score below 0.50; mesh not watertight,0.04494541358863115,0.1684661823573017,0.6994884910485933,1.6963037390014506
+synthetic/ring,proposed,1,chamfer above 0.06; F-score below 0.50,0.07404283747862017,0.08182163153070576,0.6578129751312188,21.544360407999193
+synthetic/ring,proposed,2,chamfer above 0.06; F-score below 0.50,0.07404283747862017,0.08182163153070576,0.6578129751312188,26.942255108999234
+synthetic/ring,proposed,3,chamfer above 0.06; F-score below 0.50,0.07404283747862017,0.08182163153070576,0.6578129751312188,27.859291927999948
+synthetic/ring,tsdf,1,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.09075739262137286,0.05192663316582914,0.6149336722535547,1.2654234770016046
+synthetic/ring,tsdf,2,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.09075739262137286,0.05192663316582914,0.6149336722535547,1.2808368019996124
+synthetic/ring,tsdf,3,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.09075739262137286,0.05192663316582914,0.6149336722535547,1.2228206700001465
+synthetic/ring,visual_hull,1,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.07276140873369213,0.10026811237062593,0.7048823970974603,2.051559609999458
+synthetic/ring,visual_hull,2,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.07276140873369213,0.10026811237062593,0.7048823970974603,2.2621264339995832
+synthetic/ring,visual_hull,3,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.07276140873369213,0.10026811237062593,0.7048823970974603,2.0072240850004164
+synthetic/slab,proposed,1,F-score below 0.50; silhouette IoU below 0.55,0.03625745958464065,0.1362737353372434,0.3510135696064965,23.51311071300006
+synthetic/slab,proposed,2,F-score below 0.50; silhouette IoU below 0.55,0.03625745958464065,0.1362737353372434,0.3510135696064965,23.005591793998974
+synthetic/slab,proposed,3,F-score below 0.50; silhouette IoU below 0.55,0.03625745958464065,0.1362737353372434,0.3510135696064965,25.831475843999215
+synthetic/slab,tsdf,1,chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight,0.11074683045299152,0.0353598452883263,0.35711207268088335,1.2783373269994627
+synthetic/slab,tsdf,2,chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight,0.11074683045299152,0.0353598452883263,0.35711207268088335,1.3534750750004605
+synthetic/slab,tsdf,3,chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight,0.11074683045299152,0.0353598452883263,0.35711207268088335,1.4671246590005467
+synthetic/slab,visual_hull,1,F-score below 0.50; silhouette IoU below 0.55; mesh not watertight,0.039507169049473045,0.12360640741487004,0.40733357813565546,1.8090069070003665
+synthetic/slab,visual_hull,2,F-score below 0.50; silhouette IoU below 0.55; mesh not watertight,0.039507169049473045,0.12360640741487004,0.40733357813565546,1.9212831259992527
+synthetic/slab,visual_hull,3,F-score below 0.50; silhouette IoU below 0.55; mesh not watertight,0.039507169049473045,0.12360640741487004,0.40733357813565546,2.043619026999295
+synthetic/thin_plate,proposed,1,chamfer above 0.06; F-score below 0.50,0.14042193316060514,0.023243145589798085,0.6873136249989616,26.782367732999774
+synthetic/thin_plate,proposed,2,chamfer above 0.06; F-score below 0.50,0.14042193316060514,0.023243145589798085,0.6873136249989616,24.34846250800001
+synthetic/thin_plate,proposed,3,chamfer above 0.06; F-score below 0.50,0.14042193316060514,0.023243145589798085,0.6873136249989616,23.541778442999203
+synthetic/thin_plate,tsdf,1,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.08527194679664729,0.052936772983114444,0.7814569536423841,1.2635085619986057
+synthetic/thin_plate,tsdf,2,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.08527194679664729,0.052936772983114444,0.7814569536423841,1.3561747950006975
+synthetic/thin_plate,tsdf,3,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.08527194679664729,0.052936772983114444,0.7814569536423841,1.2009342450000986
+synthetic/thin_plate,visual_hull,1,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.08839532450412554,0.0593678015973098,0.6792668855951007,2.064113360000192
+synthetic/thin_plate,visual_hull,2,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.08839532450412554,0.0593678015973098,0.6792668855951007,1.4326952730007179
+synthetic/thin_plate,visual_hull,3,chamfer above 0.06; F-score below 0.50; mesh not watertight,0.08839532450412554,0.0593678015973098,0.6792668855951007,1.8893059299989545
+synthetic/tall_box,proposed,1,F-score below 0.50; silhouette IoU below 0.55,0.04270460777389979,0.09906256460743293,0.4995944462999189,18.946571204000065
+synthetic/tall_box,proposed,2,F-score below 0.50; silhouette IoU below 0.55,0.04270460777389979,0.09906256460743293,0.4995944462999189,21.520680439998614
+synthetic/tall_box,proposed,3,F-score below 0.50; silhouette IoU below 0.55,0.04270460777389979,0.09906256460743293,0.4995944462999189,20.234475706000012
+synthetic/tall_box,tsdf,1,chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight,0.0847381974297374,0.061765319733228706,0.4513714440898907,1.0583510050000768
+synthetic/tall_box,tsdf,2,chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight,0.0847381974297374,0.061765319733228706,0.4513714440898907,1.2586363549999078
+synthetic/tall_box,tsdf,3,chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight,0.0847381974297374,0.061765319733228706,0.4513714440898907,1.179993152998577
+synthetic/tall_box,visual_hull,1,F-score below 0.50; silhouette IoU below 0.55; mesh not watertight,0.049359843601916475,0.12105375461633155,0.45588913760401895,1.570544008998695
+synthetic/tall_box,visual_hull,2,F-score below 0.50; silhouette IoU below 0.55; mesh not watertight,0.049359843601916475,0.12105375461633155,0.45588913760401895,1.6069190600010188
+synthetic/tall_box,visual_hull,3,F-score below 0.50; silhouette IoU below 0.55; mesh not watertight,0.049359843601916475,0.12105375461633155,0.45588913760401895,1.8362788790000195
+real/sneaker,proposed,1,silhouette IoU below 0.55,,,0.21117368688646407,18.590287222999905
+real/sneaker,proposed,2,silhouette IoU below 0.55,,,0.21117368688646407,21.11467106300006
+real/sneaker,proposed,3,silhouette IoU below 0.55,,,0.21117368688646407,21.374389257000075
+real/sneaker,tsdf,1,silhouette IoU below 0.55; mesh not watertight,,,0.25381731988313766,0.9093362860003253
+real/sneaker,tsdf,2,silhouette IoU below 0.55; mesh not watertight,,,0.25381731988313766,1.4289978819997486
+real/sneaker,tsdf,3,silhouette IoU below 0.55; mesh not watertight,,,0.25381731988313766,1.2267491369984782
+real/sneaker,visual_hull,1,silhouette IoU below 0.55; mesh not watertight,,,0.2242286973555338,1.9618241379994288
+real/sneaker,visual_hull,2,silhouette IoU below 0.55; mesh not watertight,,,0.2242286973555338,1.78938353599915
+real/sneaker,visual_hull,3,silhouette IoU below 0.55; mesh not watertight,,,0.2242286973555338,2.170426512000631
+real/water_bottle,proposed,1,silhouette IoU below 0.55,,,0.23440748978430662,27.521820369000125
+real/water_bottle,proposed,2,silhouette IoU below 0.55,,,0.23440748978430662,23.464632113000334
+real/water_bottle,proposed,3,silhouette IoU below 0.55,,,0.23440748978430662,21.437692409999727
+real/water_bottle,tsdf,1,mesh not watertight,,,0.6194498093646489,1.2286547800013068
+real/water_bottle,tsdf,2,mesh not watertight,,,0.6194498093646489,0.9671702649993676
+real/water_bottle,tsdf,3,mesh not watertight,,,0.6194498093646489,1.3992940620009904
+real/water_bottle,visual_hull,1,silhouette IoU below 0.55; mesh not watertight,,,0.47386777400482755,2.2021975239986205
+real/water_bottle,visual_hull,2,silhouette IoU below 0.55; mesh not watertight,,,0.47386777400482755,1.9400859209999908
+real/water_bottle,visual_hull,3,silhouette IoU below 0.55; mesh not watertight,,,0.47386777400482755,2.0627981739999086
+real/coffee_mug,proposed,1,silhouette IoU below 0.55,,,0.09277148145331,19.3048
+real/coffee_mug,proposed,2,silhouette IoU below 0.55,,,0.09277148145331,18.1448
+real/coffee_mug,proposed,3,silhouette IoU below 0.55,,,0.09277148145331,16.8966
+real/coffee_mug,tsdf,1,silhouette IoU below 0.55; mesh not watertight,,,0.10167269825891204,1.3673381810003775
+real/coffee_mug,tsdf,2,silhouette IoU below 0.55; mesh not watertight,,,0.10167269825891204,1.407445592998556
+real/coffee_mug,tsdf,3,silhouette IoU below 0.55; mesh not watertight,,,0.10167269825891204,1.306579015999887
+real/coffee_mug,visual_hull,1,silhouette IoU below 0.55; mesh not watertight,,,0.09828997521401346,1.8199066380002478
+real/coffee_mug,visual_hull,2,silhouette IoU below 0.55; mesh not watertight,,,0.09828997521401346,2.0248709739971673
+real/coffee_mug,visual_hull,3,silhouette IoU below 0.55; mesh not watertight,,,0.09828997521401346,2.0554812689988466
+real/ceramic_vase,proposed,1,silhouette IoU below 0.55; mesh not watertight,,,0.22045698326283622,26.840846637998766
+real/ceramic_vase,proposed,2,silhouette IoU below 0.55; mesh not watertight,,,0.22045698326283622,28.02527398500024
+real/ceramic_vase,proposed,3,silhouette IoU below 0.55; mesh not watertight,,,0.22045698326283622,28.352442420000443
+real/ceramic_vase,tsdf,1,silhouette IoU below 0.55; mesh not watertight,,,0.44913654675042963,1.7238951779982017
+real/ceramic_vase,tsdf,2,silhouette IoU below 0.55; mesh not watertight,,,0.44913654675042963,1.4420146100019338
+real/ceramic_vase,tsdf,3,silhouette IoU below 0.55; mesh not watertight,,,0.44913654675042963,1.6988045309990412
+real/ceramic_vase,visual_hull,1,silhouette IoU below 0.55; mesh not watertight,,,0.32777368980459487,2.3510895229992457
+real/ceramic_vase,visual_hull,2,silhouette IoU below 0.55; mesh not watertight,,,0.32777368980459487,2.536341949002235
+real/ceramic_vase,visual_hull,3,silhouette IoU below 0.55; mesh not watertight,,,0.32777368980459487,2.363016723000328
+real/basketball,proposed,1,silhouette IoU below 0.55,,,0.33790352118950273,37.19712902700121
+real/basketball,proposed,2,silhouette IoU below 0.55,,,0.33790352118950273,35.96660935800173
+real/basketball,proposed,3,silhouette IoU below 0.55,,,0.33790352118950273,37.948099245000776
+real/basketball,tsdf,1,silhouette IoU below 0.55; mesh not watertight,,,0.3618453145377256,1.6349578779991134
+real/basketball,tsdf,2,silhouette IoU below 0.55; mesh not watertight,,,0.3618453145377256,1.6514830270025413
+real/basketball,tsdf,3,silhouette IoU below 0.55; mesh not watertight,,,0.3618453145377256,1.6195991230015352
+real/basketball,visual_hull,1,silhouette IoU below 0.55; mesh not watertight,,,0.4457718462321321,2.38978498600045
+real/basketball,visual_hull,2,silhouette IoU below 0.55; mesh not watertight,,,0.4457718462321321,2.6335495540006377
+real/basketball,visual_hull,3,silhouette IoU below 0.55; mesh not watertight,,,0.4457718462321321,2.3068658000011055
+real/headphones,proposed,1,silhouette IoU below 0.55,,,0.32547163486678915,34.17565922799986
+real/headphones,proposed,2,silhouette IoU below 0.55,,,0.32547163486678915,34.523555984997074
+real/headphones,proposed,3,silhouette IoU below 0.55,,,0.32547163486678915,35.818253106001066
+real/headphones,tsdf,1,silhouette IoU below 0.55; mesh not watertight,,,0.37838537621045,1.60055125800136
+real/headphones,tsdf,2,silhouette IoU below 0.55; mesh not watertight,,,0.37838537621045,1.7786944420004147
+real/headphones,tsdf,3,silhouette IoU below 0.55; mesh not watertight,,,0.37838537621045,1.682561354002246
+real/headphones,visual_hull,1,silhouette IoU below 0.55; mesh not watertight,,,0.34468968056090094,2.447112072000891
+real/headphones,visual_hull,2,silhouette IoU below 0.55; mesh not watertight,,,0.34468968056090094,2.6101068059979298
+real/headphones,visual_hull,3,silhouette IoU below 0.55; mesh not watertight,,,0.34468968056090094,2.4696095760009484
+real/rubber_duck,proposed,1,silhouette IoU below 0.55,,,0.01832560766917543,35.107384509999974
+real/rubber_duck,proposed,2,silhouette IoU below 0.55,,,0.01832560766917543,33.62676834999729
+real/rubber_duck,proposed,3,silhouette IoU below 0.55,,,0.01832560766917543,34.95672096300041
+real/rubber_duck,tsdf,1,silhouette IoU below 0.55; mesh not watertight,,,0.026105273123165768,1.7175181239981612
+real/rubber_duck,tsdf,2,silhouette IoU below 0.55; mesh not watertight,,,0.026105273123165768,1.642408202002116
+real/rubber_duck,tsdf,3,silhouette IoU below 0.55; mesh not watertight,,,0.026105273123165768,1.7514705640023749
+real/rubber_duck,visual_hull,1,silhouette IoU below 0.55; mesh not watertight,,,0.019452576628690346,2.678092057001777
+real/rubber_duck,visual_hull,2,silhouette IoU below 0.55; mesh not watertight,,,0.019452576628690346,2.7275786799982598
+real/rubber_duck,visual_hull,3,silhouette IoU below 0.55; mesh not watertight,,,0.019452576628690346,2.665596998998808
+real/toy_car,proposed,1,silhouette IoU below 0.55,,,0.4012251148545176,34.04327928099883
+real/toy_car,proposed,2,silhouette IoU below 0.55,,,0.4012251148545176,33.71157931799826
+real/toy_car,proposed,3,silhouette IoU below 0.55,,,0.4012251148545176,31.400208320003003
+real/toy_car,tsdf,1,silhouette IoU below 0.55; mesh not watertight,,,0.32677807356200084,1.7235126790001232
+real/toy_car,tsdf,2,silhouette IoU below 0.55; mesh not watertight,,,0.32677807356200084,1.6744599110024865
+real/toy_car,tsdf,3,silhouette IoU below 0.55; mesh not watertight,,,0.32677807356200084,1.7750204889998713
+real/toy_car,visual_hull,1,silhouette IoU below 0.55; mesh not watertight,,,0.4387970083219214,2.795893624999735
+real/toy_car,visual_hull,2,silhouette IoU below 0.55; mesh not watertight,,,0.4387970083219214,2.4087827779985673
+real/toy_car,visual_hull,3,silhouette IoU below 0.55; mesh not watertight,,,0.4387970083219214,2.2776768619987706
+real/houseplant,proposed,1,silhouette IoU below 0.55,,,0.12459902971819412,29.38237490100073
+real/houseplant,proposed,2,silhouette IoU below 0.55,,,0.12459902971819412,27.97158894599852
+real/houseplant,proposed,3,silhouette IoU below 0.55,,,0.12459902971819412,30.767209334000654
+real/houseplant,tsdf,1,silhouette IoU below 0.55; mesh not watertight,,,0.14446932377966862,1.7106278559986094
+real/houseplant,tsdf,2,silhouette IoU below 0.55; mesh not watertight,,,0.14446932377966862,1.5914850819972344
+real/houseplant,tsdf,3,silhouette IoU below 0.55; mesh not watertight,,,0.14446932377966862,1.79045450799822
+real/houseplant,visual_hull,1,silhouette IoU below 0.55; mesh not watertight,,,0.09891613174786909,2.4225209309988713
+real/houseplant,visual_hull,2,silhouette IoU below 0.55; mesh not watertight,,,0.09891613174786909,2.3564931260007143
+real/houseplant,visual_hull,3,silhouette IoU below 0.55; mesh not watertight,,,0.09891613174786909,2.6990291490001255
+real/dumbbell,proposed,1,silhouette IoU below 0.55,,,0.36094741453625584,35.87653850500283
+real/dumbbell,proposed,2,silhouette IoU below 0.55,,,0.36094741453625584,33.23879946500165
+real/dumbbell,proposed,3,silhouette IoU below 0.55,,,0.36094741453625584,35.08019458200215
+real/dumbbell,tsdf,1,silhouette IoU below 0.55; mesh not watertight,,,0.46007911520142086,1.9092261570003757
+real/dumbbell,tsdf,2,silhouette IoU below 0.55; mesh not watertight,,,0.46007911520142086,1.716161672000453
+real/dumbbell,tsdf,3,silhouette IoU below 0.55; mesh not watertight,,,0.46007911520142086,1.80143990400029
+real/dumbbell,visual_hull,1,silhouette IoU below 0.55; mesh not watertight,,,0.4504775817507585,2.417677174998971
+real/dumbbell,visual_hull,2,silhouette IoU below 0.55; mesh not watertight,,,0.4504775817507585,2.638790680997772
+real/dumbbell,visual_hull,3,silhouette IoU below 0.55; mesh not watertight,,,0.4504775817507585,2.4143316190020414
+real/candle_jar,proposed,1,silhouette IoU below 0.55,,,0.30107095460016664,29.801280957999552
+real/candle_jar,proposed,2,silhouette IoU below 0.55,,,0.30107095460016664,31.704751063000003
+real/candle_jar,proposed,3,silhouette IoU below 0.55,,,0.30107095460016664,27.207984739001404
+real/candle_jar,tsdf,1,silhouette IoU below 0.55; mesh not watertight,,,0.2002611051990653,1.3595805070035567
+real/candle_jar,tsdf,2,silhouette IoU below 0.55; mesh not watertight,,,0.2002611051990653,1.5481986249978945
+real/candle_jar,tsdf,3,silhouette IoU below 0.55; mesh not watertight,,,0.2002611051990653,1.5111529550013074
+real/candle_jar,visual_hull,1,silhouette IoU below 0.55; mesh not watertight,,,0.3465364120781528,2.718274063001445
+real/candle_jar,visual_hull,2,silhouette IoU below 0.55; mesh not watertight,,,0.3465364120781528,2.3281514970003627
+real/candle_jar,visual_hull,3,silhouette IoU below 0.55; mesh not watertight,,,0.3465364120781528,2.3788999960015644
+real/cardboard_box,proposed,1,silhouette IoU below 0.55,,,0.030718436854401173,34.25947529000041
+real/cardboard_box,proposed,2,silhouette IoU below 0.55,,,0.030718436854401173,33.977128299997275
+real/cardboard_box,proposed,3,silhouette IoU below 0.55,,,0.030718436854401173,36.19260540200048
+real/cardboard_box,tsdf,1,silhouette IoU below 0.55; mesh not watertight,,,0.031565581413804736,1.9620363350004482
+real/cardboard_box,tsdf,2,silhouette IoU below 0.55; mesh not watertight,,,0.031565581413804736,1.6959403399996518
+real/cardboard_box,tsdf,3,silhouette IoU below 0.55; mesh not watertight,,,0.031565581413804736,1.564600811998389
+real/cardboard_box,visual_hull,1,silhouette IoU below 0.55; mesh not watertight,,,0.03397902740106358,2.4837052740003855
+real/cardboard_box,visual_hull,2,silhouette IoU below 0.55; mesh not watertight,,,0.03397902740106358,2.2730700130014156
+real/cardboard_box,visual_hull,3,silhouette IoU below 0.55; mesh not watertight,,,0.03397902740106358,2.325012064000475

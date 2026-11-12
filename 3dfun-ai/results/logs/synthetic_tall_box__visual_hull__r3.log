@@ -1,0 +1,4 @@
+synthetic/tall_box | visual_hull | rep 3 | draft
+  visual_hull: 7999 faces in 1.84s
+  seconds=1.84 peak=927MB tris=7999
+  chamfer=0.04936 f=0.1211 iou=0.0460 nc=0.6891

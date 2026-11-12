@@ -1,0 +1,4 @@
+synthetic/lamp | visual_hull | rep 3 | draft
+  visual_hull: 7999 faces in 1.67s
+  seconds=1.67 peak=927MB tris=7999
+  chamfer=0.03953 f=0.1708 iou=0.0675 nc=0.7600

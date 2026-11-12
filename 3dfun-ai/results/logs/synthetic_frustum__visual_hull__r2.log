@@ -1,0 +1,4 @@
+synthetic/frustum | visual_hull | rep 2 | draft
+  visual_hull: 8000 faces in 1.69s
+  seconds=1.69 peak=927MB tris=8000
+  chamfer=0.08901 f=0.0737 iou=0.0341 nc=0.7457

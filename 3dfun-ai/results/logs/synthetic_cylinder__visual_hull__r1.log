@@ -1,0 +1,4 @@
+synthetic/cylinder | visual_hull | rep 1 | draft
+  visual_hull: 7999 faces in 1.97s
+  seconds=1.97 peak=927MB tris=7999
+  chamfer=0.07420 f=0.0962 iou=0.0438 nc=0.8263

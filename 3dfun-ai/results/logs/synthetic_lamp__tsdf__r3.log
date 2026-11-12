@@ -1,0 +1,4 @@
+synthetic/lamp | tsdf | rep 3 | draft
+  tsdf: 7997 faces in 1.38s
+  seconds=1.38 peak=927MB tris=7997
+  chamfer=0.09101 f=0.0313 iou=0.0099 nc=0.5908

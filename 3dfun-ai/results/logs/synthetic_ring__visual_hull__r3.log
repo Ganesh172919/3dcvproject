@@ -1,0 +1,4 @@
+synthetic/ring | visual_hull | rep 3 | draft
+  visual_hull: 8000 faces in 2.01s
+  seconds=2.01 peak=927MB tris=8000
+  chamfer=0.07276 f=0.1003 iou=0.0493 nc=0.6395

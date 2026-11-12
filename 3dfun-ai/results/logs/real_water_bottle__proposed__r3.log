@@ -1,0 +1,10 @@
+real/water_bottle | proposed | rep 3 | draft
+  stage preprocessing     0.564s
+  stage depth             0.556s
+  stage volume            0.024s
+  stage geometry          0.104s
+  stage texture           0.719s
+  stage export            0.233s
+  stage render           19.209s
+  stage total            21.421s
+  seconds=21.44 peak=933MB tris=8316

@@ -1,0 +1,244 @@
+[ok ] synthetic/box          proposed     r1  31.29s cd=0.0206 ssim=0.499
+[ok ] synthetic/box          proposed     r2  28.92s cd=0.0206 ssim=0.499
+[ok ] synthetic/box          proposed     r3  27.91s cd=0.0206 ssim=0.499
+[ok ] synthetic/box          tsdf         r1   1.50s cd=0.1233 ssim=0.461
+[ok ] synthetic/box          tsdf         r2   1.49s cd=0.1233 ssim=0.461
+[ok ] synthetic/box          tsdf         r3   1.23s cd=0.1233 ssim=0.461
+[ok ] synthetic/box          visual_hull  r1   2.31s cd=0.0588 ssim=0.492
+[ok ] synthetic/box          visual_hull  r2   1.98s cd=0.0588 ssim=0.492
+[ok ] synthetic/box          visual_hull  r3   2.36s cd=0.0588 ssim=0.492
+[ok ] synthetic/cylinder     proposed     r1  29.67s cd=0.0813 ssim=0.413
+[ok ] synthetic/cylinder     proposed     r2  28.15s cd=0.0813 ssim=0.413
+[ok ] synthetic/cylinder     proposed     r3  29.08s cd=0.0813 ssim=0.413
+[ok ] synthetic/cylinder     tsdf         r1   1.38s cd=0.1437 ssim=0.419
+[ok ] synthetic/cylinder     tsdf         r2   1.56s cd=0.1437 ssim=0.419
+[ok ] synthetic/cylinder     tsdf         r3   1.43s cd=0.1437 ssim=0.419
+[ok ] synthetic/cylinder     visual_hull  r1   1.97s cd=0.0742 ssim=0.422
+[ok ] synthetic/cylinder     visual_hull  r2   2.04s cd=0.0742 ssim=0.422
+[ok ] synthetic/cylinder     visual_hull  r3   2.03s cd=0.0742 ssim=0.422
+[ok ] synthetic/cone         proposed     r1  28.80s cd=0.0598 ssim=0.465
+[ok ] synthetic/cone         proposed     r2  30.61s cd=0.0598 ssim=0.465
+[ok ] synthetic/cone         proposed     r3  28.28s cd=0.0598 ssim=0.465
+[ok ] synthetic/cone         tsdf         r1   1.08s cd=0.0678 ssim=0.410
+[ok ] synthetic/cone         tsdf         r2   1.28s cd=0.0678 ssim=0.410
+[ok ] synthetic/cone         tsdf         r3   1.26s cd=0.0678 ssim=0.410
+[ok ] synthetic/cone         visual_hull  r1   2.04s cd=0.0950 ssim=0.468
+[ok ] synthetic/cone         visual_hull  r2   2.06s cd=0.0950 ssim=0.468
+[ok ] synthetic/cone         visual_hull  r3   2.12s cd=0.0950 ssim=0.468
+[ok ] synthetic/prism        proposed     r1  28.33s cd=0.1000 ssim=0.496
+[ok ] synthetic/prism        proposed     r2  28.41s cd=0.1000 ssim=0.496
+[ok ] synthetic/prism        proposed     r3  26.92s cd=0.1000 ssim=0.496
+[ok ] synthetic/prism        tsdf         r1   1.25s cd=0.1058 ssim=0.408
+[ok ] synthetic/prism        tsdf         r2   1.34s cd=0.1058 ssim=0.408
+[ok ] synthetic/prism        tsdf         r3   1.19s cd=0.1058 ssim=0.408
+[ok ] synthetic/prism        visual_hull  r1   1.89s cd=0.0955 ssim=0.441
+[ok ] synthetic/prism        visual_hull  r2   1.74s cd=0.0955 ssim=0.441
+[ok ] synthetic/prism        visual_hull  r3   1.94s cd=0.0955 ssim=0.441
+[ok ] synthetic/sphere       proposed     r1  28.32s cd=0.0403 ssim=0.514
+[ok ] synthetic/sphere       proposed     r2  27.21s cd=0.0403 ssim=0.514
+[ok ] synthetic/sphere       proposed     r3  31.68s cd=0.0403 ssim=0.514
+[ok ] synthetic/sphere       tsdf         r1   1.32s cd=0.1148 ssim=0.491
+[ok ] synthetic/sphere       tsdf         r2   1.43s cd=0.1148 ssim=0.491
+[ok ] synthetic/sphere       tsdf         r3   1.27s cd=0.1148 ssim=0.491
+[ok ] synthetic/sphere       visual_hull  r1   1.58s cd=0.0947 ssim=0.482
+[ok ] synthetic/sphere       visual_hull  r2   2.08s cd=0.0947 ssim=0.482
+[ok ] synthetic/sphere       visual_hull  r3   1.78s cd=0.0947 ssim=0.482
+[ok ] synthetic/stairs       proposed     r1  22.40s cd=0.1159 ssim=0.545
+[ok ] synthetic/stairs       proposed     r2  25.14s cd=0.1159 ssim=0.545
+[ok ] synthetic/stairs       proposed     r3  20.19s cd=0.1159 ssim=0.545
+[ok ] synthetic/stairs       tsdf         r1   0.95s cd=0.1236 ssim=0.446
+[ok ] synthetic/stairs       tsdf         r2   1.44s cd=0.1236 ssim=0.446
+[ok ] synthetic/stairs       tsdf         r3   1.33s cd=0.1236 ssim=0.446
+[ok ] synthetic/stairs       visual_hull  r1   2.08s cd=0.1048 ssim=0.545
+[ok ] synthetic/stairs       visual_hull  r2   1.78s cd=0.1048 ssim=0.545
+[ok ] synthetic/stairs       visual_hull  r3   1.95s cd=0.1048 ssim=0.545
+[ok ] synthetic/lamp         proposed     r1  23.63s cd=0.0181 ssim=0.452
+[ok ] synthetic/lamp         proposed     r2  26.67s cd=0.0181 ssim=0.452
+[ok ] synthetic/lamp         proposed     r3  27.05s cd=0.0181 ssim=0.452
+[ok ] synthetic/lamp         tsdf         r1   1.21s cd=0.0910 ssim=0.452
+[ok ] synthetic/lamp         tsdf         r2   1.50s cd=0.0910 ssim=0.452
+[ok ] synthetic/lamp         tsdf         r3   1.38s cd=0.0910 ssim=0.452
+[ok ] synthetic/lamp         visual_hull  r1   1.96s cd=0.0395 ssim=0.452
+[ok ] synthetic/lamp         visual_hull  r2   2.10s cd=0.0395 ssim=0.452
+[ok ] synthetic/lamp         visual_hull  r3   1.67s cd=0.0395 ssim=0.452
+[ok ] synthetic/frustum      proposed     r1  26.87s cd=0.0749 ssim=0.420
+[ok ] synthetic/frustum      proposed     r2  20.99s cd=0.0749 ssim=0.420
+[ok ] synthetic/frustum      proposed     r3  23.65s cd=0.0749 ssim=0.420
+[ok ] synthetic/frustum      tsdf         r1   1.03s cd=0.0461 ssim=0.490
+[ok ] synthetic/frustum      tsdf         r2   1.36s cd=0.0461 ssim=0.490
+[ok ] synthetic/frustum      tsdf         r3   1.26s cd=0.0461 ssim=0.490
+[ok ] synthetic/frustum      visual_hull  r1   1.70s cd=0.0890 ssim=0.440
+[ok ] synthetic/frustum      visual_hull  r2   1.69s cd=0.0890 ssim=0.440
+[ok ] synthetic/frustum      visual_hull  r3   1.83s cd=0.0890 ssim=0.440
+[ok ] synthetic/capsule      proposed     r1  23.19s cd=0.0267 ssim=0.370
+[ok ] synthetic/capsule      proposed     r2  24.84s cd=0.0267 ssim=0.370
+[ok ] synthetic/capsule      proposed     r3  22.64s cd=0.0267 ssim=0.370
+[ok ] synthetic/capsule      tsdf         r1   1.41s cd=0.0633 ssim=0.388
+[ok ] synthetic/capsule      tsdf         r2   0.99s cd=0.0633 ssim=0.388
+[ok ] synthetic/capsule      tsdf         r3   1.34s cd=0.0633 ssim=0.388
+[ok ] synthetic/capsule      visual_hull  r1   2.07s cd=0.0449 ssim=0.390
+[ok ] synthetic/capsule      visual_hull  r2   1.84s cd=0.0449 ssim=0.390
+[ok ] synthetic/capsule      visual_hull  r3   1.70s cd=0.0449 ssim=0.390
+[ok ] synthetic/ring         proposed     r1  21.54s cd=0.0740 ssim=0.382
+[ok ] synthetic/ring         proposed     r2  26.94s cd=0.0740 ssim=0.382
+[ok ] synthetic/ring         proposed     r3  27.86s cd=0.0740 ssim=0.382
+[ok ] synthetic/ring         tsdf         r1   1.27s cd=0.0908 ssim=0.343
+[ok ] synthetic/ring         tsdf         r2   1.28s cd=0.0908 ssim=0.343
+[ok ] synthetic/ring         tsdf         r3   1.22s cd=0.0908 ssim=0.343
+[ok ] synthetic/ring         visual_hull  r1   2.05s cd=0.0728 ssim=0.353
+[ok ] synthetic/ring         visual_hull  r2   2.26s cd=0.0728 ssim=0.353
+[ok ] synthetic/ring         visual_hull  r3   2.01s cd=0.0728 ssim=0.353
+[ok ] synthetic/slab         proposed     r1  23.51s cd=0.0363 ssim=0.447
+[ok ] synthetic/slab         proposed     r2  23.01s cd=0.0363 ssim=0.447
+[ok ] synthetic/slab         proposed     r3  25.83s cd=0.0363 ssim=0.447
+[ok ] synthetic/slab         tsdf         r1   1.28s cd=0.1107 ssim=0.411
+[ok ] synthetic/slab         tsdf         r2   1.35s cd=0.1107 ssim=0.411
+[ok ] synthetic/slab         tsdf         r3   1.47s cd=0.1107 ssim=0.411
+[ok ] synthetic/slab         visual_hull  r1   1.81s cd=0.0395 ssim=0.423
+[ok ] synthetic/slab         visual_hull  r2   1.92s cd=0.0395 ssim=0.423
+[ok ] synthetic/slab         visual_hull  r3   2.04s cd=0.0395 ssim=0.423
+[ok ] synthetic/thin_plate   proposed     r1  26.78s cd=0.1404 ssim=0.621
+[ok ] synthetic/thin_plate   proposed     r2  24.35s cd=0.1404 ssim=0.621
+[ok ] synthetic/thin_plate   proposed     r3  23.54s cd=0.1404 ssim=0.621
+[ok ] synthetic/thin_plate   tsdf         r1   1.26s cd=0.0853 ssim=0.524
+[ok ] synthetic/thin_plate   tsdf         r2   1.36s cd=0.0853 ssim=0.524
+[ok ] synthetic/thin_plate   tsdf         r3   1.20s cd=0.0853 ssim=0.524
+[ok ] synthetic/thin_plate   visual_hull  r1   2.06s cd=0.0884 ssim=0.585
+[ok ] synthetic/thin_plate   visual_hull  r2   1.43s cd=0.0884 ssim=0.585
+[ok ] synthetic/thin_plate   visual_hull  r3   1.89s cd=0.0884 ssim=0.585
+[ok ] synthetic/tall_box     proposed     r1  18.95s cd=0.0427 ssim=0.384
+[ok ] synthetic/tall_box     proposed     r2  21.52s cd=0.0427 ssim=0.384
+[ok ] synthetic/tall_box     proposed     r3  20.23s cd=0.0427 ssim=0.384
+[ok ] synthetic/tall_box     tsdf         r1   1.06s cd=0.0847 ssim=0.419
+[ok ] synthetic/tall_box     tsdf         r2   1.26s cd=0.0847 ssim=0.419
+[ok ] synthetic/tall_box     tsdf         r3   1.18s cd=0.0847 ssim=0.419
+[ok ] synthetic/tall_box     visual_hull  r1   1.57s cd=0.0494 ssim=0.428
+[ok ] synthetic/tall_box     visual_hull  r2   1.61s cd=0.0494 ssim=0.428
+[ok ] synthetic/tall_box     visual_hull  r3   1.84s cd=0.0494 ssim=0.428
+[ok ] real/sneaker           proposed     r1  18.59s cd=   -   ssim=0.353
+[ok ] real/sneaker           proposed     r2  21.11s cd=   -   ssim=0.353
+[ok ] real/sneaker           proposed     r3  21.37s cd=   -   ssim=0.353
+[ok ] real/sneaker           tsdf         r1   0.91s cd=   -   ssim=0.309
+[ok ] real/sneaker           tsdf         r2   1.43s cd=   -   ssim=0.309
+[ok ] real/sneaker           tsdf         r3   1.23s cd=   -   ssim=0.309
+[ok ] real/sneaker           visual_hull  r1   1.96s cd=   -   ssim=0.349
+[ok ] real/sneaker           visual_hull  r2   1.79s cd=   -   ssim=0.349
+[ok ] real/sneaker           visual_hull  r3   2.17s cd=   -   ssim=0.349
+[ok ] real/water_bottle      proposed     r1  27.52s cd=   -   ssim=0.451
+[ok ] real/water_bottle      proposed     r2  23.46s cd=   -   ssim=0.451
+[ok ] real/water_bottle      proposed     r3  21.44s cd=   -   ssim=0.451
+[ok ] real/water_bottle      tsdf         r1   1.23s cd=   -   ssim=0.489
+[ok ] real/water_bottle      tsdf         r2   0.97s cd=   -   ssim=0.489
+[ok ] real/water_bottle      tsdf         r3   1.40s cd=   -   ssim=0.489
+[ok ] real/water_bottle      visual_hull  r1   2.20s cd=   -   ssim=0.462
+[ok ] real/water_bottle      visual_hull  r2   1.94s cd=   -   ssim=0.462
+[ok ] real/water_bottle      visual_hull  r3   2.06s cd=   -   ssim=0.462
+[ok ] real/coffee_mug        proposed     r1  26.20s cd=   -   ssim=0.388
+[ok ] real/coffee_mug        proposed     r2  26.90s cd=   -   ssim=0.388
+[ok ] real/coffee_mug        proposed     r3  28.33s cd=   -   ssim=0.388
+[ok ] real/coffee_mug        tsdf         r1   1.37s cd=   -   ssim=0.376
+[ok ] real/coffee_mug        tsdf         r2   1.41s cd=   -   ssim=0.376
+[ok ] real/coffee_mug        tsdf         r3   1.31s cd=   -   ssim=0.376
+[ok ] real/coffee_mug        visual_hull  r1   1.82s cd=   -   ssim=0.385
+[ok ] real/coffee_mug        visual_hull  r2   2.02s cd=   -   ssim=0.385
+[ok ] real/coffee_mug        visual_hull  r3   2.06s cd=   -   ssim=0.385
+[ok ] real/ceramic_vase      proposed     r1  26.84s cd=   -   ssim=0.501
+[ok ] real/ceramic_vase      proposed     r2  28.03s cd=   -   ssim=0.501
+[ok ] real/ceramic_vase      proposed     r3  28.35s cd=   -   ssim=0.501
+[ok ] real/ceramic_vase      tsdf         r1   1.72s cd=   -   ssim=0.463
+[ok ] real/ceramic_vase      tsdf         r2   1.44s cd=   -   ssim=0.463
+[ok ] real/ceramic_vase      tsdf         r3   1.70s cd=   -   ssim=0.463
+[ok ] real/ceramic_vase      visual_hull  r1   2.35s cd=   -   ssim=0.486
+[ok ] real/ceramic_vase      visual_hull  r2   2.54s cd=   -   ssim=0.486
+[ok ] real/ceramic_vase      visual_hull  r3   2.36s cd=   -   ssim=0.486
+[ok ] real/basketball        proposed     r1  37.20s cd=   -   ssim=0.452
+[ok ] real/basketball        proposed     r2  35.97s cd=   -   ssim=0.452
+[ok ] real/basketball        proposed     r3  37.95s cd=   -   ssim=0.452
+[ok ] real/basketball        tsdf         r1   1.63s cd=   -   ssim=0.457
+[ok ] real/basketball        tsdf         r2   1.65s cd=   -   ssim=0.457
+[ok ] real/basketball        tsdf         r3   1.62s cd=   -   ssim=0.457
+[ok ] real/basketball        visual_hull  r1   2.39s cd=   -   ssim=0.447
+[ok ] real/basketball        visual_hull  r2   2.63s cd=   -   ssim=0.447
+[ok ] real/basketball        visual_hull  r3   2.31s cd=   -   ssim=0.447
+[ok ] real/headphones        proposed     r1  34.18s cd=   -   ssim=0.503
+[ok ] real/headphones        proposed     r2  34.52s cd=   -   ssim=0.503
+[ok ] real/headphones        proposed     r3  35.82s cd=   -   ssim=0.503
+[ok ] real/headphones        tsdf         r1   1.60s cd=   -   ssim=0.502
+[ok ] real/headphones        tsdf         r2   1.78s cd=   -   ssim=0.502
+[ok ] real/headphones        tsdf         r3   1.68s cd=   -   ssim=0.502
+[ok ] real/headphones        visual_hull  r1   2.45s cd=   -   ssim=0.503
+[ok ] real/headphones        visual_hull  r2   2.61s cd=   -   ssim=0.503
+[ok ] real/headphones        visual_hull  r3   2.47s cd=   -   ssim=0.503
+[ok ] real/rubber_duck       proposed     r1  35.11s cd=   -   ssim=0.410
+[ok ] real/rubber_duck       proposed     r2  33.63s cd=   -   ssim=0.410
+[ok ] real/rubber_duck       proposed     r3  34.96s cd=   -   ssim=0.410
+[ok ] real/rubber_duck       tsdf         r1   1.72s cd=   -   ssim=0.359
+[ok ] real/rubber_duck       tsdf         r2   1.64s cd=   -   ssim=0.359
+[ok ] real/rubber_duck       tsdf         r3   1.75s cd=   -   ssim=0.359
+[ok ] real/rubber_duck       visual_hull  r1   2.68s cd=   -   ssim=0.400
+[ok ] real/rubber_duck       visual_hull  r2   2.73s cd=   -   ssim=0.400
+[ok ] real/rubber_duck       visual_hull  r3   2.67s cd=   -   ssim=0.400
+[ok ] real/toy_car           proposed     r1  34.04s cd=   -   ssim=0.242
+[ok ] real/toy_car           proposed     r2  33.71s cd=   -   ssim=0.242
+[ok ] real/toy_car           proposed     r3  31.40s cd=   -   ssim=0.242
+[ok ] real/toy_car           tsdf         r1   1.72s cd=   -   ssim=0.252
+[ok ] real/toy_car           tsdf         r2   1.67s cd=   -   ssim=0.252
+[ok ] real/toy_car           tsdf         r3   1.78s cd=   -   ssim=0.252
+[ok ] real/toy_car           visual_hull  r1   2.80s cd=   -   ssim=0.242
+[ok ] real/toy_car           visual_hull  r2   2.41s cd=   -   ssim=0.242
+[ok ] real/toy_car           visual_hull  r3   2.28s cd=   -   ssim=0.242
+[ok ] real/houseplant        proposed     r1  29.38s cd=   -   ssim=0.366
+[ok ] real/houseplant        proposed     r2  27.97s cd=   -   ssim=0.366
+[ok ] real/houseplant        proposed     r3  30.77s cd=   -   ssim=0.366
+[ok ] real/houseplant        tsdf         r1   1.71s cd=   -   ssim=0.324
+[ok ] real/houseplant        tsdf         r2   1.59s cd=   -   ssim=0.324
+[ok ] real/houseplant        tsdf         r3   1.79s cd=   -   ssim=0.324
+[ok ] real/houseplant        visual_hull  r1   2.42s cd=   -   ssim=0.391
+[ok ] real/houseplant        visual_hull  r2   2.36s cd=   -   ssim=0.391
+[ok ] real/houseplant        visual_hull  r3   2.70s cd=   -   ssim=0.391
+[ok ] real/dumbbell          proposed     r1  35.88s cd=   -   ssim=0.402
+[ok ] real/dumbbell          proposed     r2  33.24s cd=   -   ssim=0.402
+[ok ] real/dumbbell          proposed     r3  35.08s cd=   -   ssim=0.402
+[ok ] real/dumbbell          tsdf         r1   1.91s cd=   -   ssim=0.377
+[ok ] real/dumbbell          tsdf         r2   1.72s cd=   -   ssim=0.377
+[ok ] real/dumbbell          tsdf         r3   1.80s cd=   -   ssim=0.377
+[ok ] real/dumbbell          visual_hull  r1   2.42s cd=   -   ssim=0.379
+[ok ] real/dumbbell          visual_hull  r2   2.64s cd=   -   ssim=0.379
+[ok ] real/dumbbell          visual_hull  r3   2.41s cd=   -   ssim=0.379
+[ok ] real/candle_jar        proposed     r1  29.80s cd=   -   ssim=0.580
+[ok ] real/candle_jar        proposed     r2  31.70s cd=   -   ssim=0.580
+[ok ] real/candle_jar        proposed     r3  27.21s cd=   -   ssim=0.580
+[ok ] real/candle_jar        tsdf         r1   1.36s cd=   -   ssim=0.572
+[ok ] real/candle_jar        tsdf         r2   1.55s cd=   -   ssim=0.572
+[ok ] real/candle_jar        tsdf         r3   1.51s cd=   -   ssim=0.572
+[ok ] real/candle_jar        visual_hull  r1   2.72s cd=   -   ssim=0.576
+[ok ] real/candle_jar        visual_hull  r2   2.33s cd=   -   ssim=0.576
+[ok ] real/candle_jar        visual_hull  r3   2.38s cd=   -   ssim=0.576
+[ok ] real/cardboard_box     proposed     r1  34.26s cd=   -   ssim=0.439
+[ok ] real/cardboard_box     proposed     r2  33.98s cd=   -   ssim=0.439
+[ok ] real/cardboard_box     proposed     r3  36.19s cd=   -   ssim=0.439
+[ok ] real/cardboard_box     tsdf         r1   1.96s cd=   -   ssim=0.432
+[ok ] real/cardboard_box     tsdf         r2   1.70s cd=   -   ssim=0.432
+[ok ] real/cardboard_box     tsdf         r3   1.56s cd=   -   ssim=0.432
+[ok ] real/cardboard_box     visual_hull  r1   2.48s cd=   -   ssim=0.427
+[ok ] real/cardboard_box     visual_hull  r2   2.27s cd=   -   ssim=0.427
+[ok ] real/cardboard_box     visual_hull  r3   2.33s cd=   -   ssim=0.427
+  ablation full                   cd=0.06392 f=0.148 iou=0.055
+  ablation no_slab_core           cd=0.10161 f=0.071 iou=0.023
+  ablation depth_flat_slab        cd=0.08113 f=0.112 iou=0.041
+  ablation thin_inflation         cd=0.09103 f=0.102 iou=0.036
+  ablation no_taubin_smoothing    cd=0.06394 f=0.148 iou=0.055
+  ablation coarse_grid            cd=0.06373 f=0.142 iou=0.054
+  sweep thickness_scale=0.25  cd=0.10255 f=0.0746 iou=0.0277 3.17s
+  sweep thickness_scale=0.35  cd=0.09103 f=0.1020 iou=0.0364 3.50s
+  sweep thickness_scale=0.42  cd=0.08421 f=0.1070 iou=0.0422 3.72s
+  sweep thickness_scale=0.55  cd=0.07487 f=0.1032 iou=0.0386 3.78s
+  sweep thickness_scale=0.70  cd=0.06392 f=0.1482 iou=0.0545 3.73s
+  sweep thickness_scale=0.85  cd=0.05690 f=0.1265 iou=0.0482 4.01s
+  sweep thickness_scale=1.00  cd=0.06247 f=0.1354 iou=0.0524 3.99s
+  sweep thickness_scale=1.15  cd=0.06725 f=0.1157 iou=0.0433 3.87s
+
+summary written to /home/user/3dfun-ai/results/summary/main_table.csv
+  proposed     n= 75 chamfer=0.06392+-0.03721 f=0.148 iou=0.055 ssim=0.444 t=28.09s
+  tsdf         n= 75 chamfer=0.09623+-0.02679 f=0.053 iou=0.027 ssim=0.423 t=1.43s
+  visual_hull  n= 75 chamfer=0.07281+-0.02309 f=0.098 iou=0.038 ssim=0.439 t=2.13s

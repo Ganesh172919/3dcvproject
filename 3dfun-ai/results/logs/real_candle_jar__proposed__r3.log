@@ -1,0 +1,10 @@
+real/candle_jar | proposed | rep 3 | draft
+  stage preprocessing     0.673s
+  stage depth             0.650s
+  stage volume            0.109s
+  stage geometry          0.186s
+  stage texture           1.166s
+  stage export            0.393s
+  stage render           23.968s
+  stage total            27.168s
+  seconds=27.21 peak=943MB tris=7488

@@ -1,0 +1,10 @@
+real/basketball | proposed | rep 2 | draft
+  stage preprocessing     0.799s
+  stage depth             0.785s
+  stage volume            0.150s
+  stage geometry          0.245s
+  stage texture           1.271s
+  stage export            0.395s
+  stage render           32.228s
+  stage total            35.930s
+  seconds=35.97 peak=942MB tris=7988

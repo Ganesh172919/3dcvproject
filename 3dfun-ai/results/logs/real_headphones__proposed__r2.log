@@ -1,0 +1,10 @@
+real/headphones | proposed | rep 2 | draft
+  stage preprocessing     0.996s
+  stage depth             0.867s
+  stage volume            0.116s
+  stage geometry          0.207s
+  stage texture           1.285s
+  stage export            0.483s
+  stage render           30.505s
+  stage total            34.485s
+  seconds=34.52 peak=943MB tris=7788

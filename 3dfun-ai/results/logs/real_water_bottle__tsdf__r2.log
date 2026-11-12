@@ -1,0 +1,3 @@
+real/water_bottle | tsdf | rep 2 | draft
+  tsdf: 7430 faces in 0.97s
+  seconds=0.97 peak=933MB tris=7430

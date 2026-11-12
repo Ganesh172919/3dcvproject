@@ -1,0 +1,11 @@
+synthetic/capsule | proposed | rep 2 | draft
+  stage preprocessing     0.631s
+  stage depth             0.672s
+  stage volume            0.044s
+  stage geometry          0.189s
+  stage texture           1.230s
+  stage export            0.360s
+  stage render           21.669s
+  stage total            24.811s
+  seconds=24.84 peak=927MB tris=7964
+  chamfer=0.02668 f=0.4160 iou=0.1102 nc=0.9227

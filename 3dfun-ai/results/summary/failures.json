@@ -1,0 +1,2252 @@
+[
+  {
+    "entry_id": "synthetic/box",
+    "method": "proposed",
+    "repetition": 1,
+    "reason": "F-score below 0.50",
+    "chamfer": 0.02055165661973826,
+    "f_score": 0.3248147510755992,
+    "silhouette_iou": 0.7767310293936786,
+    "seconds": 31.293531983999856
+  },
+  {
+    "entry_id": "synthetic/box",
+    "method": "proposed",
+    "repetition": 2,
+    "reason": "F-score below 0.50",
+    "chamfer": 0.02055165661973826,
+    "f_score": 0.3248147510755992,
+    "silhouette_iou": 0.7767310293936786,
+    "seconds": 28.920604831000674
+  },
+  {
+    "entry_id": "synthetic/box",
+    "method": "proposed",
+    "repetition": 3,
+    "reason": "F-score below 0.50",
+    "chamfer": 0.02055165661973826,
+    "f_score": 0.3248147510755992,
+    "silhouette_iou": 0.7767310293936786,
+    "seconds": 27.91347670400137
+  },
+  {
+    "entry_id": "synthetic/box",
+    "method": "tsdf",
+    "repetition": 1,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.12334674774695856,
+    "f_score": 0.023805431619786613,
+    "silhouette_iou": 0.6686796856976128,
+    "seconds": 1.5046726280015719
+  },
+  {
+    "entry_id": "synthetic/box",
+    "method": "tsdf",
+    "repetition": 2,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.12334674774695856,
+    "f_score": 0.023805431619786613,
+    "silhouette_iou": 0.6686796856976128,
+    "seconds": 1.4913528600009158
+  },
+  {
+    "entry_id": "synthetic/box",
+    "method": "tsdf",
+    "repetition": 3,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.12334674774695856,
+    "f_score": 0.023805431619786613,
+    "silhouette_iou": 0.6686796856976128,
+    "seconds": 1.2314622009998857
+  },
+  {
+    "entry_id": "synthetic/box",
+    "method": "visual_hull",
+    "repetition": 1,
+    "reason": "F-score below 0.50; mesh not watertight",
+    "chamfer": 0.05879245920034848,
+    "f_score": 0.19422604114400402,
+    "silhouette_iou": 0.859807719902425,
+    "seconds": 2.308625744000892
+  },
+  {
+    "entry_id": "synthetic/box",
+    "method": "visual_hull",
+    "repetition": 2,
+    "reason": "F-score below 0.50; mesh not watertight",
+    "chamfer": 0.05879245920034848,
+    "f_score": 0.19422604114400402,
+    "silhouette_iou": 0.859807719902425,
+    "seconds": 1.9798001449998992
+  },
+  {
+    "entry_id": "synthetic/box",
+    "method": "visual_hull",
+    "repetition": 3,
+    "reason": "F-score below 0.50; mesh not watertight",
+    "chamfer": 0.05879245920034848,
+    "f_score": 0.19422604114400402,
+    "silhouette_iou": 0.859807719902425,
+    "seconds": 2.356597469000917
+  },
+  {
+    "entry_id": "synthetic/cylinder",
+    "method": "proposed",
+    "repetition": 1,
+    "reason": "chamfer above 0.06; F-score below 0.50",
+    "chamfer": 0.08133619008363493,
+    "f_score": 0.06632016338655775,
+    "silhouette_iou": 0.7069174106801023,
+    "seconds": 29.666838380000627
+  },
+  {
+    "entry_id": "synthetic/cylinder",
+    "method": "proposed",
+    "repetition": 2,
+    "reason": "chamfer above 0.06; F-score below 0.50",
+    "chamfer": 0.08133619008363493,
+    "f_score": 0.06632016338655775,
+    "silhouette_iou": 0.7069174106801023,
+    "seconds": 28.14720527300051
+  },
+  {
+    "entry_id": "synthetic/cylinder",
+    "method": "proposed",
+    "repetition": 3,
+    "reason": "chamfer above 0.06; F-score below 0.50",
+    "chamfer": 0.08133619008363493,
+    "f_score": 0.06632016338655775,
+    "silhouette_iou": 0.7069174106801023,
+    "seconds": 29.075138932999835
+  },
+  {
+    "entry_id": "synthetic/cylinder",
+    "method": "tsdf",
+    "repetition": 1,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.14368576786960569,
+    "f_score": 0.006721311475409837,
+    "silhouette_iou": 0.5874572940952213,
+    "seconds": 1.3785488800003804
+  },
+  {
+    "entry_id": "synthetic/cylinder",
+    "method": "tsdf",
+    "repetition": 2,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.14368576786960569,
+    "f_score": 0.006721311475409837,
+    "silhouette_iou": 0.5874572940952213,
+    "seconds": 1.5648038260005706
+  },
+  {
+    "entry_id": "synthetic/cylinder",
+    "method": "tsdf",
+    "repetition": 3,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.14368576786960569,
+    "f_score": 0.006721311475409837,
+    "silhouette_iou": 0.5874572940952213,
+    "seconds": 1.4253385359988897
+  },
+  {
+    "entry_id": "synthetic/cylinder",
+    "method": "visual_hull",
+    "repetition": 1,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.07420089216331666,
+    "f_score": 0.09617978669375317,
+    "silhouette_iou": 0.7772709573343717,
+    "seconds": 1.9739478070005134
+  },
+  {
+    "entry_id": "synthetic/cylinder",
+    "method": "visual_hull",
+    "repetition": 2,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.07420089216331666,
+    "f_score": 0.09617978669375317,
+    "silhouette_iou": 0.7772709573343717,
+    "seconds": 2.0442797010000504
+  },
+  {
+    "entry_id": "synthetic/cylinder",
+    "method": "visual_hull",
+    "repetition": 3,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.07420089216331666,
+    "f_score": 0.09617978669375317,
+    "silhouette_iou": 0.7772709573343717,
+    "seconds": 2.0266480520003824
+  },
+  {
+    "entry_id": "synthetic/cone",
+    "method": "proposed",
+    "repetition": 1,
+    "reason": "F-score below 0.50; silhouette IoU below 0.55",
+    "chamfer": 0.05981063265405273,
+    "f_score": 0.04202076246334311,
+    "silhouette_iou": 0.5306624152660979,
+    "seconds": 28.799688130000504
+  },
+  {
+    "entry_id": "synthetic/cone",
+    "method": "proposed",
+    "repetition": 2,
+    "reason": "F-score below 0.50; silhouette IoU below 0.55",
+    "chamfer": 0.05981063265405273,
+    "f_score": 0.04202076246334311,
+    "silhouette_iou": 0.5306624152660979,
+    "seconds": 30.60989150900059
+  },
+  {
+    "entry_id": "synthetic/cone",
+    "method": "proposed",
+    "repetition": 3,
+    "reason": "F-score below 0.50; silhouette IoU below 0.55",
+    "chamfer": 0.05981063265405273,
+    "f_score": 0.04202076246334311,
+    "silhouette_iou": 0.5306624152660979,
+    "seconds": 28.284476537000955
+  },
+  {
+    "entry_id": "synthetic/cone",
+    "method": "tsdf",
+    "repetition": 1,
+    "reason": "chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": 0.06781135071865413,
+    "f_score": 0.12941989002654533,
+    "silhouette_iou": 0.5276381078398942,
+    "seconds": 1.0778860039990832
+  },
+  {
+    "entry_id": "synthetic/cone",
+    "method": "tsdf",
+    "repetition": 2,
+    "reason": "chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": 0.06781135071865413,
+    "f_score": 0.12941989002654533,
+    "silhouette_iou": 0.5276381078398942,
+    "seconds": 1.279883155000789
+  },
+  {
+    "entry_id": "synthetic/cone",
+    "method": "tsdf",
+    "repetition": 3,
+    "reason": "chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": 0.06781135071865413,
+    "f_score": 0.12941989002654533,
+    "silhouette_iou": 0.5276381078398942,
+    "seconds": 1.25749691800047
+  },
+  {
+    "entry_id": "synthetic/cone",
+    "method": "visual_hull",
+    "repetition": 1,
+    "reason": "chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": 0.09501867340891841,
+    "f_score": 0.046793536324786326,
+    "silhouette_iou": 0.5070602418267107,
+    "seconds": 2.041163890000462
+  },
+  {
+    "entry_id": "synthetic/cone",
+    "method": "visual_hull",
+    "repetition": 2,
+    "reason": "chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": 0.09501867340891841,
+    "f_score": 0.046793536324786326,
+    "silhouette_iou": 0.5070602418267107,
+    "seconds": 2.060745561000658
+  },
+  {
+    "entry_id": "synthetic/cone",
+    "method": "visual_hull",
+    "repetition": 3,
+    "reason": "chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": 0.09501867340891841,
+    "f_score": 0.046793536324786326,
+    "silhouette_iou": 0.5070602418267107,
+    "seconds": 2.1208497149982577
+  },
+  {
+    "entry_id": "synthetic/prism",
+    "method": "proposed",
+    "repetition": 1,
+    "reason": "chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55",
+    "chamfer": 0.10003559711701449,
+    "f_score": 0.042912754804892254,
+    "silhouette_iou": 0.5013081891376063,
+    "seconds": 28.327652916999796
+  },
+  {
+    "entry_id": "synthetic/prism",
+    "method": "proposed",
+    "repetition": 2,
+    "reason": "chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55",
+    "chamfer": 0.10003559711701449,
+    "f_score": 0.042912754804892254,
+    "silhouette_iou": 0.5013081891376063,
+    "seconds": 28.41141205999884
+  },
+  {
+    "entry_id": "synthetic/prism",
+    "method": "proposed",
+    "repetition": 3,
+    "reason": "chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55",
+    "chamfer": 0.10003559711701449,
+    "f_score": 0.042912754804892254,
+    "silhouette_iou": 0.5013081891376063,
+    "seconds": 26.917588010001054
+  },
+  {
+    "entry_id": "synthetic/prism",
+    "method": "tsdf",
+    "repetition": 1,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.10575726793348483,
+    "f_score": 0.043201307901907356,
+    "silhouette_iou": 0.5882048054496316,
+    "seconds": 1.2489969529997325
+  },
+  {
+    "entry_id": "synthetic/prism",
+    "method": "tsdf",
+    "repetition": 2,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.10575726793348483,
+    "f_score": 0.043201307901907356,
+    "silhouette_iou": 0.5882048054496316,
+    "seconds": 1.3394491670005664
+  },
+  {
+    "entry_id": "synthetic/prism",
+    "method": "tsdf",
+    "repetition": 3,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.10575726793348483,
+    "f_score": 0.043201307901907356,
+    "silhouette_iou": 0.5882048054496316,
+    "seconds": 1.188936233998902
+  },
+  {
+    "entry_id": "synthetic/prism",
+    "method": "visual_hull",
+    "repetition": 1,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.09547337135658246,
+    "f_score": 0.040314978775015164,
+    "silhouette_iou": 0.5540402484310896,
+    "seconds": 1.8859983570000622
+  },
+  {
+    "entry_id": "synthetic/prism",
+    "method": "visual_hull",
+    "repetition": 2,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.09547337135658246,
+    "f_score": 0.040314978775015164,
+    "silhouette_iou": 0.5540402484310896,
+    "seconds": 1.7445478110003023
+  },
+  {
+    "entry_id": "synthetic/prism",
+    "method": "visual_hull",
+    "repetition": 3,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.09547337135658246,
+    "f_score": 0.040314978775015164,
+    "silhouette_iou": 0.5540402484310896,
+    "seconds": 1.9433533680003166
+  },
+  {
+    "entry_id": "synthetic/sphere",
+    "method": "proposed",
+    "repetition": 1,
+    "reason": "F-score below 0.50",
+    "chamfer": 0.04033239925223342,
+    "f_score": 0.15288109875735775,
+    "silhouette_iou": 0.7636462518590867,
+    "seconds": 28.324722577001012
+  },
+  {
+    "entry_id": "synthetic/sphere",
+    "method": "proposed",
+    "repetition": 2,
+    "reason": "F-score below 0.50",
+    "chamfer": 0.04033239925223342,
+    "f_score": 0.15288109875735775,
+    "silhouette_iou": 0.7636462518590867,
+    "seconds": 27.205390240998895
+  },
+  {
+    "entry_id": "synthetic/sphere",
+    "method": "proposed",
+    "repetition": 3,
+    "reason": "F-score below 0.50",
+    "chamfer": 0.04033239925223342,
+    "f_score": 0.15288109875735775,
+    "silhouette_iou": 0.7636462518590867,
+    "seconds": 31.677902690998962
+  },
+  {
+    "entry_id": "synthetic/sphere",
+    "method": "tsdf",
+    "repetition": 1,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.11482832504645285,
+    "f_score": 0.031698583146905296,
+    "silhouette_iou": 0.7817102137767221,
+    "seconds": 1.3199467770009505
+  },
+  {
+    "entry_id": "synthetic/sphere",
+    "method": "tsdf",
+    "repetition": 2,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.11482832504645285,
+    "f_score": 0.031698583146905296,
+    "silhouette_iou": 0.7817102137767221,
+    "seconds": 1.4289554790011607
+  },
+  {
+    "entry_id": "synthetic/sphere",
+    "method": "tsdf",
+    "repetition": 3,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.11482832504645285,
+    "f_score": 0.031698583146905296,
+    "silhouette_iou": 0.7817102137767221,
+    "seconds": 1.2650633499997639
+  },
+  {
+    "entry_id": "synthetic/sphere",
+    "method": "visual_hull",
+    "repetition": 1,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.09468515734368883,
+    "f_score": 0.045671711229946524,
+    "silhouette_iou": 0.7182297765491266,
+    "seconds": 1.5843030159994669
+  },
+  {
+    "entry_id": "synthetic/sphere",
+    "method": "visual_hull",
+    "repetition": 2,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.09468515734368883,
+    "f_score": 0.045671711229946524,
+    "silhouette_iou": 0.7182297765491266,
+    "seconds": 2.076860912000484
+  },
+  {
+    "entry_id": "synthetic/sphere",
+    "method": "visual_hull",
+    "repetition": 3,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.09468515734368883,
+    "f_score": 0.045671711229946524,
+    "silhouette_iou": 0.7182297765491266,
+    "seconds": 1.7830827990001126
+  },
+  {
+    "entry_id": "synthetic/stairs",
+    "method": "proposed",
+    "repetition": 1,
+    "reason": "chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55",
+    "chamfer": 0.11586174610632607,
+    "f_score": 0.03243941493456504,
+    "silhouette_iou": 0.4461260986153391,
+    "seconds": 22.403786118000426
+  },
+  {
+    "entry_id": "synthetic/stairs",
+    "method": "proposed",
+    "repetition": 2,
+    "reason": "chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55",
+    "chamfer": 0.11586174610632607,
+    "f_score": 0.03243941493456504,
+    "silhouette_iou": 0.4461260986153391,
+    "seconds": 25.14357925100012
+  },
+  {
+    "entry_id": "synthetic/stairs",
+    "method": "proposed",
+    "repetition": 3,
+    "reason": "chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55",
+    "chamfer": 0.11586174610632607,
+    "f_score": 0.03243941493456504,
+    "silhouette_iou": 0.4461260986153391,
+    "seconds": 20.19170863599902
+  },
+  {
+    "entry_id": "synthetic/stairs",
+    "method": "tsdf",
+    "repetition": 1,
+    "reason": "chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": 0.12355025291887028,
+    "f_score": 0.02923142201834862,
+    "silhouette_iou": 0.40084889845319766,
+    "seconds": 0.9522782479998568
+  },
+  {
+    "entry_id": "synthetic/stairs",
+    "method": "tsdf",
+    "repetition": 2,
+    "reason": "chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": 0.12355025291887028,
+    "f_score": 0.02923142201834862,
+    "silhouette_iou": 0.40084889845319766,
+    "seconds": 1.4380135699993843
+  },
+  {
+    "entry_id": "synthetic/stairs",
+    "method": "tsdf",
+    "repetition": 3,
+    "reason": "chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": 0.12355025291887028,
+    "f_score": 0.02923142201834862,
+    "silhouette_iou": 0.40084889845319766,
+    "seconds": 1.3310497989987198
+  },
+  {
+    "entry_id": "synthetic/stairs",
+    "method": "visual_hull",
+    "repetition": 1,
+    "reason": "chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": 0.10478594917361009,
+    "f_score": 0.03554779917469051,
+    "silhouette_iou": 0.4931400490469923,
+    "seconds": 2.0768766990004224
+  },
+  {
+    "entry_id": "synthetic/stairs",
+    "method": "visual_hull",
+    "repetition": 2,
+    "reason": "chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": 0.10478594917361009,
+    "f_score": 0.03554779917469051,
+    "silhouette_iou": 0.4931400490469923,
+    "seconds": 1.7810535160006111
+  },
+  {
+    "entry_id": "synthetic/stairs",
+    "method": "visual_hull",
+    "repetition": 3,
+    "reason": "chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": 0.10478594917361009,
+    "f_score": 0.03554779917469051,
+    "silhouette_iou": 0.4931400490469923,
+    "seconds": 1.9490967719993932
+  },
+  {
+    "entry_id": "synthetic/lamp",
+    "method": "proposed",
+    "repetition": 1,
+    "reason": "F-score below 0.50",
+    "chamfer": 0.018074670337133857,
+    "f_score": 0.3717162254770224,
+    "silhouette_iou": 0.8041500894798338,
+    "seconds": 23.634539827999106
+  },
+  {
+    "entry_id": "synthetic/lamp",
+    "method": "proposed",
+    "repetition": 2,
+    "reason": "F-score below 0.50",
+    "chamfer": 0.018074670337133857,
+    "f_score": 0.3717162254770224,
+    "silhouette_iou": 0.8041500894798338,
+    "seconds": 26.67443199599984
+  },
+  {
+    "entry_id": "synthetic/lamp",
+    "method": "proposed",
+    "repetition": 3,
+    "reason": "F-score below 0.50",
+    "chamfer": 0.018074670337133857,
+    "f_score": 0.3717162254770224,
+    "silhouette_iou": 0.8041500894798338,
+    "seconds": 27.049072428999352
+  },
+  {
+    "entry_id": "synthetic/lamp",
+    "method": "tsdf",
+    "repetition": 1,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.09101034953762147,
+    "f_score": 0.031278769230769235,
+    "silhouette_iou": 0.6200597761868354,
+    "seconds": 1.214625459000672
+  },
+  {
+    "entry_id": "synthetic/lamp",
+    "method": "tsdf",
+    "repetition": 2,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.09101034953762147,
+    "f_score": 0.031278769230769235,
+    "silhouette_iou": 0.6200597761868354,
+    "seconds": 1.4966877979986748
+  },
+  {
+    "entry_id": "synthetic/lamp",
+    "method": "tsdf",
+    "repetition": 3,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.09101034953762147,
+    "f_score": 0.031278769230769235,
+    "silhouette_iou": 0.6200597761868354,
+    "seconds": 1.3751668570002948
+  },
+  {
+    "entry_id": "synthetic/lamp",
+    "method": "visual_hull",
+    "repetition": 1,
+    "reason": "F-score below 0.50; mesh not watertight",
+    "chamfer": 0.0395344684802084,
+    "f_score": 0.17075980221058756,
+    "silhouette_iou": 0.7207946387175632,
+    "seconds": 1.9564449849985976
+  },
+  {
+    "entry_id": "synthetic/lamp",
+    "method": "visual_hull",
+    "repetition": 2,
+    "reason": "F-score below 0.50; mesh not watertight",
+    "chamfer": 0.0395344684802084,
+    "f_score": 0.17075980221058756,
+    "silhouette_iou": 0.7207946387175632,
+    "seconds": 2.102892058999714
+  },
+  {
+    "entry_id": "synthetic/lamp",
+    "method": "visual_hull",
+    "repetition": 3,
+    "reason": "F-score below 0.50; mesh not watertight",
+    "chamfer": 0.0395344684802084,
+    "f_score": 0.17075980221058756,
+    "silhouette_iou": 0.7207946387175632,
+    "seconds": 1.6666709210003319
+  },
+  {
+    "entry_id": "synthetic/frustum",
+    "method": "proposed",
+    "repetition": 1,
+    "reason": "chamfer above 0.06; F-score below 0.50",
+    "chamfer": 0.07488412229353916,
+    "f_score": 0.1376700216060497,
+    "silhouette_iou": 0.8158428651239378,
+    "seconds": 26.869060466999144
+  },
+  {
+    "entry_id": "synthetic/frustum",
+    "method": "proposed",
+    "repetition": 2,
+    "reason": "chamfer above 0.06; F-score below 0.50",
+    "chamfer": 0.07488412229353916,
+    "f_score": 0.1376700216060497,
+    "silhouette_iou": 0.8158428651239378,
+    "seconds": 20.993953496999893
+  },
+  {
+    "entry_id": "synthetic/frustum",
+    "method": "proposed",
+    "repetition": 3,
+    "reason": "chamfer above 0.06; F-score below 0.50",
+    "chamfer": 0.07488412229353916,
+    "f_score": 0.1376700216060497,
+    "silhouette_iou": 0.8158428651239378,
+    "seconds": 23.65158629799953
+  },
+  {
+    "entry_id": "synthetic/frustum",
+    "method": "tsdf",
+    "repetition": 1,
+    "reason": "F-score below 0.50; mesh not watertight",
+    "chamfer": 0.04610952087729689,
+    "f_score": 0.12212585047871256,
+    "silhouette_iou": 0.5949879827614786,
+    "seconds": 1.0254542380007479
+  },
+  {
+    "entry_id": "synthetic/frustum",
+    "method": "tsdf",
+    "repetition": 2,
+    "reason": "F-score below 0.50; mesh not watertight",
+    "chamfer": 0.04610952087729689,
+    "f_score": 0.12212585047871256,
+    "silhouette_iou": 0.5949879827614786,
+    "seconds": 1.3636907460004295
+  },
+  {
+    "entry_id": "synthetic/frustum",
+    "method": "tsdf",
+    "repetition": 3,
+    "reason": "F-score below 0.50; mesh not watertight",
+    "chamfer": 0.04610952087729689,
+    "f_score": 0.12212585047871256,
+    "silhouette_iou": 0.5949879827614786,
+    "seconds": 1.2629041319996759
+  },
+  {
+    "entry_id": "synthetic/frustum",
+    "method": "visual_hull",
+    "repetition": 1,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.08900705022537753,
+    "f_score": 0.07372138554216867,
+    "silhouette_iou": 0.7056148856712311,
+    "seconds": 1.6962176990000444
+  },
+  {
+    "entry_id": "synthetic/frustum",
+    "method": "visual_hull",
+    "repetition": 2,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.08900705022537753,
+    "f_score": 0.07372138554216867,
+    "silhouette_iou": 0.7056148856712311,
+    "seconds": 1.6882292730006156
+  },
+  {
+    "entry_id": "synthetic/frustum",
+    "method": "visual_hull",
+    "repetition": 3,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.08900705022537753,
+    "f_score": 0.07372138554216867,
+    "silhouette_iou": 0.7056148856712311,
+    "seconds": 1.833852769999794
+  },
+  {
+    "entry_id": "synthetic/capsule",
+    "method": "proposed",
+    "repetition": 1,
+    "reason": "F-score below 0.50; silhouette IoU below 0.55",
+    "chamfer": 0.026676607155933812,
+    "f_score": 0.41601575917486205,
+    "silhouette_iou": 0.456225549709969,
+    "seconds": 23.194948042999386
+  },
+  {
+    "entry_id": "synthetic/capsule",
+    "method": "proposed",
+    "repetition": 2,
+    "reason": "F-score below 0.50; silhouette IoU below 0.55",
+    "chamfer": 0.026676607155933812,
+    "f_score": 0.41601575917486205,
+    "silhouette_iou": 0.456225549709969,
+    "seconds": 24.835186647998853
+  },
+  {
+    "entry_id": "synthetic/capsule",
+    "method": "proposed",
+    "repetition": 3,
+    "reason": "F-score below 0.50; silhouette IoU below 0.55",
+    "chamfer": 0.026676607155933812,
+    "f_score": 0.41601575917486205,
+    "silhouette_iou": 0.456225549709969,
+    "seconds": 22.637951983000676
+  },
+  {
+    "entry_id": "synthetic/capsule",
+    "method": "tsdf",
+    "repetition": 1,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.06331397480124855,
+    "f_score": 0.07300837554880107,
+    "silhouette_iou": 0.5797666272299162,
+    "seconds": 1.4082524020013807
+  },
+  {
+    "entry_id": "synthetic/capsule",
+    "method": "tsdf",
+    "repetition": 2,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.06331397480124855,
+    "f_score": 0.07300837554880107,
+    "silhouette_iou": 0.5797666272299162,
+    "seconds": 0.9904631289991812
+  },
+  {
+    "entry_id": "synthetic/capsule",
+    "method": "tsdf",
+    "repetition": 3,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.06331397480124855,
+    "f_score": 0.07300837554880107,
+    "silhouette_iou": 0.5797666272299162,
+    "seconds": 1.3356797359992925
+  },
+  {
+    "entry_id": "synthetic/capsule",
+    "method": "visual_hull",
+    "repetition": 1,
+    "reason": "F-score below 0.50; mesh not watertight",
+    "chamfer": 0.04494541358863115,
+    "f_score": 0.1684661823573017,
+    "silhouette_iou": 0.6994884910485933,
+    "seconds": 2.0668501900017873
+  },
+  {
+    "entry_id": "synthetic/capsule",
+    "method": "visual_hull",
+    "repetition": 2,
+    "reason": "F-score below 0.50; mesh not watertight",
+    "chamfer": 0.04494541358863115,
+    "f_score": 0.1684661823573017,
+    "silhouette_iou": 0.6994884910485933,
+    "seconds": 1.835127709999142
+  },
+  {
+    "entry_id": "synthetic/capsule",
+    "method": "visual_hull",
+    "repetition": 3,
+    "reason": "F-score below 0.50; mesh not watertight",
+    "chamfer": 0.04494541358863115,
+    "f_score": 0.1684661823573017,
+    "silhouette_iou": 0.6994884910485933,
+    "seconds": 1.6963037390014506
+  },
+  {
+    "entry_id": "synthetic/ring",
+    "method": "proposed",
+    "repetition": 1,
+    "reason": "chamfer above 0.06; F-score below 0.50",
+    "chamfer": 0.07404283747862017,
+    "f_score": 0.08182163153070576,
+    "silhouette_iou": 0.6578129751312188,
+    "seconds": 21.544360407999193
+  },
+  {
+    "entry_id": "synthetic/ring",
+    "method": "proposed",
+    "repetition": 2,
+    "reason": "chamfer above 0.06; F-score below 0.50",
+    "chamfer": 0.07404283747862017,
+    "f_score": 0.08182163153070576,
+    "silhouette_iou": 0.6578129751312188,
+    "seconds": 26.942255108999234
+  },
+  {
+    "entry_id": "synthetic/ring",
+    "method": "proposed",
+    "repetition": 3,
+    "reason": "chamfer above 0.06; F-score below 0.50",
+    "chamfer": 0.07404283747862017,
+    "f_score": 0.08182163153070576,
+    "silhouette_iou": 0.6578129751312188,
+    "seconds": 27.859291927999948
+  },
+  {
+    "entry_id": "synthetic/ring",
+    "method": "tsdf",
+    "repetition": 1,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.09075739262137286,
+    "f_score": 0.05192663316582914,
+    "silhouette_iou": 0.6149336722535547,
+    "seconds": 1.2654234770016046
+  },
+  {
+    "entry_id": "synthetic/ring",
+    "method": "tsdf",
+    "repetition": 2,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.09075739262137286,
+    "f_score": 0.05192663316582914,
+    "silhouette_iou": 0.6149336722535547,
+    "seconds": 1.2808368019996124
+  },
+  {
+    "entry_id": "synthetic/ring",
+    "method": "tsdf",
+    "repetition": 3,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.09075739262137286,
+    "f_score": 0.05192663316582914,
+    "silhouette_iou": 0.6149336722535547,
+    "seconds": 1.2228206700001465
+  },
+  {
+    "entry_id": "synthetic/ring",
+    "method": "visual_hull",
+    "repetition": 1,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.07276140873369213,
+    "f_score": 0.10026811237062593,
+    "silhouette_iou": 0.7048823970974603,
+    "seconds": 2.051559609999458
+  },
+  {
+    "entry_id": "synthetic/ring",
+    "method": "visual_hull",
+    "repetition": 2,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.07276140873369213,
+    "f_score": 0.10026811237062593,
+    "silhouette_iou": 0.7048823970974603,
+    "seconds": 2.2621264339995832
+  },
+  {
+    "entry_id": "synthetic/ring",
+    "method": "visual_hull",
+    "repetition": 3,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.07276140873369213,
+    "f_score": 0.10026811237062593,
+    "silhouette_iou": 0.7048823970974603,
+    "seconds": 2.0072240850004164
+  },
+  {
+    "entry_id": "synthetic/slab",
+    "method": "proposed",
+    "repetition": 1,
+    "reason": "F-score below 0.50; silhouette IoU below 0.55",
+    "chamfer": 0.03625745958464065,
+    "f_score": 0.1362737353372434,
+    "silhouette_iou": 0.3510135696064965,
+    "seconds": 23.51311071300006
+  },
+  {
+    "entry_id": "synthetic/slab",
+    "method": "proposed",
+    "repetition": 2,
+    "reason": "F-score below 0.50; silhouette IoU below 0.55",
+    "chamfer": 0.03625745958464065,
+    "f_score": 0.1362737353372434,
+    "silhouette_iou": 0.3510135696064965,
+    "seconds": 23.005591793998974
+  },
+  {
+    "entry_id": "synthetic/slab",
+    "method": "proposed",
+    "repetition": 3,
+    "reason": "F-score below 0.50; silhouette IoU below 0.55",
+    "chamfer": 0.03625745958464065,
+    "f_score": 0.1362737353372434,
+    "silhouette_iou": 0.3510135696064965,
+    "seconds": 25.831475843999215
+  },
+  {
+    "entry_id": "synthetic/slab",
+    "method": "tsdf",
+    "repetition": 1,
+    "reason": "chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": 0.11074683045299152,
+    "f_score": 0.0353598452883263,
+    "silhouette_iou": 0.35711207268088335,
+    "seconds": 1.2783373269994627
+  },
+  {
+    "entry_id": "synthetic/slab",
+    "method": "tsdf",
+    "repetition": 2,
+    "reason": "chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": 0.11074683045299152,
+    "f_score": 0.0353598452883263,
+    "silhouette_iou": 0.35711207268088335,
+    "seconds": 1.3534750750004605
+  },
+  {
+    "entry_id": "synthetic/slab",
+    "method": "tsdf",
+    "repetition": 3,
+    "reason": "chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": 0.11074683045299152,
+    "f_score": 0.0353598452883263,
+    "silhouette_iou": 0.35711207268088335,
+    "seconds": 1.4671246590005467
+  },
+  {
+    "entry_id": "synthetic/slab",
+    "method": "visual_hull",
+    "repetition": 1,
+    "reason": "F-score below 0.50; silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": 0.039507169049473045,
+    "f_score": 0.12360640741487004,
+    "silhouette_iou": 0.40733357813565546,
+    "seconds": 1.8090069070003665
+  },
+  {
+    "entry_id": "synthetic/slab",
+    "method": "visual_hull",
+    "repetition": 2,
+    "reason": "F-score below 0.50; silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": 0.039507169049473045,
+    "f_score": 0.12360640741487004,
+    "silhouette_iou": 0.40733357813565546,
+    "seconds": 1.9212831259992527
+  },
+  {
+    "entry_id": "synthetic/slab",
+    "method": "visual_hull",
+    "repetition": 3,
+    "reason": "F-score below 0.50; silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": 0.039507169049473045,
+    "f_score": 0.12360640741487004,
+    "silhouette_iou": 0.40733357813565546,
+    "seconds": 2.043619026999295
+  },
+  {
+    "entry_id": "synthetic/thin_plate",
+    "method": "proposed",
+    "repetition": 1,
+    "reason": "chamfer above 0.06; F-score below 0.50",
+    "chamfer": 0.14042193316060514,
+    "f_score": 0.023243145589798085,
+    "silhouette_iou": 0.6873136249989616,
+    "seconds": 26.782367732999774
+  },
+  {
+    "entry_id": "synthetic/thin_plate",
+    "method": "proposed",
+    "repetition": 2,
+    "reason": "chamfer above 0.06; F-score below 0.50",
+    "chamfer": 0.14042193316060514,
+    "f_score": 0.023243145589798085,
+    "silhouette_iou": 0.6873136249989616,
+    "seconds": 24.34846250800001
+  },
+  {
+    "entry_id": "synthetic/thin_plate",
+    "method": "proposed",
+    "repetition": 3,
+    "reason": "chamfer above 0.06; F-score below 0.50",
+    "chamfer": 0.14042193316060514,
+    "f_score": 0.023243145589798085,
+    "silhouette_iou": 0.6873136249989616,
+    "seconds": 23.541778442999203
+  },
+  {
+    "entry_id": "synthetic/thin_plate",
+    "method": "tsdf",
+    "repetition": 1,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.08527194679664729,
+    "f_score": 0.052936772983114444,
+    "silhouette_iou": 0.7814569536423841,
+    "seconds": 1.2635085619986057
+  },
+  {
+    "entry_id": "synthetic/thin_plate",
+    "method": "tsdf",
+    "repetition": 2,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.08527194679664729,
+    "f_score": 0.052936772983114444,
+    "silhouette_iou": 0.7814569536423841,
+    "seconds": 1.3561747950006975
+  },
+  {
+    "entry_id": "synthetic/thin_plate",
+    "method": "tsdf",
+    "repetition": 3,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.08527194679664729,
+    "f_score": 0.052936772983114444,
+    "silhouette_iou": 0.7814569536423841,
+    "seconds": 1.2009342450000986
+  },
+  {
+    "entry_id": "synthetic/thin_plate",
+    "method": "visual_hull",
+    "repetition": 1,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.08839532450412554,
+    "f_score": 0.0593678015973098,
+    "silhouette_iou": 0.6792668855951007,
+    "seconds": 2.064113360000192
+  },
+  {
+    "entry_id": "synthetic/thin_plate",
+    "method": "visual_hull",
+    "repetition": 2,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.08839532450412554,
+    "f_score": 0.0593678015973098,
+    "silhouette_iou": 0.6792668855951007,
+    "seconds": 1.4326952730007179
+  },
+  {
+    "entry_id": "synthetic/thin_plate",
+    "method": "visual_hull",
+    "repetition": 3,
+    "reason": "chamfer above 0.06; F-score below 0.50; mesh not watertight",
+    "chamfer": 0.08839532450412554,
+    "f_score": 0.0593678015973098,
+    "silhouette_iou": 0.6792668855951007,
+    "seconds": 1.8893059299989545
+  },
+  {
+    "entry_id": "synthetic/tall_box",
+    "method": "proposed",
+    "repetition": 1,
+    "reason": "F-score below 0.50; silhouette IoU below 0.55",
+    "chamfer": 0.04270460777389979,
+    "f_score": 0.09906256460743293,
+    "silhouette_iou": 0.4995944462999189,
+    "seconds": 18.946571204000065
+  },
+  {
+    "entry_id": "synthetic/tall_box",
+    "method": "proposed",
+    "repetition": 2,
+    "reason": "F-score below 0.50; silhouette IoU below 0.55",
+    "chamfer": 0.04270460777389979,
+    "f_score": 0.09906256460743293,
+    "silhouette_iou": 0.4995944462999189,
+    "seconds": 21.520680439998614
+  },
+  {
+    "entry_id": "synthetic/tall_box",
+    "method": "proposed",
+    "repetition": 3,
+    "reason": "F-score below 0.50; silhouette IoU below 0.55",
+    "chamfer": 0.04270460777389979,
+    "f_score": 0.09906256460743293,
+    "silhouette_iou": 0.4995944462999189,
+    "seconds": 20.234475706000012
+  },
+  {
+    "entry_id": "synthetic/tall_box",
+    "method": "tsdf",
+    "repetition": 1,
+    "reason": "chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": 0.0847381974297374,
+    "f_score": 0.061765319733228706,
+    "silhouette_iou": 0.4513714440898907,
+    "seconds": 1.0583510050000768
+  },
+  {
+    "entry_id": "synthetic/tall_box",
+    "method": "tsdf",
+    "repetition": 2,
+    "reason": "chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": 0.0847381974297374,
+    "f_score": 0.061765319733228706,
+    "silhouette_iou": 0.4513714440898907,
+    "seconds": 1.2586363549999078
+  },
+  {
+    "entry_id": "synthetic/tall_box",
+    "method": "tsdf",
+    "repetition": 3,
+    "reason": "chamfer above 0.06; F-score below 0.50; silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": 0.0847381974297374,
+    "f_score": 0.061765319733228706,
+    "silhouette_iou": 0.4513714440898907,
+    "seconds": 1.179993152998577
+  },
+  {
+    "entry_id": "synthetic/tall_box",
+    "method": "visual_hull",
+    "repetition": 1,
+    "reason": "F-score below 0.50; silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": 0.049359843601916475,
+    "f_score": 0.12105375461633155,
+    "silhouette_iou": 0.45588913760401895,
+    "seconds": 1.570544008998695
+  },
+  {
+    "entry_id": "synthetic/tall_box",
+    "method": "visual_hull",
+    "repetition": 2,
+    "reason": "F-score below 0.50; silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": 0.049359843601916475,
+    "f_score": 0.12105375461633155,
+    "silhouette_iou": 0.45588913760401895,
+    "seconds": 1.6069190600010188
+  },
+  {
+    "entry_id": "synthetic/tall_box",
+    "method": "visual_hull",
+    "repetition": 3,
+    "reason": "F-score below 0.50; silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": 0.049359843601916475,
+    "f_score": 0.12105375461633155,
+    "silhouette_iou": 0.45588913760401895,
+    "seconds": 1.8362788790000195
+  },
+  {
+    "entry_id": "real/sneaker",
+    "method": "proposed",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.21117368688646407,
+    "seconds": 18.590287222999905
+  },
+  {
+    "entry_id": "real/sneaker",
+    "method": "proposed",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.21117368688646407,
+    "seconds": 21.11467106300006
+  },
+  {
+    "entry_id": "real/sneaker",
+    "method": "proposed",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.21117368688646407,
+    "seconds": 21.374389257000075
+  },
+  {
+    "entry_id": "real/sneaker",
+    "method": "tsdf",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.25381731988313766,
+    "seconds": 0.9093362860003253
+  },
+  {
+    "entry_id": "real/sneaker",
+    "method": "tsdf",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.25381731988313766,
+    "seconds": 1.4289978819997486
+  },
+  {
+    "entry_id": "real/sneaker",
+    "method": "tsdf",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.25381731988313766,
+    "seconds": 1.2267491369984782
+  },
+  {
+    "entry_id": "real/sneaker",
+    "method": "visual_hull",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.2242286973555338,
+    "seconds": 1.9618241379994288
+  },
+  {
+    "entry_id": "real/sneaker",
+    "method": "visual_hull",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.2242286973555338,
+    "seconds": 1.78938353599915
+  },
+  {
+    "entry_id": "real/sneaker",
+    "method": "visual_hull",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.2242286973555338,
+    "seconds": 2.170426512000631
+  },
+  {
+    "entry_id": "real/water_bottle",
+    "method": "proposed",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.23440748978430662,
+    "seconds": 27.521820369000125
+  },
+  {
+    "entry_id": "real/water_bottle",
+    "method": "proposed",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.23440748978430662,
+    "seconds": 23.464632113000334
+  },
+  {
+    "entry_id": "real/water_bottle",
+    "method": "proposed",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.23440748978430662,
+    "seconds": 21.437692409999727
+  },
+  {
+    "entry_id": "real/water_bottle",
+    "method": "tsdf",
+    "repetition": 1,
+    "reason": "mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.6194498093646489,
+    "seconds": 1.2286547800013068
+  },
+  {
+    "entry_id": "real/water_bottle",
+    "method": "tsdf",
+    "repetition": 2,
+    "reason": "mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.6194498093646489,
+    "seconds": 0.9671702649993676
+  },
+  {
+    "entry_id": "real/water_bottle",
+    "method": "tsdf",
+    "repetition": 3,
+    "reason": "mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.6194498093646489,
+    "seconds": 1.3992940620009904
+  },
+  {
+    "entry_id": "real/water_bottle",
+    "method": "visual_hull",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.47386777400482755,
+    "seconds": 2.2021975239986205
+  },
+  {
+    "entry_id": "real/water_bottle",
+    "method": "visual_hull",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.47386777400482755,
+    "seconds": 1.9400859209999908
+  },
+  {
+    "entry_id": "real/water_bottle",
+    "method": "visual_hull",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.47386777400482755,
+    "seconds": 2.0627981739999086
+  },
+  {
+    "entry_id": "real/coffee_mug",
+    "method": "proposed",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.09277148145331,
+    "seconds": 19.3048
+  },
+  {
+    "entry_id": "real/coffee_mug",
+    "method": "proposed",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.09277148145331,
+    "seconds": 18.1448
+  },
+  {
+    "entry_id": "real/coffee_mug",
+    "method": "proposed",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.09277148145331,
+    "seconds": 16.8966
+  },
+  {
+    "entry_id": "real/coffee_mug",
+    "method": "tsdf",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.10167269825891204,
+    "seconds": 1.3673381810003775
+  },
+  {
+    "entry_id": "real/coffee_mug",
+    "method": "tsdf",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.10167269825891204,
+    "seconds": 1.407445592998556
+  },
+  {
+    "entry_id": "real/coffee_mug",
+    "method": "tsdf",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.10167269825891204,
+    "seconds": 1.306579015999887
+  },
+  {
+    "entry_id": "real/coffee_mug",
+    "method": "visual_hull",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.09828997521401346,
+    "seconds": 1.8199066380002478
+  },
+  {
+    "entry_id": "real/coffee_mug",
+    "method": "visual_hull",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.09828997521401346,
+    "seconds": 2.0248709739971673
+  },
+  {
+    "entry_id": "real/coffee_mug",
+    "method": "visual_hull",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.09828997521401346,
+    "seconds": 2.0554812689988466
+  },
+  {
+    "entry_id": "real/ceramic_vase",
+    "method": "proposed",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.22045698326283622,
+    "seconds": 26.840846637998766
+  },
+  {
+    "entry_id": "real/ceramic_vase",
+    "method": "proposed",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.22045698326283622,
+    "seconds": 28.02527398500024
+  },
+  {
+    "entry_id": "real/ceramic_vase",
+    "method": "proposed",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.22045698326283622,
+    "seconds": 28.352442420000443
+  },
+  {
+    "entry_id": "real/ceramic_vase",
+    "method": "tsdf",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.44913654675042963,
+    "seconds": 1.7238951779982017
+  },
+  {
+    "entry_id": "real/ceramic_vase",
+    "method": "tsdf",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.44913654675042963,
+    "seconds": 1.4420146100019338
+  },
+  {
+    "entry_id": "real/ceramic_vase",
+    "method": "tsdf",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.44913654675042963,
+    "seconds": 1.6988045309990412
+  },
+  {
+    "entry_id": "real/ceramic_vase",
+    "method": "visual_hull",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.32777368980459487,
+    "seconds": 2.3510895229992457
+  },
+  {
+    "entry_id": "real/ceramic_vase",
+    "method": "visual_hull",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.32777368980459487,
+    "seconds": 2.536341949002235
+  },
+  {
+    "entry_id": "real/ceramic_vase",
+    "method": "visual_hull",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.32777368980459487,
+    "seconds": 2.363016723000328
+  },
+  {
+    "entry_id": "real/basketball",
+    "method": "proposed",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.33790352118950273,
+    "seconds": 37.19712902700121
+  },
+  {
+    "entry_id": "real/basketball",
+    "method": "proposed",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.33790352118950273,
+    "seconds": 35.96660935800173
+  },
+  {
+    "entry_id": "real/basketball",
+    "method": "proposed",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.33790352118950273,
+    "seconds": 37.948099245000776
+  },
+  {
+    "entry_id": "real/basketball",
+    "method": "tsdf",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.3618453145377256,
+    "seconds": 1.6349578779991134
+  },
+  {
+    "entry_id": "real/basketball",
+    "method": "tsdf",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.3618453145377256,
+    "seconds": 1.6514830270025413
+  },
+  {
+    "entry_id": "real/basketball",
+    "method": "tsdf",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.3618453145377256,
+    "seconds": 1.6195991230015352
+  },
+  {
+    "entry_id": "real/basketball",
+    "method": "visual_hull",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.4457718462321321,
+    "seconds": 2.38978498600045
+  },
+  {
+    "entry_id": "real/basketball",
+    "method": "visual_hull",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.4457718462321321,
+    "seconds": 2.6335495540006377
+  },
+  {
+    "entry_id": "real/basketball",
+    "method": "visual_hull",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.4457718462321321,
+    "seconds": 2.3068658000011055
+  },
+  {
+    "entry_id": "real/headphones",
+    "method": "proposed",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.32547163486678915,
+    "seconds": 34.17565922799986
+  },
+  {
+    "entry_id": "real/headphones",
+    "method": "proposed",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.32547163486678915,
+    "seconds": 34.523555984997074
+  },
+  {
+    "entry_id": "real/headphones",
+    "method": "proposed",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.32547163486678915,
+    "seconds": 35.818253106001066
+  },
+  {
+    "entry_id": "real/headphones",
+    "method": "tsdf",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.37838537621045,
+    "seconds": 1.60055125800136
+  },
+  {
+    "entry_id": "real/headphones",
+    "method": "tsdf",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.37838537621045,
+    "seconds": 1.7786944420004147
+  },
+  {
+    "entry_id": "real/headphones",
+    "method": "tsdf",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.37838537621045,
+    "seconds": 1.682561354002246
+  },
+  {
+    "entry_id": "real/headphones",
+    "method": "visual_hull",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.34468968056090094,
+    "seconds": 2.447112072000891
+  },
+  {
+    "entry_id": "real/headphones",
+    "method": "visual_hull",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.34468968056090094,
+    "seconds": 2.6101068059979298
+  },
+  {
+    "entry_id": "real/headphones",
+    "method": "visual_hull",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.34468968056090094,
+    "seconds": 2.4696095760009484
+  },
+  {
+    "entry_id": "real/rubber_duck",
+    "method": "proposed",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.01832560766917543,
+    "seconds": 35.107384509999974
+  },
+  {
+    "entry_id": "real/rubber_duck",
+    "method": "proposed",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.01832560766917543,
+    "seconds": 33.62676834999729
+  },
+  {
+    "entry_id": "real/rubber_duck",
+    "method": "proposed",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.01832560766917543,
+    "seconds": 34.95672096300041
+  },
+  {
+    "entry_id": "real/rubber_duck",
+    "method": "tsdf",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.026105273123165768,
+    "seconds": 1.7175181239981612
+  },
+  {
+    "entry_id": "real/rubber_duck",
+    "method": "tsdf",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.026105273123165768,
+    "seconds": 1.642408202002116
+  },
+  {
+    "entry_id": "real/rubber_duck",
+    "method": "tsdf",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.026105273123165768,
+    "seconds": 1.7514705640023749
+  },
+  {
+    "entry_id": "real/rubber_duck",
+    "method": "visual_hull",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.019452576628690346,
+    "seconds": 2.678092057001777
+  },
+  {
+    "entry_id": "real/rubber_duck",
+    "method": "visual_hull",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.019452576628690346,
+    "seconds": 2.7275786799982598
+  },
+  {
+    "entry_id": "real/rubber_duck",
+    "method": "visual_hull",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.019452576628690346,
+    "seconds": 2.665596998998808
+  },
+  {
+    "entry_id": "real/toy_car",
+    "method": "proposed",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.4012251148545176,
+    "seconds": 34.04327928099883
+  },
+  {
+    "entry_id": "real/toy_car",
+    "method": "proposed",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.4012251148545176,
+    "seconds": 33.71157931799826
+  },
+  {
+    "entry_id": "real/toy_car",
+    "method": "proposed",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.4012251148545176,
+    "seconds": 31.400208320003003
+  },
+  {
+    "entry_id": "real/toy_car",
+    "method": "tsdf",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.32677807356200084,
+    "seconds": 1.7235126790001232
+  },
+  {
+    "entry_id": "real/toy_car",
+    "method": "tsdf",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.32677807356200084,
+    "seconds": 1.6744599110024865
+  },
+  {
+    "entry_id": "real/toy_car",
+    "method": "tsdf",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.32677807356200084,
+    "seconds": 1.7750204889998713
+  },
+  {
+    "entry_id": "real/toy_car",
+    "method": "visual_hull",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.4387970083219214,
+    "seconds": 2.795893624999735
+  },
+  {
+    "entry_id": "real/toy_car",
+    "method": "visual_hull",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.4387970083219214,
+    "seconds": 2.4087827779985673
+  },
+  {
+    "entry_id": "real/toy_car",
+    "method": "visual_hull",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.4387970083219214,
+    "seconds": 2.2776768619987706
+  },
+  {
+    "entry_id": "real/houseplant",
+    "method": "proposed",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.12459902971819412,
+    "seconds": 29.38237490100073
+  },
+  {
+    "entry_id": "real/houseplant",
+    "method": "proposed",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.12459902971819412,
+    "seconds": 27.97158894599852
+  },
+  {
+    "entry_id": "real/houseplant",
+    "method": "proposed",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.12459902971819412,
+    "seconds": 30.767209334000654
+  },
+  {
+    "entry_id": "real/houseplant",
+    "method": "tsdf",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.14446932377966862,
+    "seconds": 1.7106278559986094
+  },
+  {
+    "entry_id": "real/houseplant",
+    "method": "tsdf",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.14446932377966862,
+    "seconds": 1.5914850819972344
+  },
+  {
+    "entry_id": "real/houseplant",
+    "method": "tsdf",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.14446932377966862,
+    "seconds": 1.79045450799822
+  },
+  {
+    "entry_id": "real/houseplant",
+    "method": "visual_hull",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.09891613174786909,
+    "seconds": 2.4225209309988713
+  },
+  {
+    "entry_id": "real/houseplant",
+    "method": "visual_hull",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.09891613174786909,
+    "seconds": 2.3564931260007143
+  },
+  {
+    "entry_id": "real/houseplant",
+    "method": "visual_hull",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.09891613174786909,
+    "seconds": 2.6990291490001255
+  },
+  {
+    "entry_id": "real/dumbbell",
+    "method": "proposed",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.36094741453625584,
+    "seconds": 35.87653850500283
+  },
+  {
+    "entry_id": "real/dumbbell",
+    "method": "proposed",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.36094741453625584,
+    "seconds": 33.23879946500165
+  },
+  {
+    "entry_id": "real/dumbbell",
+    "method": "proposed",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.36094741453625584,
+    "seconds": 35.08019458200215
+  },
+  {
+    "entry_id": "real/dumbbell",
+    "method": "tsdf",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.46007911520142086,
+    "seconds": 1.9092261570003757
+  },
+  {
+    "entry_id": "real/dumbbell",
+    "method": "tsdf",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.46007911520142086,
+    "seconds": 1.716161672000453
+  },
+  {
+    "entry_id": "real/dumbbell",
+    "method": "tsdf",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.46007911520142086,
+    "seconds": 1.80143990400029
+  },
+  {
+    "entry_id": "real/dumbbell",
+    "method": "visual_hull",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.4504775817507585,
+    "seconds": 2.417677174998971
+  },
+  {
+    "entry_id": "real/dumbbell",
+    "method": "visual_hull",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.4504775817507585,
+    "seconds": 2.638790680997772
+  },
+  {
+    "entry_id": "real/dumbbell",
+    "method": "visual_hull",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.4504775817507585,
+    "seconds": 2.4143316190020414
+  },
+  {
+    "entry_id": "real/candle_jar",
+    "method": "proposed",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.30107095460016664,
+    "seconds": 29.801280957999552
+  },
+  {
+    "entry_id": "real/candle_jar",
+    "method": "proposed",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.30107095460016664,
+    "seconds": 31.704751063000003
+  },
+  {
+    "entry_id": "real/candle_jar",
+    "method": "proposed",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.30107095460016664,
+    "seconds": 27.207984739001404
+  },
+  {
+    "entry_id": "real/candle_jar",
+    "method": "tsdf",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.2002611051990653,
+    "seconds": 1.3595805070035567
+  },
+  {
+    "entry_id": "real/candle_jar",
+    "method": "tsdf",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.2002611051990653,
+    "seconds": 1.5481986249978945
+  },
+  {
+    "entry_id": "real/candle_jar",
+    "method": "tsdf",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.2002611051990653,
+    "seconds": 1.5111529550013074
+  },
+  {
+    "entry_id": "real/candle_jar",
+    "method": "visual_hull",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.3465364120781528,
+    "seconds": 2.718274063001445
+  },
+  {
+    "entry_id": "real/candle_jar",
+    "method": "visual_hull",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.3465364120781528,
+    "seconds": 2.3281514970003627
+  },
+  {
+    "entry_id": "real/candle_jar",
+    "method": "visual_hull",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.3465364120781528,
+    "seconds": 2.3788999960015644
+  },
+  {
+    "entry_id": "real/cardboard_box",
+    "method": "proposed",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.030718436854401173,
+    "seconds": 34.25947529000041
+  },
+  {
+    "entry_id": "real/cardboard_box",
+    "method": "proposed",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.030718436854401173,
+    "seconds": 33.977128299997275
+  },
+  {
+    "entry_id": "real/cardboard_box",
+    "method": "proposed",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.030718436854401173,
+    "seconds": 36.19260540200048
+  },
+  {
+    "entry_id": "real/cardboard_box",
+    "method": "tsdf",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.031565581413804736,
+    "seconds": 1.9620363350004482
+  },
+  {
+    "entry_id": "real/cardboard_box",
+    "method": "tsdf",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.031565581413804736,
+    "seconds": 1.6959403399996518
+  },
+  {
+    "entry_id": "real/cardboard_box",
+    "method": "tsdf",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.031565581413804736,
+    "seconds": 1.564600811998389
+  },
+  {
+    "entry_id": "real/cardboard_box",
+    "method": "visual_hull",
+    "repetition": 1,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.03397902740106358,
+    "seconds": 2.4837052740003855
+  },
+  {
+    "entry_id": "real/cardboard_box",
+    "method": "visual_hull",
+    "repetition": 2,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.03397902740106358,
+    "seconds": 2.2730700130014156
+  },
+  {
+    "entry_id": "real/cardboard_box",
+    "method": "visual_hull",
+    "repetition": 3,
+    "reason": "silhouette IoU below 0.55; mesh not watertight",
+    "chamfer": null,
+    "f_score": null,
+    "silhouette_iou": 0.03397902740106358,
+    "seconds": 2.325012064000475
+  }
+]

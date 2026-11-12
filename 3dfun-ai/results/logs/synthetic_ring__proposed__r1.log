@@ -1,0 +1,11 @@
+synthetic/ring | proposed | rep 1 | draft
+  stage preprocessing     0.682s
+  stage depth             0.538s
+  stage volume            0.056s
+  stage geometry          0.123s
+  stage texture           0.828s
+  stage export            0.295s
+  stage render           18.993s
+  stage total            21.526s
+  seconds=21.54 peak=927MB tris=7748
+  chamfer=0.07404 f=0.0818 iou=0.0373 nc=0.7001

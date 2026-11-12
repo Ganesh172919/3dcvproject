@@ -1,0 +1,11 @@
+synthetic/thin_plate | proposed | rep 1 | draft
+  stage preprocessing     0.671s
+  stage depth             0.646s
+  stage volume            0.072s
+  stage geometry          0.106s
+  stage texture           0.755s
+  stage export            0.255s
+  stage render           24.241s
+  stage total            26.758s
+  seconds=26.78 peak=927MB tris=7724
+  chamfer=0.14042 f=0.0232 iou=0.0127 nc=0.6207

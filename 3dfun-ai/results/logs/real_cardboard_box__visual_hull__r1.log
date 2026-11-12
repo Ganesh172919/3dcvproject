@@ -1,0 +1,3 @@
+real/cardboard_box | visual_hull | rep 1 | draft
+  visual_hull: 8000 faces in 2.48s
+  seconds=2.48 peak=947MB tris=8000

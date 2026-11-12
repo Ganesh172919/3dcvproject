@@ -1,0 +1,3 @@
+real/candle_jar | tsdf | rep 2 | draft
+  tsdf: 7999 faces in 1.55s
+  seconds=1.55 peak=943MB tris=7999

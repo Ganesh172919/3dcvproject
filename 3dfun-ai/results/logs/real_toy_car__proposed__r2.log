@@ -1,0 +1,10 @@
+real/toy_car | proposed | rep 2 | draft
+  stage preprocessing     0.879s
+  stage depth             0.984s
+  stage volume            0.101s
+  stage geometry          0.209s
+  stage texture           1.171s
+  stage export            0.745s
+  stage render           29.548s
+  stage total            33.668s
+  seconds=33.71 peak=943MB tris=7324

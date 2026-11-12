@@ -1,0 +1,9 @@
+stage,mean_s,std_s,n
+preprocessing,0.7109,0.2170,75
+depth,0.7111,0.1556,75
+volume,0.0795,0.0340,75
+geometry,0.2072,0.2259,75
+texture,1.0362,0.2250,75
+export,0.3764,0.1670,75
+render,24.5587,4.6819,75
+total,27.6993,5.2485,75

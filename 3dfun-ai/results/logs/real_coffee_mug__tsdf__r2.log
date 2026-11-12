@@ -1,0 +1,3 @@
+real/coffee_mug | tsdf | rep 2 | draft
+  tsdf: 7992 faces in 1.41s
+  seconds=1.41 peak=936MB tris=7992

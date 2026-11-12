@@ -1,0 +1,4 @@
+synthetic/capsule | visual_hull | rep 3 | draft
+  visual_hull: 8000 faces in 1.70s
+  seconds=1.70 peak=927MB tris=8000
+  chamfer=0.04495 f=0.1685 iou=0.0426 nc=0.8041

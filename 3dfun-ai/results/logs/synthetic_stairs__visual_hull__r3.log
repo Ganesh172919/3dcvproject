@@ -1,0 +1,4 @@
+synthetic/stairs | visual_hull | rep 3 | draft
+  visual_hull: 7999 faces in 1.95s
+  seconds=1.95 peak=927MB tris=7999
+  chamfer=0.10479 f=0.0355 iou=0.0216 nc=0.5885

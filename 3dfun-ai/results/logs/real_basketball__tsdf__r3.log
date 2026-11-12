@@ -1,0 +1,3 @@
+real/basketball | tsdf | rep 3 | draft
+  tsdf: 7999 faces in 1.62s
+  seconds=1.62 peak=942MB tris=7999

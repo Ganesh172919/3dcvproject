@@ -1,0 +1,110 @@
+[
+  {
+    "file": "paper/main.pdf",
+    "pages": [
+      {
+        "page": 1,
+        "images": 0,
+        "blocks": 23,
+        "render": "results/renders/paper_p01.png"
+      },
+      {
+        "page": 2,
+        "images": 0,
+        "blocks": 45,
+        "render": "results/renders/paper_p02.png"
+      },
+      {
+        "page": 3,
+        "images": 0,
+        "blocks": 18,
+        "render": "results/renders/paper_p03.png"
+      },
+      {
+        "page": 4,
+        "images": 0,
+        "blocks": 38,
+        "render": "results/renders/paper_p04.png"
+      },
+      {
+        "page": 5,
+        "images": 0,
+        "blocks": 28,
+        "render": "results/renders/paper_p05.png"
+      },
+      {
+        "page": 6,
+        "images": 0,
+        "blocks": 23,
+        "render": "results/renders/paper_p06.png"
+      },
+      {
+        "page": 7,
+        "images": 1,
+        "blocks": 0,
+        "render": "results/renders/paper_p07.png"
+      },
+      {
+        "page": 8,
+        "images": 3,
+        "blocks": 6,
+        "render": "results/renders/paper_p08.png"
+      }
+    ],
+    "problems": []
+  },
+  {
+    "file": "docs/report.pdf",
+    "pages": [
+      {
+        "page": 1,
+        "images": 0,
+        "blocks": 12,
+        "render": "results/renders/report_p01.png"
+      },
+      {
+        "page": 2,
+        "images": 0,
+        "blocks": 11,
+        "render": "results/renders/report_p02.png"
+      },
+      {
+        "page": 3,
+        "images": 0,
+        "blocks": 21,
+        "render": "results/renders/report_p03.png"
+      },
+      {
+        "page": 4,
+        "images": 0,
+        "blocks": 99,
+        "render": "results/renders/report_p04.png"
+      },
+      {
+        "page": 5,
+        "images": 0,
+        "blocks": 98,
+        "render": "results/renders/report_p05.png"
+      },
+      {
+        "page": 6,
+        "images": 0,
+        "blocks": 47,
+        "render": "results/renders/report_p06.png"
+      },
+      {
+        "page": 7,
+        "images": 0,
+        "blocks": 16,
+        "render": "results/renders/report_p07.png"
+      },
+      {
+        "page": 8,
+        "images": 0,
+        "blocks": 6,
+        "render": "results/renders/report_p08.png"
+      }
+    ],
+    "problems": []
+  }
+]

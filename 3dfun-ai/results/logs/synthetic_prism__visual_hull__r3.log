@@ -1,0 +1,4 @@
+synthetic/prism | visual_hull | rep 3 | draft
+  visual_hull: 8000 faces in 1.94s
+  seconds=1.94 peak=927MB tris=8000
+  chamfer=0.09547 f=0.0403 iou=0.0178 nc=0.6092

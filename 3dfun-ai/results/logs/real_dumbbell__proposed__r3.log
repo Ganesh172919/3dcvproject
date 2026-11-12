@@ -1,0 +1,10 @@
+real/dumbbell | proposed | rep 3 | draft
+  stage preprocessing     0.989s
+  stage depth             1.147s
+  stage volume            0.148s
+  stage geometry          0.211s
+  stage texture           1.130s
+  stage export            0.439s
+  stage render           30.952s
+  stage total            35.048s
+  seconds=35.08 peak=943MB tris=7656

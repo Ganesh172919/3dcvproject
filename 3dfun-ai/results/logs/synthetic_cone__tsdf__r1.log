@@ -1,0 +1,4 @@
+synthetic/cone | tsdf | rep 1 | draft
+  tsdf: 8000 faces in 1.08s
+  seconds=1.08 peak=927MB tris=8000
+  chamfer=0.06781 f=0.1294 iou=0.0649 nc=0.6092

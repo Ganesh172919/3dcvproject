@@ -1,0 +1,381 @@
+{
+  "pages": [
+    {
+      "name": "landing",
+      "path": "/site/index.html",
+      "audit": {
+        "overflow": 0,
+        "clipped": [],
+        "tiny": [
+          {
+            "tag": "A",
+            "txt": "Studio",
+            "h": 19,
+            "w": 40
+          },
+          {
+            "tag": "A",
+            "txt": "API reference",
+            "h": 19,
+            "w": 83
+          },
+          {
+            "tag": "A",
+            "txt": "Health",
+            "h": 19,
+            "w": 41
+          },
+          {
+            "tag": "A",
+            "txt": "FAQ",
+            "h": 19,
+            "w": 24
+          }
+        ],
+        "unlabeled": [
+          {
+            "tag": "A",
+            "cls": "skip-link",
+            "left": -9999,
+            "right": -9841
+          }
+        ]
+      }
+    },
+    {
+      "name": "app-home",
+      "path": "/app/",
+      "audit": {
+        "overflow": 0,
+        "clipped": [],
+        "tiny": [
+          {
+            "tag": "BUTTON",
+            "txt": "Draft",
+            "h": 27,
+            "w": 62
+          },
+          {
+            "tag": "BUTTON",
+            "txt": "Standard",
+            "h": 27,
+            "w": 91
+          },
+          {
+            "tag": "BUTTON",
+            "txt": "High",
+            "h": 27,
+            "w": 58
+          },
+          {
+            "tag": "INPUT",
+            "txt": "24000",
+            "h": 16,
+            "w": 378
+          },
+          {
+            "tag": "INPUT",
+            "txt": "on",
+            "h": 16,
+            "w": 16
+          },
+          {
+            "tag": "INPUT",
+            "txt": "on",
+            "h": 16,
+            "w": 16
+          },
+          {
+            "tag": "INPUT",
+            "txt": "on",
+            "h": 16,
+            "w": 16
+          },
+          {
+            "tag": "INPUT",
+            "txt": "on",
+            "h": 16,
+            "w": 16
+          },
+          {
+            "tag": "INPUT",
+            "txt": "on",
+            "h": 16,
+            "w": 16
+          },
+          {
+            "tag": "INPUT",
+            "txt": "on",
+            "h": 16,
+            "w": 16
+          },
+          {
+            "tag": "INPUT",
+            "txt": "on",
+            "h": 16,
+            "w": 16
+          },
+          {
+            "tag": "INPUT",
+            "txt": "on",
+            "h": 16,
+            "w": 16
+          },
+          {
+            "tag": "INPUT",
+            "txt": "on",
+            "h": 16,
+            "w": 16
+          }
+        ],
+        "unlabeled": [
+          {
+            "tag": "A",
+            "cls": "skip-link",
+            "left": -9999,
+            "right": -9841
+          }
+        ]
+      }
+    },
+    {
+      "name": "studio",
+      "path": "/app/studio",
+      "audit": {
+        "overflow": 0,
+        "clipped": [],
+        "tiny": [
+          {
+            "tag": "BUTTON",
+            "txt": "Draft",
+            "h": 27,
+            "w": 62
+          },
+          {
+            "tag": "BUTTON",
+            "txt": "Standard",
+            "h": 27,
+            "w": 91
+          },
+          {
+            "tag": "BUTTON",
+            "txt": "High",
+            "h": 27,
+            "w": 58
+          },
+          {
+            "tag": "INPUT",
+            "txt": "24000",
+            "h": 16,
+            "w": 378
+          },
+          {
+            "tag": "INPUT",
+            "txt": "on",
+            "h": 16,
+            "w": 16
+          },
+          {
+            "tag": "INPUT",
+            "txt": "on",
+            "h": 16,
+            "w": 16
+          },
+          {
+            "tag": "INPUT",
+            "txt": "on",
+            "h": 16,
+            "w": 16
+          },
+          {
+            "tag": "INPUT",
+            "txt": "on",
+            "h": 16,
+            "w": 16
+          },
+          {
+            "tag": "INPUT",
+            "txt": "on",
+            "h": 16,
+            "w": 16
+          },
+          {
+            "tag": "INPUT",
+            "txt": "on",
+            "h": 16,
+            "w": 16
+          },
+          {
+            "tag": "INPUT",
+            "txt": "on",
+            "h": 16,
+            "w": 16
+          },
+          {
+            "tag": "INPUT",
+            "txt": "on",
+            "h": 16,
+            "w": 16
+          },
+          {
+            "tag": "INPUT",
+            "txt": "on",
+            "h": 16,
+            "w": 16
+          }
+        ],
+        "unlabeled": [
+          {
+            "tag": "A",
+            "cls": "skip-link",
+            "left": -9999,
+            "right": -9841
+          }
+        ]
+      }
+    },
+    {
+      "name": "dashboard",
+      "path": "/app/dashboard",
+      "audit": {
+        "overflow": 0,
+        "clipped": [],
+        "tiny": [
+          {
+            "tag": "A",
+            "txt": "View all models \u2192",
+            "h": 19,
+            "w": 112
+          }
+        ],
+        "unlabeled": [
+          {
+            "tag": "A",
+            "cls": "skip-link",
+            "left": -9999,
+            "right": -9841
+          }
+        ]
+      }
+    },
+    {
+      "name": "assets",
+      "path": "/app/assets",
+      "audit": {
+        "overflow": 0,
+        "clipped": [],
+        "tiny": [],
+        "unlabeled": [
+          {
+            "tag": "A",
+            "cls": "skip-link",
+            "left": -9999,
+            "right": -9841
+          }
+        ]
+      }
+    },
+    {
+      "name": "gallery",
+      "path": "/app/gallery",
+      "audit": {
+        "overflow": 0,
+        "clipped": [],
+        "tiny": [],
+        "unlabeled": [
+          {
+            "tag": "A",
+            "cls": "skip-link",
+            "left": -9999,
+            "right": -9841
+          }
+        ]
+      }
+    },
+    {
+      "name": "admin",
+      "path": "/app/admin",
+      "audit": {
+        "overflow": 0,
+        "clipped": [],
+        "tiny": [],
+        "unlabeled": [
+          {
+            "tag": "A",
+            "cls": "skip-link",
+            "left": -9999,
+            "right": -9841
+          }
+        ]
+      }
+    },
+    {
+      "name": "benchmark",
+      "path": "/app/benchmark",
+      "audit": {
+        "overflow": 0,
+        "clipped": [],
+        "tiny": [],
+        "unlabeled": [
+          {
+            "tag": "A",
+            "cls": "skip-link",
+            "left": -9999,
+            "right": -9841
+          }
+        ]
+      }
+    },
+    {
+      "name": "settings",
+      "path": "/app/settings",
+      "audit": {
+        "overflow": 0,
+        "clipped": [],
+        "tiny": [],
+        "unlabeled": [
+          {
+            "tag": "A",
+            "cls": "skip-link",
+            "left": -9999,
+            "right": -9841
+          }
+        ]
+      }
+    },
+    {
+      "name": "model-detail",
+      "path": "/app/assets",
+      "audit": {
+        "skipped": true
+      }
+    },
+    {
+      "name": "login",
+      "path": "/app/login",
+      "audit": {
+        "overflow": 0,
+        "clipped": [],
+        "tiny": [
+          {
+            "tag": "A",
+            "txt": "Forgot password?",
+            "h": 20,
+            "w": 114
+          }
+        ],
+        "unlabeled": [
+          {
+            "tag": "A",
+            "cls": "skip-link",
+            "left": -9999,
+            "right": -9841
+          }
+        ]
+      }
+    }
+  ],
+  "console": [],
+  "network": [],
+  "login": true
+}

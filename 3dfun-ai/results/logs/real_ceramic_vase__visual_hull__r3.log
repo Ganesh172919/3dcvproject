@@ -1,0 +1,3 @@
+real/ceramic_vase | visual_hull | rep 3 | draft
+  visual_hull: 7998 faces in 2.36s
+  seconds=2.36 peak=936MB tris=7998

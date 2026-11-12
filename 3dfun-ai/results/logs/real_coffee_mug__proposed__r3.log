@@ -1,0 +1,10 @@
+real/coffee_mug | proposed | rep 3 | draft
+  stage preprocessing     0.618s
+  stage depth             0.630s
+  stage volume            0.094s
+  stage geometry          0.146s
+  stage texture           1.158s
+  stage export            0.384s
+  stage render           25.264s
+  stage total            28.311s
+  seconds=28.33 peak=936MB tris=7604

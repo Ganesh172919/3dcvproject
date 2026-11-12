@@ -1,0 +1,4 @@
+synthetic/sphere | visual_hull | rep 1 | draft
+  visual_hull: 8000 faces in 1.58s
+  seconds=1.58 peak=927MB tris=8000
+  chamfer=0.09469 f=0.0457 iou=0.0261 nc=0.8486

@@ -1,0 +1,11 @@
+synthetic/lamp | proposed | rep 3 | draft
+  stage preprocessing     0.575s
+  stage depth             0.650s
+  stage volume            0.052s
+  stage geometry          0.103s
+  stage texture           0.800s
+  stage export            0.280s
+  stage render           24.556s
+  stage total            27.028s
+  seconds=27.05 peak=927MB tris=7732
+  chamfer=0.01807 f=0.3717 iou=0.1390 nc=0.9352

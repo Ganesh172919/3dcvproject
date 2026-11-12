@@ -1,0 +1,3 @@
+real/ceramic_vase | tsdf | rep 1 | draft
+  tsdf: 7967 faces in 1.72s
+  seconds=1.72 peak=936MB tris=7967

@@ -1,0 +1,27 @@
+# Dependencies shared by the CPU, CUDA and DirectML builds.
+
+# --- web layer -------------------------------------------------------------
+fastapi==0.162.2
+uvicorn[standard]==0.48.0
+pydantic[email]==2.14.2
+python-multipart==0.0.20
+SQLAlchemy==2.1.8
+argon2-cffi==25.1.0
+PyJWT==2.10.1
+python-dotenv==1.2.4
+
+# --- reconstruction engine -------------------------------------------------
+numpy==2.3.5
+scipy==1.17.1
+opencv-python-headless==5.0.0.93
+trimesh==5.2.0
+scikit-image==0.26.0
+Pillow==11.3.0
+open3d==0.20.0
+fast-simplification==0.2.0
+
+# --- reports / deliverables ------------------------------------------------
+python-pptx==1.0.2
+reportlab==4.4.4
+matplotlib==3.10.7
+

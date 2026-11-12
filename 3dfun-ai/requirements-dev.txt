@@ -1,0 +1,7 @@
+# Development / CI extras. Install with:  pip install -r requirements-dev.txt
+-r requirements.txt
+pytest==8.4.2
+pytest-cov==7.0.0
+httpx==0.28.1
+ruff==0.14.4
+playwright==1.56.0       # optional: only for tests/browser/smoke.py

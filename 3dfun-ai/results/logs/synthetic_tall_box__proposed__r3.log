@@ -1,0 +1,11 @@
+synthetic/tall_box | proposed | rep 3 | draft
+  stage preprocessing     0.520s
+  stage depth             0.529s
+  stage volume            0.022s
+  stage geometry          0.084s
+  stage texture           0.730s
+  stage export            0.177s
+  stage render           18.146s
+  stage total            20.218s
+  seconds=20.23 peak=927MB tris=7736
+  chamfer=0.04270 f=0.0991 iou=0.0129 nc=0.7932

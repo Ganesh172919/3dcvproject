@@ -1,0 +1,4 @@
+synthetic/thin_plate | visual_hull | rep 3 | draft
+  visual_hull: 7999 faces in 1.89s
+  seconds=1.89 peak=927MB tris=7999
+  chamfer=0.08840 f=0.0594 iou=0.0251 nc=0.5356

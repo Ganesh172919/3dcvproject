@@ -1,0 +1,4 @@
+synthetic/thin_plate | tsdf | rep 1 | draft
+  tsdf: 7999 faces in 1.26s
+  seconds=1.26 peak=927MB tris=7999
+  chamfer=0.08527 f=0.0529 iou=0.0208 nc=0.3789

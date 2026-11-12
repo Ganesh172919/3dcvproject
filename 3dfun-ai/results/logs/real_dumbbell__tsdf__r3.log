@@ -1,0 +1,3 @@
+real/dumbbell | tsdf | rep 3 | draft
+  tsdf: 7997 faces in 1.80s
+  seconds=1.80 peak=943MB tris=7997

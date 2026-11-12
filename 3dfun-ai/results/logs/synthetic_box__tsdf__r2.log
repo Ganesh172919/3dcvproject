@@ -1,0 +1,4 @@
+synthetic/box | tsdf | rep 2 | draft
+  tsdf: 8000 faces in 1.49s
+  seconds=1.49 peak=867MB tris=8000
+  chamfer=0.12335 f=0.0238 iou=0.0113 nc=0.6089

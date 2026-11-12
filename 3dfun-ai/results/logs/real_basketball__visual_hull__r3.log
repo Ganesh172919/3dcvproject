@@ -1,0 +1,3 @@
+real/basketball | visual_hull | rep 3 | draft
+  visual_hull: 8000 faces in 2.31s
+  seconds=2.31 peak=943MB tris=8000

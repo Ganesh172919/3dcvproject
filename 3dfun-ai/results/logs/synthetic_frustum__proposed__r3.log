@@ -1,0 +1,11 @@
+synthetic/frustum | proposed | rep 3 | draft
+  stage preprocessing     0.648s
+  stage depth             0.636s
+  stage volume            0.083s
+  stage geometry          0.143s
+  stage texture           0.836s
+  stage export            0.209s
+  stage render           21.053s
+  stage total            23.625s
+  seconds=23.65 peak=927MB tris=7896
+  chamfer=0.07488 f=0.1377 iou=0.0674 nc=0.8342

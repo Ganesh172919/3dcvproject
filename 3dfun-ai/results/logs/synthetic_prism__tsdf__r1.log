@@ -1,0 +1,4 @@
+synthetic/prism | tsdf | rep 1 | draft
+  tsdf: 7999 faces in 1.25s
+  seconds=1.25 peak=927MB tris=7999
+  chamfer=0.10576 f=0.0432 iou=0.0206 nc=0.5871

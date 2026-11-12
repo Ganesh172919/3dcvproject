@@ -1,0 +1,10 @@
+real/houseplant | proposed | rep 1 | draft
+  stage preprocessing     0.665s
+  stage depth             0.725s
+  stage volume            0.084s
+  stage geometry          0.207s
+  stage texture           1.147s
+  stage export            0.429s
+  stage render           26.080s
+  stage total            29.355s
+  seconds=29.38 peak=943MB tris=7172

@@ -1,0 +1,11 @@
+synthetic/cone | proposed | rep 1 | draft
+  stage preprocessing     0.681s
+  stage depth             0.831s
+  stage volume            0.103s
+  stage geometry          0.205s
+  stage texture           0.920s
+  stage export            0.328s
+  stage render           25.690s
+  stage total            28.774s
+  seconds=28.80 peak=927MB tris=8092
+  chamfer=0.05981 f=0.0420 iou=0.0214 nc=0.7382

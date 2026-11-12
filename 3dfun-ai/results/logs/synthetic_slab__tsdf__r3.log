@@ -1,0 +1,4 @@
+synthetic/slab | tsdf | rep 3 | draft
+  tsdf: 7998 faces in 1.47s
+  seconds=1.47 peak=927MB tris=7998
+  chamfer=0.11075 f=0.0354 iou=0.0133 nc=0.3661

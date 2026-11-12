@@ -1,0 +1,11 @@
+synthetic/cylinder | proposed | rep 1 | draft
+  stage preprocessing     2.157s
+  stage depth             0.970s
+  stage volume            0.071s
+  stage geometry          0.237s
+  stage texture           0.942s
+  stage export            0.278s
+  stage render           24.944s
+  stage total            29.635s
+  seconds=29.67 peak=927MB tris=7736
+  chamfer=0.08134 f=0.0663 iou=0.0349 nc=0.8444

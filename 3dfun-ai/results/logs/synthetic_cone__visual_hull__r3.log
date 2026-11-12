@@ -1,0 +1,4 @@
+synthetic/cone | visual_hull | rep 3 | draft
+  visual_hull: 8000 faces in 2.12s
+  seconds=2.12 peak=927MB tris=8000
+  chamfer=0.09502 f=0.0468 iou=0.0226 nc=0.5748

@@ -1,0 +1,3 @@
+real/rubber_duck | tsdf | rep 3 | draft
+  tsdf: 8000 faces in 1.75s
+  seconds=1.75 peak=943MB tris=8000

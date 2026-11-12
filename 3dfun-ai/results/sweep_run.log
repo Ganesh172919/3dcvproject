@@ -1,0 +1,10 @@
+sweep points: [0.25, 0.35, 0.42, 0.55, 0.7, 0.85, 1.0, 1.15]
+  sweep thickness_scale=0.25  cd=0.10255 f=0.0746 iou=0.0277 3.03s
+  sweep thickness_scale=0.35  cd=0.09103 f=0.1020 iou=0.0364 2.87s
+  sweep thickness_scale=0.42  cd=0.08421 f=0.1070 iou=0.0422 2.75s
+  sweep thickness_scale=0.55  cd=0.07487 f=0.1032 iou=0.0386 2.91s
+  sweep thickness_scale=0.70  cd=0.06392 f=0.1482 iou=0.0545 2.68s
+  sweep thickness_scale=0.85  cd=0.05690 f=0.1265 iou=0.0482 2.68s
+  sweep thickness_scale=1.00  cd=0.06247 f=0.1354 iou=0.0524 2.84s
+  sweep thickness_scale=1.15  cd=0.06725 f=0.1157 iou=0.0433 2.81s
+done

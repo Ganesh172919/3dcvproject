@@ -1,0 +1,3 @@
+real/sneaker | visual_hull | rep 3 | draft
+  visual_hull: 7997 faces in 2.17s
+  seconds=2.17 peak=932MB tris=7997

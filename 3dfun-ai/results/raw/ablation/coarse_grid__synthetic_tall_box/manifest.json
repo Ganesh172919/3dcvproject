@@ -1,0 +1,247 @@
+{
+  "manifest_version": "1.0",
+  "engine": {
+    "name": "3DFUN AI reconstruction engine",
+    "version": "1.0.0",
+    "pipeline": "silhouette-constrained monocular depth inflation + marching cubes",
+    "depth_model": "depth-anything-v2-small-int8",
+    "matte_model": "u2netp"
+  },
+  "config": {
+    "canvas_size": 384,
+    "depth_input_size": 518,
+    "matte_model": "u2netp",
+    "alpha_erode_px": 1,
+    "crop_padding_pct": 0.04,
+    "background": "white",
+    "depth_percentile_low": 2.0,
+    "depth_percentile_high": 98.0,
+    "depth_smooth_sigma": 2.0,
+    "height_symmetrize": true,
+    "voxel_res": 45,
+    "inflation_power": 0.85,
+    "thickness_scale": 0.7,
+    "thickness_floor_ratio": 0.55,
+    "thickness_depth_gain": 0.45,
+    "min_thickness": 0.02,
+    "field_smooth_sigma": 0.8,
+    "quality": "draft",
+    "target_faces": 6000,
+    "taubin_iters": 12,
+    "taubin_lambda": 0.5,
+    "taubin_mu": -0.53,
+    "remove_components_below": 0.02,
+    "bake_texture": true,
+    "texture_size": 512,
+    "back_mirror_texture": true,
+    "generate_pbr_maps": true,
+    "ao_strength": 0.55,
+    "formats": [
+      "glb",
+      "obj",
+      "ply"
+    ],
+    "render_preview": false,
+    "render_turntable": false,
+    "turntable_frames": 0,
+    "render_size": 384,
+    "memory_budget_mb": 1400,
+    "time_budget_seconds": 300,
+    "depth_model": "depth-anything-v2-small-int8",
+    "pipeline_version": "1.0.0"
+  },
+  "config_hash": "4d36efc19baedbc8",
+  "input": {
+    "crop_box": [
+      223,
+      97,
+      417,
+      543
+    ],
+    "object_size_px": [
+      194,
+      446
+    ],
+    "scale": 0.7921076233183857,
+    "canvas": [
+      384,
+      384
+    ],
+    "placed_box": [
+      115,
+      15,
+      269,
+      368
+    ],
+    "object_pixel_fraction": 0.3506808810763889,
+    "source_size": [
+      640,
+      640
+    ],
+    "mime": "image/png",
+    "matte_method": "u2netp",
+    "source_bytes": 13959
+  },
+  "volume": {
+    "grid": [
+      21,
+      45,
+      15
+    ],
+    "voxel_size": 0.04240277777777778,
+    "object_extent_world": [
+      0.7916666666666666,
+      1.828125
+    ],
+    "thickness_max": 0.5541666666666666,
+    "occupancy_fraction": 0.6167901234567901,
+    "bbox_px": [
+      116,
+      16,
+      268,
+      367
+    ],
+    "canvas_size": 384
+  },
+  "resolution_calibration": {
+    "probe_res": 64,
+    "probe_faces": 12400,
+    "faces_per_res2": 3.02734375,
+    "chosen_res": 45,
+    "predicted_faces": 6130,
+    "target_faces": 6000
+  },
+  "mesh": {
+    "vertices": 3056,
+    "faces": 6108,
+    "triangles": 6108,
+    "surface_area": 1.3872268199920654,
+    "faces_under_1e-9_area": 7,
+    "aspect_ratio_mean": 395.40594482421875,
+    "aspect_ratio_p95": 2.813415050506592,
+    "aspect_ratio_p99": 30.66489028930664,
+    "degenerate_faces": 2,
+    "edge_length_max": 0.040700413286685944,
+    "edge_length_median": 0.03257162496447563,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "manifold": true,
+    "euler_characteristic": 2,
+    "watertight": true,
+    "bounding_box": [
+      0.446973592042923,
+      0.9999999403953552,
+      0.3086595833301544
+    ],
+    "centroid": [
+      -0.001258599222637713,
+      0.01300901547074318,
+      -0.00042449988541193306
+    ],
+    "uv_parameterization": {
+      "parameterization": "planar-view-projection",
+      "front_faces": 3068,
+      "back_faces": 3040,
+      "uv_gutter": 0.01,
+      "object_pixel_bbox": [
+        110.76502306957923,
+        19.402255097692887,
+        268.69071118335046,
+        372.724423369104
+      ],
+      "atlas_texels_per_sheet": 0.48
+    },
+    "pre_cleanup_faces": 6108,
+    "post_cleanup_faces": 6108,
+    "uv_corner_count": 18324,
+    "uv_bbox": [
+      0.009999999776482582,
+      0.0,
+      0.9900000095367432,
+      1.0
+    ],
+    "normalization": {
+      "applied_center": [
+        -0.011834025382995605,
+        -0.021163225173950195,
+        -0.020281091332435608
+      ],
+      "applied_scale": 0.5434133654710841,
+      "normalized_extent": [
+        0.446973592042923,
+        0.9999999403953552,
+        0.3086595833301544
+      ]
+    },
+    "decimation": {
+      "method": "none (resolution-calibrated)",
+      "watertight_after": true
+    },
+    "decimated_from_raw": false,
+    "texture": {
+      "texture_size": 512,
+      "uv_coverage": 0.9199256896972656,
+      "mean_ao": 0.6679432988166809,
+      "mean_roughness": 0.4299750328063965,
+      "mean_metallic": 0.0,
+      "delit": true,
+      "back_face_handling": "mirrored-projection",
+      "front_texel_fraction": 0.5044225035558338
+    },
+    "uv_atlas": "planar-view-projection",
+    "textured": true,
+    "watertight_trimesh": true,
+    "volume": 0.1068875709019353,
+    "euler_trimesh": 2,
+    "signed_volume": -0.1068875709019353
+  },
+  "texture": {
+    "texture_size": 512,
+    "uv_coverage": 0.9199256896972656,
+    "mean_ao": 0.6679432988166809,
+    "mean_roughness": 0.4299750328063965,
+    "mean_metallic": 0.0,
+    "delit": true,
+    "back_face_handling": "mirrored-projection",
+    "front_texel_fraction": 0.5044225035558338
+  },
+  "timings_seconds": {
+    "preprocessing": 0.4001,
+    "depth": 0.3906,
+    "volume": 0.0278,
+    "geometry": 0.0708,
+    "texture": 0.669,
+    "export": 0.1514,
+    "render": 0.0,
+    "total": 1.716
+  },
+  "files": {
+    "glb": "model.glb",
+    "ply": "model.ply",
+    "obj": "model.obj",
+    "basecolor.png": "basecolor.png",
+    "normal.png": "normal.png",
+    "orm.png": "orm.png",
+    "mtl": "model.mtl",
+    "tex_basecolor": "basecolor.png",
+    "tex_normal": "normal.png",
+    "tex_orm": "orm.png",
+    "tex_ao": "ao.png",
+    "tex_roughness": "roughness.png",
+    "tex_metallic": "metallic.png"
+  },
+  "previews": {},
+  "turntable": {},
+  "warnings": [
+    "Inverted normals detected by volume sign."
+  ],
+  "limitations": [
+    "Single-view reconstruction: surfaces never observed by the camera are inferred from a depth-driven shell and mirrored texture.",
+    "Back-facing texture is a horizontal mirror of the input (symmetric-object assumption).",
+    "Roughness/metallic maps are estimated from image statistics, not measured BRDFs."
+  ],
+  "hardware": {
+    "device": "cpu",
+    "threads": 2
+  }
+}

@@ -1,0 +1,3 @@
+real/cardboard_box | tsdf | rep 1 | draft
+  tsdf: 7992 faces in 1.96s
+  seconds=1.96 peak=947MB tris=7992

@@ -1,0 +1,63 @@
+# 3DFUN AI — Training, Fine-Tuning & Adaptation Suite Configuration
+# Indian Institute of Information Technology (IIIT), Dharwad
+# Authors: J Ganesh, M Jagadeshwar, B Varshith, Pranav Kashyap, C Sai Aravind
+# Guide: Dr. Shirshendu Layek (Dept. of DSAI)
+
+dataset_gen:
+  input_mesh_dir: "benchmarks/data/synthetic/gt"
+  output_dir: "training/data/synthetic_renders"
+  num_views_per_mesh: 16
+  resolution: 512
+  camera_distance: 1.8
+  elevation_range: [-30.0, 45.0]
+  azimuth_step: 22.5
+  ambient_light: 0.4
+  directional_light: 0.8
+
+model:
+  architecture: "depth_anything_v2"
+  encoder: "vits"
+  pretrained_weights: "engine/models/depth_anything_v2_vits.onnx"
+  input_size: [518, 518]
+  min_depth: 0.001
+  max_depth: 10.0
+
+training:
+  batch_size: 8
+  num_workers: 2
+  epochs: 20
+  learning_rate: 2.0e-5
+  min_learning_rate: 1.0e-6
+  weight_decay: 0.01
+  optimizer: "AdamW"
+  scheduler: "CosineAnnealingLR"
+  gradient_clip_norm: 1.0
+  mixed_precision: false
+  checkpoint_dir: "training/checkpoints"
+  save_every_n_epochs: 5
+
+losses:
+  silog_weight: 1.0
+  silog_variance_lambda: 0.85
+  gradient_loss_weight: 0.5
+  smoothness_weight: 0.1
+
+export:
+  target_opset: 17
+  output_onnx: "engine/models/depth_anything_v2_vits_finetuned.onnx"
+  quantize: "int8"
+  dynamic_axes:
+    input: [0, 2, 3]
+    output: [0, 1, 2]
+  calibration_samples: 50
+
+calibration:
+  n_trials: 50
+  timeout_seconds: 1800
+  study_name: "3dfun_sdf_inflation_tuning"
+  search_space:
+    thickness_max: [0.30, 1.10]
+    constant_core_f: [0.35, 0.75]
+    depth_scale_g: [0.20, 0.65]
+    depth_gamma: [0.50, 1.40]
+    sdf_sigma: [0.40, 1.50]

@@ -1,0 +1,11 @@
+synthetic/sphere | proposed | rep 2 | draft
+  stage preprocessing     0.516s
+  stage depth             0.496s
+  stage volume            0.073s
+  stage geometry          0.168s
+  stage texture           1.228s
+  stage export            0.304s
+  stage render           24.380s
+  stage total            27.179s
+  seconds=27.21 peak=927MB tris=8048
+  chamfer=0.04033 f=0.1529 iou=0.0828 nc=0.9374

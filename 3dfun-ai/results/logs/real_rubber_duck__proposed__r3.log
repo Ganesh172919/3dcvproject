@@ -1,0 +1,10 @@
+real/rubber_duck | proposed | rep 3 | draft
+  stage preprocessing     0.768s
+  stage depth             0.863s
+  stage volume            0.106s
+  stage geometry          0.195s
+  stage texture           1.123s
+  stage export            0.636s
+  stage render           31.194s
+  stage total            34.906s
+  seconds=34.96 peak=943MB tris=7748

@@ -1,0 +1,3 @@
+real/rubber_duck | visual_hull | rep 2 | draft
+  visual_hull: 7998 faces in 2.73s
+  seconds=2.73 peak=943MB tris=7998

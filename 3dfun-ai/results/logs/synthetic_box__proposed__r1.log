@@ -1,0 +1,11 @@
+synthetic/box | proposed | rep 1 | draft
+  stage preprocessing     0.775s
+  stage depth             1.080s
+  stage volume            0.067s
+  stage geometry          1.135s
+  stage texture           1.024s
+  stage export            0.291s
+  stage render           26.248s
+  stage total            30.631s
+  seconds=31.29 peak=580MB tris=7972
+  chamfer=0.02055 f=0.3248 iou=0.1121 nc=0.9077

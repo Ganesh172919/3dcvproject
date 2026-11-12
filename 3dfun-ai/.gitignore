@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.venv-directml/
+.venv-cuda/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Local state (never commit a database or user uploads)
+data/
+out/
+.env
+.env.local
+
+# Model weights: fetched with `make models`, not stored in git
+engine/models/*.onnx
+engine/models/*.part
+
+# Generated media (big binaries are rebuilt by the pipeline)
+web/assets/*
+!web/assets/.gitkeep
+!web/assets/README.md
+results/raw/meshes/
+training/checkpoints/
+training/data/
+
+# Build artefacts
+paper/*.aux
+paper/*.log
+paper/*.bbl
+paper/*.blg
+paper/*.out
+paper/*.toc
+presentations/*.pptx
+docs/*.pdf
+
+# OS noise
+.DS_Store
+Thumbs.db

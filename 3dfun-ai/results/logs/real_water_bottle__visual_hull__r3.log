@@ -1,0 +1,3 @@
+real/water_bottle | visual_hull | rep 3 | draft
+  visual_hull: 7999 faces in 2.06s
+  seconds=2.06 peak=936MB tris=7999

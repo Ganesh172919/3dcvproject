@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3DFUN AI · Studio</title>
+<meta name="description" content="3DFUN AI turns a single photograph into a watertight, textured 3D model you can inspect and download.">
+<meta name="theme-color" content="#ffffff">
+<link rel="stylesheet" href="/static/css/app.css">
+<link rel="icon" href="/static/lab-icon.svg">
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "/static/vendor/three.module.js",
+    "three/addons/": "/static/vendor/"
+  }
+}
+</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="topbar app-topbar">
+  <a class="brand" href="/app/" data-link><span class="brand-mark">3D</span> 3DFUN <span class="dim">AI</span></a>
+  <button type="button" class="btn sm nav-toggle" id="nav-toggle" aria-controls="nav" aria-expanded="false">Menu</button>
+  <nav class="nav" id="nav" aria-label="Primary">
+    <a href="/app/studio" data-link>Studio</a>
+    <a href="/app/dashboard" data-link>Dashboard</a>
+    <a href="/app/assets" data-link>My models</a>
+    <a href="/app/gallery" data-link>Gallery</a>
+    <a href="/app/benchmark" data-link>Benchmarks</a>
+    <a href="/app/chat" data-link>Chat</a>
+    <a href="/app/admin" data-link id="nav-admin" class="hidden">Admin</a>
+  </nav>
+  <div class="topbar-right" id="topbar-right">
+    <div class="wallet hidden" id="wallet" title="Credit balance">
+      <span aria-hidden="true">◆</span> <b id="wallet-value">0</b> <small>credits</small>
+    </div>
+    <a class="btn sm hidden" id="auth-login" href="/app/login" data-link>Sign in</a>
+    <button class="btn sm hidden" id="auth-logout">Sign out</button>
+    <a class="btn sm top-about" href="/">About</a>
+  </div>
+</header>
+
+<main id="main" class="page" role="main">
+  <div class="empty"><div class="spinner"></div><p class="mt16">Loading 3DFUN AI…</p></div>
+</main>
+
+<div id="toasts" aria-live="polite" aria-atomic="true"></div>
+
+<script type="module" src="/static/js/app.js"></script>
+<noscript><p style="padding:24px">This studio needs JavaScript and WebGL.</p></noscript>
+</body>
+</html>

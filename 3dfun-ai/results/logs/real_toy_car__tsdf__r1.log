@@ -1,0 +1,3 @@
+real/toy_car | tsdf | rep 1 | draft
+  tsdf: 7992 faces in 1.72s
+  seconds=1.72 peak=943MB tris=7992

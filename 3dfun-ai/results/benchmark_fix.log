@@ -1,0 +1,6 @@
+resuming: 225 runs already recorded
+  ablation full                   cd=0.06392 f=0.148 iou=0.055
+  ablation no_slab_core           cd=0.10161 f=0.071 iou=0.023
+  ablation depth_flat_slab        cd=0.08113 f=0.112 iou=0.041
+  ablation thin_inflation         cd=0.09103 f=0.102 iou=0.036
+  ablation no_taubin_smoothing    cd=0.06394 f=0.148 iou=0.055

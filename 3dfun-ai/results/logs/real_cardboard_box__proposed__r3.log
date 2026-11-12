@@ -1,0 +1,10 @@
+real/cardboard_box | proposed | rep 3 | draft
+  stage preprocessing     0.960s
+  stage depth             0.785s
+  stage volume            0.089s
+  stage geometry          0.149s
+  stage texture           1.210s
+  stage export            0.574s
+  stage render           32.359s
+  stage total            36.150s
+  seconds=36.19 peak=947MB tris=7792

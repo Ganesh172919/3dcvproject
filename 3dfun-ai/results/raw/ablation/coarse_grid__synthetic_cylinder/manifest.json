@@ -1,0 +1,260 @@
+{
+  "manifest_version": "1.0",
+  "engine": {
+    "name": "3DFUN AI reconstruction engine",
+    "version": "1.0.0",
+    "pipeline": "silhouette-constrained monocular depth inflation + marching cubes",
+    "depth_model": "depth-anything-v2-small-int8",
+    "matte_model": "u2netp"
+  },
+  "config": {
+    "canvas_size": 384,
+    "depth_input_size": 518,
+    "matte_model": "u2netp",
+    "alpha_erode_px": 1,
+    "crop_padding_pct": 0.04,
+    "background": "white",
+    "depth_percentile_low": 2.0,
+    "depth_percentile_high": 98.0,
+    "depth_smooth_sigma": 2.0,
+    "height_symmetrize": true,
+    "voxel_res": 38,
+    "inflation_power": 0.85,
+    "thickness_scale": 0.42,
+    "thickness_floor_ratio": 0.55,
+    "min_thickness": 0.02,
+    "field_smooth_sigma": 0.8,
+    "depth_bias": 0.42,
+    "quality": "draft",
+    "target_faces": 6000,
+    "taubin_iters": 12,
+    "taubin_lambda": 0.5,
+    "taubin_mu": -0.53,
+    "remove_components_below": 0.02,
+    "bake_texture": true,
+    "texture_size": 512,
+    "back_mirror_texture": true,
+    "generate_pbr_maps": true,
+    "ao_strength": 0.55,
+    "formats": [
+      "glb",
+      "obj",
+      "ply"
+    ],
+    "render_preview": true,
+    "render_turntable": true,
+    "turntable_frames": 10,
+    "render_size": 384,
+    "memory_budget_mb": 1400,
+    "time_budget_seconds": 300,
+    "depth_model": "depth-anything-v2-small-int8",
+    "pipeline_version": "1.0.0"
+  },
+  "config_hash": "951dbecc3abed794",
+  "input": {
+    "crop_box": [
+      167,
+      97,
+      473,
+      543
+    ],
+    "object_size_px": [
+      306,
+      446
+    ],
+    "scale": 0.7921076233183857,
+    "canvas": [
+      384,
+      384
+    ],
+    "placed_box": [
+      71,
+      15,
+      313,
+      368
+    ],
+    "object_pixel_fraction": 0.5511203342013888,
+    "source_size": [
+      640,
+      640
+    ],
+    "mime": "image/png",
+    "matte_method": "u2netp",
+    "source_bytes": 53814
+  },
+  "volume": {
+    "grid": [
+      27,
+      38,
+      13
+    ],
+    "voxel_size": 0.05021381578947368,
+    "object_extent_world": [
+      1.25,
+      1.828125
+    ],
+    "thickness_max": 0.525,
+    "occupancy_fraction": 0.605038236617184,
+    "bbox_px": [
+      72,
+      16,
+      312,
+      367
+    ],
+    "canvas_size": 384
+  },
+  "resolution_calibration": {
+    "probe_res": 64,
+    "probe_faces": 16772,
+    "faces_per_res2": 4.0947265625,
+    "chosen_res": 38,
+    "predicted_faces": 5913,
+    "target_faces": 6000
+  },
+  "mesh": {
+    "vertices": 2942,
+    "faces": 5880,
+    "triangles": 5880,
+    "surface_area": 1.91453218460083,
+    "faces_under_1e-9_area": 1,
+    "aspect_ratio_mean": 12.316920280456543,
+    "aspect_ratio_p95": 2.9446070194244385,
+    "aspect_ratio_p99": 206.31820678710938,
+    "degenerate_faces": 0,
+    "edge_length_max": 0.04850613698363304,
+    "edge_length_median": 0.038830872625112534,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "manifold": true,
+    "euler_characteristic": 2,
+    "watertight": true,
+    "bounding_box": [
+      0.6979898810386658,
+      1.0,
+      0.2816042900085449
+    ],
+    "centroid": [
+      -0.0019544828683137894,
+      -0.0028175953775644302,
+      0.0014784971717745066
+    ],
+    "uv_parameterization": {
+      "parameterization": "planar-view-projection",
+      "front_faces": 2952,
+      "back_faces": 2928,
+      "uv_gutter": 0.01,
+      "object_pixel_bbox": [
+        67.18115504479056,
+        21.240406036376953,
+        312.2326366117036,
+        372.32211685180664
+      ],
+      "atlas_texels_per_sheet": 0.48
+    },
+    "pre_cleanup_faces": 5880,
+    "post_cleanup_faces": 5880,
+    "uv_corner_count": 17640,
+    "uv_bbox": [
+      0.009999999776482582,
+      0.0,
+      0.9900000095367432,
+      1.0
+    ],
+    "normalization": {
+      "applied_center": [
+        -0.011943250894546509,
+        -0.024902403354644775,
+        -0.030077487230300903
+      ],
+      "applied_scale": 0.5468812361488635,
+      "normalized_extent": [
+        0.6979898810386658,
+        1.0,
+        0.2816042900085449
+      ]
+    },
+    "decimation": {
+      "method": "none (resolution-calibrated)",
+      "watertight_after": true
+    },
+    "decimated_from_raw": false,
+    "texture": {
+      "texture_size": 512,
+      "uv_coverage": 0.9236602783203125,
+      "mean_ao": 0.6590251326560974,
+      "mean_roughness": 0.4279223084449768,
+      "mean_metallic": 0.0,
+      "delit": true,
+      "back_face_handling": "mirrored-projection",
+      "front_texel_fraction": 0.5004501676771348
+    },
+    "uv_atlas": "planar-view-projection",
+    "textured": true,
+    "watertight_trimesh": true,
+    "volume": 0.1672359463923673,
+    "euler_trimesh": 2,
+    "signed_volume": -0.1672359463923673
+  },
+  "texture": {
+    "texture_size": 512,
+    "uv_coverage": 0.9236602783203125,
+    "mean_ao": 0.6590251326560974,
+    "mean_roughness": 0.4279223084449768,
+    "mean_metallic": 0.0,
+    "delit": true,
+    "back_face_handling": "mirrored-projection",
+    "front_texel_fraction": 0.5004501676771348
+  },
+  "timings_seconds": {
+    "preprocessing": 0.3995,
+    "depth": 0.4198,
+    "volume": 0.0227,
+    "geometry": 0.0614,
+    "texture": 0.6228,
+    "export": 0.1542,
+    "render": 11.528,
+    "total": 13.2178
+  },
+  "files": {
+    "ply": "model.ply",
+    "obj": "model.obj",
+    "basecolor.png": "basecolor.png",
+    "normal.png": "normal.png",
+    "orm.png": "orm.png",
+    "mtl": "model.mtl",
+    "glb": "model.glb",
+    "tex_basecolor": "basecolor.png",
+    "tex_normal": "normal.png",
+    "tex_orm": "orm.png",
+    "tex_ao": "ao.png",
+    "tex_roughness": "roughness.png",
+    "tex_metallic": "metallic.png"
+  },
+  "previews": {
+    "front": "preview_front.png",
+    "three_quarter": "preview_three_quarter.png",
+    "side": "preview_side.png",
+    "back": "preview_back.png",
+    "main": "preview.png",
+    "clay": "preview_clay.png",
+    "wireframe": "wireframe.png"
+  },
+  "turntable": {
+    "turntable_mp4": "turntable.mp4",
+    "turntable_gif": "turntable.gif",
+    "frames": 10,
+    "codec": "mp4v"
+  },
+  "warnings": [
+    "Inverted normals detected by volume sign."
+  ],
+  "limitations": [
+    "Single-view reconstruction: surfaces never observed by the camera are inferred from a depth-driven shell and mirrored texture.",
+    "Back-facing texture is a horizontal mirror of the input (symmetric-object assumption).",
+    "Roughness/metallic maps are estimated from image statistics, not measured BRDFs."
+  ],
+  "hardware": {
+    "device": "cpu",
+    "threads": 2
+  }
+}

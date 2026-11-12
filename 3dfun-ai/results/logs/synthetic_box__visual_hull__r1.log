@@ -1,0 +1,4 @@
+synthetic/box | visual_hull | rep 1 | draft
+  visual_hull: 8000 faces in 2.31s
+  seconds=2.31 peak=927MB tris=8000
+  chamfer=0.05879 f=0.1942 iou=0.0729 nc=0.8157

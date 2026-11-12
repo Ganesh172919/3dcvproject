@@ -1,0 +1,4 @@
+synthetic/frustum | tsdf | rep 3 | draft
+  tsdf: 8000 faces in 1.26s
+  seconds=1.26 peak=927MB tris=8000
+  chamfer=0.04611 f=0.1221 iou=0.0887 nc=0.8413

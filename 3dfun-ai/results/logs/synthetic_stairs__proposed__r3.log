@@ -1,0 +1,11 @@
+synthetic/stairs | proposed | rep 3 | draft
+  stage preprocessing     0.529s
+  stage depth             0.574s
+  stage volume            0.097s
+  stage geometry          0.126s
+  stage texture           0.695s
+  stage export            0.190s
+  stage render           17.953s
+  stage total            20.175s
+  seconds=20.19 peak=927MB tris=7664
+  chamfer=0.11586 f=0.0324 iou=0.0212 nc=0.5938
