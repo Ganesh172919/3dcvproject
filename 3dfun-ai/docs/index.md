@@ -2,6 +2,8 @@
 
 Welcome to the comprehensive documentation for **3DFUN AI: An End-to-End Image-to-3D Generation Framework**, engineered for the 3D Computer Vision curriculum at the Indian Institute of Information Technology (IIIT), Dharwad.
 
+> **[Read the Master Technical Handbook & Specification](MASTER_DOCUMENTATION.md)** — The complete, unabridged, encyclopedic manual detailing all mathematical formulations, architecture, benchmarks, API specifications, and operational guides in a single document.
+
 ---
 
 ## Team & Attribution

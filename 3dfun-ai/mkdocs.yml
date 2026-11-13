@@ -46,12 +46,14 @@ extra_javascript:
 
 nav:
   - Overview: index.md
+  - Master Handbook: MASTER_DOCUMENTATION.md
   - Tutorials:
       - Quickstart Guide: tutorials/quickstart.md
       - GPU Acceleration (DirectML / CUDA): tutorials/gpu-acceleration.md
   - How-To Guides:
       - Fine-Tune Depth Estimators: how-to/fine-tune-depth.md
       - Export for 3D Printing: how-to/export-3d-printing.md
+      - Container Deployment: how-to/deploy-docker.md
   - Reference:
       - REST API Specification: reference/api-spec.md
       - Configuration & Settings: reference/configuration.md
