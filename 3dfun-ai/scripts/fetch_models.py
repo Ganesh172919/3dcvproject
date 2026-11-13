@@ -7,14 +7,17 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import http.client
 import shutil
 import sys
 import tempfile
 import urllib.request
 from pathlib import Path
+from typing import BinaryIO
 
 ROOT = Path(__file__).resolve().parents[1]
 MODELS = ROOT / "engine" / "models"
+DOWNLOAD_CHUNK_BYTES = 32 * 1024 * 1024
 
 # name -> (url, expected_sha256 or None, note)
 SOURCES = {
@@ -43,6 +46,30 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def download(url: str, output: BinaryIO, size: int = 0) -> None:
+    if size <= DOWNLOAD_CHUNK_BYTES:
+        with urllib.request.urlopen(url, timeout=90) as response:
+            shutil.copyfileobj(response, output, length=1 << 20)
+        return
+
+    # The large TripoSR encoder can stall when requested as one response.
+    for start in range(0, size, DOWNLOAD_CHUNK_BYTES):
+        end = min(start + DOWNLOAD_CHUNK_BYTES, size) - 1
+        request = urllib.request.Request(url, headers={"Range": f"bytes={start}-{end}"})
+        with urllib.request.urlopen(request, timeout=90) as response:
+            if start == 0 and response.status == 200:
+                shutil.copyfileobj(response, output, length=1 << 20)
+                if output.tell() != size:
+                    raise ValueError("Download did not match the expected file size.")
+                return
+            if response.status != 206 or response.headers.get("Content-Range") != f"bytes {start}-{end}/{size}":
+                raise ValueError(f"Model server returned an unexpected byte range at offset {start}.")
+            shutil.copyfileobj(response, output, length=1 << 20)
+        if output.tell() != end + 1:
+            raise ValueError(f"Model download stopped early at offset {output.tell()}.")
+        print(f"       {output.tell() / 1e6:.1f}/{size / 1e6:.1f} MB", flush=True)
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Fetch the ONNX models used by 3DFUN AI")
     ap.add_argument("--check", action="store_true", help="verify without downloading")
@@ -52,6 +79,7 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
     MODELS.mkdir(parents=True, exist_ok=True)
     sources = SOURCES.copy()
+    sizes = {}
     if args.midas or args.all:
         sources["midas_v21_small.onnx"] = (
             "https://github.com/isl-org/MiDaS/releases/download/v2_1/model-small.onnx",
@@ -62,7 +90,8 @@ def main(argv: list[str] | None = None) -> int:
         sys.path.insert(0, str(ROOT / "engine"))
         from recon.triposr import MODEL_FILES, MODEL_URL
 
-        for name, (_, digest) in MODEL_FILES.items():
+        for name, (size, digest) in MODEL_FILES.items():
+            sizes[name] = size
             sources[name] = (f"{MODEL_URL}/{name}?download=true", digest, "TripoSR (MIT)")
 
     missing = []
@@ -80,12 +109,11 @@ def main(argv: list[str] | None = None) -> int:
         try:
             with tempfile.NamedTemporaryFile(dir=MODELS, prefix=name + ".", suffix=".part", delete=False) as out:
                 partial = Path(out.name)
-                with urllib.request.urlopen(url, timeout=90) as response:
-                    shutil.copyfileobj(response, out, length=1 << 20)
+                download(url, out, sizes.get(name, 0))
             if sha256(partial) != want:
                 raise ValueError("Downloaded file failed its SHA-256 check.")
             partial.replace(target)
-        except (OSError, ValueError) as exc:
+        except (OSError, ValueError, http.client.HTTPException) as exc:
             print(f"       download failed: {exc}")
             missing.append(name)
             continue

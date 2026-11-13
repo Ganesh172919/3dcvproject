@@ -1,3 +1,9 @@
+// 3DFUN AI 3D Reconstruction Studio Controller.
+// Course: 3D Computer Vision Course Project · IIIT Dharwad
+// Supervisor: Dr. Shirshendu Layek (Dept. of DSAI)
+// Authors: J Ganesh (23BDS024), M Jagadeshwar (23BDS033), B Varshith (23BDS011),
+//          Pranav Kashyap (23BCS098), C Sai Aravind (23BDS075)
+
 import { api, clear, fmt, h, mount, refreshUser, state, statusBadge, toast } from './lib.js';
 import { EXAMPLES } from './examples.js';
 import { ENGINE_NAMES, inferenceLabel, PROVIDER_NAMES } from './experiments.js';
@@ -138,6 +144,20 @@ export async function renderStudio(_params, main) {
     if (id) url.searchParams.set('upload', id);
     else url.searchParams.delete('upload');
     history.replaceState(null, '', url);
+  }
+
+  async function restoreReference(id, showError = true) {
+    uploading = true;
+    updateControls();
+    try {
+      const saved = await api(`/uploads/${encodeURIComponent(id)}`);
+      if (active) upload = saved;
+    } catch (err) {
+      if (active && showError) error.textContent = err.message;
+    } finally {
+      uploading = false;
+      if (active) { renderReference(); updateControls(); }
+    }
   }
 
   function renderReference() {
@@ -301,13 +321,18 @@ export async function renderStudio(_params, main) {
     try {
       const job = await api(`/generations/${id}`);
       if (!active || (current && current.id !== id)) return;
-      if (!current && Object.hasOwn(ENGINES, job.provider) && available(job.provider)) {
+      const initial = !current;
+      if (initial && Object.hasOwn(ENGINES, job.provider) && available(job.provider)) {
         engine.value = job.provider;
         quality.value = job.quality;
         updateEstimate();
       }
       current = job;
       renderProgress();
+      if (initial && !upload && !uploading && job.upload_id) {
+        await restoreReference(job.upload_id, false);
+        if (!active) return;
+      }
       if (TERMINAL.includes(current.status)) {
         if (current.asset_id && current.status === 'COMPLETED') {
           await renderResult(current.asset_id).catch(err => { if (active) error.textContent = err.message; });
@@ -405,11 +430,7 @@ export async function renderStudio(_params, main) {
   const saved = params.get('upload');
   const draft = params.get('draft');
   if (saved) {
-    uploading = true;
-    updateControls();
-    try { upload = await api(`/uploads/${encodeURIComponent(saved)}`); }
-    catch (err) { if (active) error.textContent = err.message; }
-    finally { uploading = false; if (active) { renderReference(); updateControls(); } }
+    await restoreReference(saved);
   } else if (draft) {
     const savedOnServer = await selectFile(async () => {
       const file = await pendingReference(draft);

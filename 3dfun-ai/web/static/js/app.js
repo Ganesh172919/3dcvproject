@@ -1,4 +1,8 @@
-// 3DFUN AI single-page application: router + views.
+// 3DFUN AI Single-Page Application: Router + Views.
+// Course: 3D Computer Vision Course Project · IIIT Dharwad
+// Supervisor: Dr. Shirshendu Layek (Dept. of DSAI)
+// Authors: J Ganesh (23BDS024), M Jagadeshwar (23BDS033), B Varshith (23BDS011),
+//          Pranav Kashyap (23BCS098), C Sai Aravind (23BDS075)
 import {
   ApiError, $, $$, api, clear, copyText, debounce, emptyState, esc, fmt, h, initRouter,
   logout, mount, navigate, refreshUser, renderError, renderRoute, route, setAuthUI, state, statusBadge,
@@ -6,6 +10,8 @@ import {
 } from './lib.js';
 import { renderChat } from './chat.js';
 import { renderStudio } from './studio.js';
+import { renderTeam } from './team.js';
+import { renderWork } from './work.js';
 import { experimentsPanel, inferenceLabel } from './experiments.js';
 
 // ---------------------------------------------------------------------------
@@ -939,6 +945,9 @@ route('/app/benchmark', async (_p, main) => {
       'Reproduce with one command: ', h('code', {}, 'make benchmark'),
       ' — every figure on this page is read from results/summary/*.csv.'));
 });
+
+route('/app/team', async (_p, main) => { renderTeam(main); });
+route('/app/work', async (_p, main) => { renderWork(main); });
 
 route('/app/', async () => { navigate('/app/studio'); });
 route('/app', async () => { navigate('/app/studio'); });

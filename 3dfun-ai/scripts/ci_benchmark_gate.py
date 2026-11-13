@@ -1,5 +1,10 @@
 """CI Benchmark Regression Gate for 3DFUN AI.
 
+Course: 3D Computer Vision Course Project · IIIT Dharwad
+Supervisor: Dr. Shirshendu Layek (Dept. of DSAI)
+Authors: J Ganesh (23BDS024), M Jagadeshwar (23BDS033), B Varshith (23BDS011),
+         Pranav Kashyap (23BCS098), C Sai Aravind (23BDS075)
+
 Asserts that key geometric and operational metrics do not regress across CI/CD builds:
 - Chamfer Distance does not regress by >5%
 - Watertightness remains 100%

@@ -1,5 +1,10 @@
 """Stage 1 - image ingestion, background matting and normalisation.
 
+Course: 3D Computer Vision Course Project · IIIT Dharwad
+Supervisor: Dr. Shirshendu Layek (Dept. of DSAI)
+Authors: J Ganesh (23BDS024), M Jagadeshwar (23BDS033), B Varshith (23BDS011),
+         Pranav Kashyap (23BCS098), C Sai Aravind (23BDS075)
+
 Produces a square, object-centred RGBA working image plus a binary mask. All
 downstream stages operate on this canonical representation.
 """
@@ -63,19 +68,31 @@ class PreparedImage:
 # --------------------------------------------------------------------------
 # matting
 # --------------------------------------------------------------------------
+_MATTE_SESSION: Any = None
+
+
+def _get_u2net_session(model_path: Path):
+    global _MATTE_SESSION
+    if _MATTE_SESSION is not None:
+        return _MATTE_SESSION
+    import onnxruntime as ort
+
+    so = ort.SessionOptions()
+    so.intra_op_num_threads = 2
+    so.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
+    _MATTE_SESSION = InferenceSession(model_path, so)
+    return _MATTE_SESSION
+
+
 def _u2net_alpha(rgb: np.ndarray, providers: dict[str, str] | None = None) -> np.ndarray | None:
     """Salient-object matte with U^2-Net-lite (u2netp) via ONNX Runtime."""
     model_path = MODELS_DIR / "u2netp.onnx"
     if not model_path.exists():
         return None
     try:
-        import onnxruntime as ort
+        sess = _get_u2net_session(model_path)
     except Exception:  # pragma: no cover - optional dependency
         return None
-    so = ort.SessionOptions()
-    so.intra_op_num_threads = 2
-    so.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
-    sess = InferenceSession(model_path, so)
     size = 320
     img = cv2.resize(rgb, (size, size), interpolation=cv2.INTER_AREA).astype(np.float32) / 255.0
     mean = np.array([0.485, 0.456, 0.406], dtype=np.float32)

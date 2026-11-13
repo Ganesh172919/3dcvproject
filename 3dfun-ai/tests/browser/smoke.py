@@ -37,15 +37,19 @@ def main() -> int:
         page.get_by_role("button", name="Photo", exact=True).click()
         expect(page.get_by_role("img", name="Teapot reference photo")).to_be_visible()
 
-        # Direct registration URL opens the correct form.
-        page.goto(f"{BASE}/app/register", wait_until="networkidle")
+        # A guest can pick a real local file and keep it through registration.
+        page.set_input_files("#home-file", IMAGE)
+        page.wait_for_url("**/app/studio?draft=*")
+        page.get_by_role("main").get_by_role("link", name="Create account", exact=True).click()
         expect(page.locator("#name")).to_be_visible()
         page.fill("#email", email)
         page.fill("#name", "Browser Test")
         page.fill("#password", "Hunter2Hunter2")
         page.screenshot(path=str(OUT / "02-register.png"))
         page.click("form button[type=submit]")
-        page.wait_for_url("**/app/studio")
+        page.wait_for_url("**/app/studio?upload=*")
+        page.reload()
+        expect(page.get_by_text(Path(IMAGE).name, exact=True)).to_be_visible()
         page.screenshot(path=str(OUT / "03-after-register.png"))
         print("after register url:", page.url)
 
@@ -89,6 +93,13 @@ def main() -> int:
             page.get_by_role("link", name="Open model details").click()
             expect(page.locator(".viewer-hud")).to_contain_text("tri", timeout=30_000)
             expect(page.get_by_role("img", name="Reference image used to generate the model")).to_be_visible()
+
+            page.get_by_role("link", name="Dashboard", exact=True).click()
+            expect(page.get_by_role("heading", name="Experiment notebook")).to_be_visible()
+            expect(page.get_by_role("region", name="Runs on the selected image")).to_be_visible()
+            with page.expect_download() as csv:
+                page.get_by_role("button", name="Download CSV").click()
+            assert "image_sha256" in csv.value.path().read_text(encoding="utf-8")
 
         page.set_viewport_size({"width": 390, "height": 844})
         page.get_by_role("button", name="Menu", exact=True).click()

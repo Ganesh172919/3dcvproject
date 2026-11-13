@@ -4,8 +4,9 @@ Renders multi-angle RGB, 16-bit metric depth, surface normals, and silhouette ma
 from 3D OBJ / GLB meshes using Trimesh and vectorised software projection.
 
 Course: 3D Computer Vision Course Project (IIIT Dharwad)
-Authors: J Ganesh, M Jagadeshwar, B Varshith, Pranav Kashyap, C Sai Aravind
-Supervisor: Dr. Shirshendu Layek
+Authors: J Ganesh (23BDS024), M Jagadeshwar (23BDS033), B Varshith (23BDS011),
+         Pranav Kashyap (23BCS098), C Sai Aravind (23BDS075)
+Supervisor: Dr. Shirshendu Layek (Dept. of DSAI)
 """
 from __future__ import annotations
 

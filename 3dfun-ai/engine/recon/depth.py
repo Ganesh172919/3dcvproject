@@ -1,5 +1,10 @@
 """Stage 2 - monocular relative depth with Depth Anything V2 or MiDaS (ONNX).
 
+Course: 3D Computer Vision Course Project · IIIT Dharwad
+Supervisor: Dr. Shirshendu Layek (Dept. of DSAI)
+Authors: J Ganesh (23BDS024), M Jagadeshwar (23BDS033), B Varshith (23BDS011),
+         Pranav Kashyap (23BCS098), C Sai Aravind (23BDS075)
+
 The model outputs affine-invariant inverse depth (larger = closer). We convert it
 into a normalised *closeness* field in [0, 1] on the working canvas, which the
 volumetric stage turns into per-pixel object thickness.

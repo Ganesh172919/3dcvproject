@@ -27,7 +27,7 @@ Indian Institute of Information Technology, Dharwad
 | Platform backend (FastAPI, auth, uploads, generation lifecycle, credits, admin) | B Varshith, Pranav Kashyap |
 | Web studio, 3D viewer, dashboard, gallery, accessibility pass | C Sai Aravind, B Varshith |
 | Benchmark harness, dataset construction, metrics, statistics | J Ganesh, M Jagadeshwar |
-| Paper, slides, submission packaging and final verification | all five, reviewed by Dr. Shirshendu Layek |
+| Paper, slides, submission packaging and final verification | all five |
 
 ## Citation
 

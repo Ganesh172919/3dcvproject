@@ -1,4 +1,10 @@
-"""3DFUN AI - FastAPI application factory, middleware and API wiring."""
+"""3DFUN AI - FastAPI application factory, middleware and API wiring.
+
+Course: 3D Computer Vision Course Project · IIIT Dharwad
+Supervisor: Dr. Shirshendu Layek (Dept. of DSAI)
+Authors: J Ganesh (23BDS024), M Jagadeshwar (23BDS033), B Varshith (23BDS011),
+         Pranav Kashyap (23BCS098), C Sai Aravind (23BDS075)
+"""
 from __future__ import annotations
 
 import logging
@@ -78,7 +84,7 @@ def create_app() -> FastAPI:
             response.headers.setdefault(key, value)
         # static assets are imported as ES modules by the SPA, which requires
         # an explicit CORS grant when the app runs inside a sandboxed iframe
-        if request.url.path.startswith(("/static/", "/assets/")):
+        if request.url.path.startswith(("/static/", "/assets/", "/figures/", "/presentations/", "/paper-files/")) or request.url.path in {"/paper/main.pdf", "/report.pdf", "/docs/report.pdf"}:
             response.headers.setdefault("Access-Control-Allow-Origin", "*")
             response.headers.setdefault("Cross-Origin-Resource-Policy", "cross-origin")
         policy = CSP
@@ -150,6 +156,31 @@ def create_app() -> FastAPI:
         app.mount("/assets", StaticFiles(directory=web_dir / "assets"), name="assets")
         app.mount("/static", StaticFiles(directory=web_dir / "static"), name="static")
 
+    results_figures = ROOT / "results" / "figures"
+    if results_figures.exists():
+        app.mount("/figures", StaticFiles(directory=results_figures), name="figures")
+    presentations_dir = ROOT / "presentations"
+    if presentations_dir.exists():
+        app.mount("/presentations", StaticFiles(directory=presentations_dir), name="presentations")
+
+    paper_dir = ROOT / "paper"
+    docs_dir = ROOT / "docs"
+
+    @app.get("/paper/main.pdf", include_in_schema=False)
+    def paper_pdf():
+        pdf_path = paper_dir / "main.pdf"
+        if pdf_path.exists():
+            return FileResponse(pdf_path, media_type="application/pdf", filename="3DFUN_AI_IEEE_Paper.pdf")
+        return JSONResponse(status_code=404, content={"error": "IEEE Paper PDF not found"})
+
+    @app.get("/report.pdf", include_in_schema=False)
+    @app.get("/docs/report.pdf", include_in_schema=False)
+    def report_pdf():
+        pdf_path = docs_dir / "report.pdf"
+        if pdf_path.exists():
+            return FileResponse(pdf_path, media_type="application/pdf", filename="3DFUN_AI_Project_Report.pdf")
+        return JSONResponse(status_code=404, content={"error": "Project Report PDF not found"})
+
     @app.get("/", include_in_schema=False)
     def landing():
         index = web_dir / "public" / "index.html"
@@ -172,7 +203,8 @@ def create_app() -> FastAPI:
         return RedirectResponse(f"{target}?{request.url.query}" if request.url.query else target)
 
     for _route in ("/studio", "/dashboard", "/gallery", "/admin", "/login", "/register",
-                   "/settings", "/benchmark", "/forgot", "/reset-password", "/verify-email"):
+                   "/settings", "/benchmark", "/forgot", "/reset-password", "/verify-email",
+                   "/team", "/work"):
         app.get(_route, include_in_schema=False)(legacy_route)
 
     @app.get("/app", include_in_schema=False)
@@ -189,6 +221,28 @@ def create_app() -> FastAPI:
                  settings.version, settings.environment, settings.generation_provider,
                  queue_backend()["kind"], event_backend())
         log.info("health endpoint: %s/api/v1/health", settings.app_url)
+
+        def _warm_models():
+            try:
+                from recon.depth import _load_session
+                _load_session("depth_anything_v2_small_quantized.onnx")
+                from recon.preprocessing import _get_u2net_session, MODELS_DIR
+                _get_u2net_session(MODELS_DIR / "u2netp.onnx")
+                from recon.triposr import _session, available as triposr_avail
+                if triposr_avail():
+                    _session("triposr_encoder_int8.onnx")
+                    _session("triposr_decoder.onnx")
+                log.info("Local ONNX sessions warmed up successfully in memory.")
+            except Exception as e:
+                log.info("Model warm-up completed or deferred: %s", e)
+
+        if settings.recon_warmup and settings.generation_provider == "local":
+            from recon.runtime import CPU, runtime_status
+
+            if runtime_status()["preferred"] == CPU:
+                import threading
+
+                threading.Thread(target=_warm_models, daemon=True, name="model-warmup").start()
 
     @app.on_event("shutdown")
     def _shutdown() -> None:

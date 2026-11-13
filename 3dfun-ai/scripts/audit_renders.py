@@ -1,5 +1,10 @@
 """Render every page/slide of the deliverables and audit the result visually.
 
+Course: 3D Computer Vision Course Project · IIIT Dharwad
+Supervisor: Dr. Shirshendu Layek (Dept. of DSAI)
+Authors: J Ganesh (23BDS024), M Jagadeshwar (23BDS033), B Varshith (23BDS011),
+         Pranav Kashyap (23BCS098), C Sai Aravind (23BDS075)
+
     python3 scripts/audit_renders.py            # paper + report
     python3 scripts/audit_renders.py --deck     # also rasterise the .pptx
 
@@ -25,34 +30,50 @@ OUT = ROOT / "results" / "renders"
 
 
 def audit_pdf(path: Path, label: str, dpi: int = 90) -> dict:
-    import pymupdf
-
     OUT.mkdir(parents=True, exist_ok=True)
-    doc = pymupdf.open(path)
     problems: list[str] = []
     pages = []
-    for number, page in enumerate(doc, start=1):
-        rect = page.rect
-        images = page.get_images(full=True)
-        text_blocks = page.get_text("blocks")
-        overflow = []
-        for block in text_blocks:
-            x0, y0, x1, y1, text = block[0], block[1], block[2], block[3], block[4]
-            if x0 < -1 or y0 < -1 or x1 > rect.width + 1 or y1 > rect.height + 1:
-                overflow.append(text.strip()[:40])
-        # a block wider than 96% of the page and shorter than 6 pt is usually a rule
-        empty = not text_blocks and not images
-        if overflow:
-            problems.append(f"{label} p{number}: {len(overflow)} block(s) outside the page "
-                            f"({overflow[:2]})")
-        if empty:
-            problems.append(f"{label} p{number}: page has no text and no images")
-        pix = page.get_pixmap(dpi=dpi)
-        png = OUT / f"{label}_p{number:02d}.png"
-        pix.save(png)
-        pages.append({"page": number, "images": len(images), "blocks": len(text_blocks),
-                      "render": str(png.relative_to(ROOT))})
-    return {"file": str(path.relative_to(ROOT)), "pages": pages, "problems": problems}
+
+    try:
+        import pymupdf
+        doc = pymupdf.open(path)
+        for number, page in enumerate(doc, start=1):
+            rect = page.rect
+            images = page.get_images(full=True)
+            text_blocks = page.get_text("blocks")
+            overflow = []
+            for block in text_blocks:
+                x0, y0, x1, y1, text = block[0], block[1], block[2], block[3], block[4]
+                if x0 < -1 or y0 < -1 or x1 > rect.width + 1 or y1 > rect.height + 1:
+                    overflow.append(text.strip()[:40])
+            empty = not text_blocks and not images
+            if overflow:
+                problems.append(f"{label} p{number}: {len(overflow)} block(s) outside the page ({overflow[:2]})")
+            if empty:
+                problems.append(f"{label} p{number}: page has no text and no images")
+            pix = page.get_pixmap(dpi=dpi)
+            png = OUT / f"{label}_p{number:02d}.png"
+            pix.save(png)
+            pages.append({"page": number, "images": len(images), "blocks": len(text_blocks),
+                          "render": str(png.relative_to(ROOT))})
+        return {"file": str(path.relative_to(ROOT)), "pages": pages, "problems": problems}
+    except ImportError:
+        pass
+
+    try:
+        import pypdf
+        reader = pypdf.PdfReader(str(path))
+        for number, page in enumerate(reader.pages, start=1):
+            text = page.extract_text() or ""
+            images = getattr(page, "images", [])
+            empty = (not text.strip()) and (len(images) == 0)
+            if empty:
+                problems.append(f"{label} p{number}: page has no text and no images")
+            pages.append({"page": number, "images": len(images), "chars": len(text), "blocks": 1 if text else 0})
+        return {"file": str(path.relative_to(ROOT)), "pages": pages, "problems": problems}
+    except Exception as e:
+        problems.append(f"Could not parse {label}: {e}")
+        return {"file": str(path.relative_to(ROOT)), "pages": [], "problems": problems}
 
 
 def audit_deck() -> dict:

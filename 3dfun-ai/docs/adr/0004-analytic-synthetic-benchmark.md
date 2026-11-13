@@ -15,7 +15,7 @@ We engineered a dual-track benchmark suite:
 
 ## Consequences
 ### Positive:
-- **Exact Metric Verification:** Chamfer distance, F-score, and volumetric IoU against analytic meshes are mathematically exact and reproducible.
+- **Known reference geometry:** Chamfer distance and F-score are estimated from sampled points. Volumetric IoU is estimated on a voxel grid.
 - **Academic Honesty:** Avoids claiming artificial metric precision on uncalibrated consumer photographs.
 - **Lightweight Repository:** Procedural generation scripts require $<2$ MB of storage, avoiding multi-gigabyte dataset downloads.
 

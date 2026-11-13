@@ -8,7 +8,6 @@
 <meta name="theme-color" content="#ffffff">
 <link rel="stylesheet" href="/static/css/app.css">
 <link rel="icon" href="/static/lab-icon.svg">
-<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
 <script type="importmap">
 {
   "imports": {
@@ -30,6 +29,8 @@
     <a href="/app/assets" data-link>My models</a>
     <a href="/app/gallery" data-link>Gallery</a>
     <a href="/app/benchmark" data-link>Benchmarks</a>
+    <a href="/app/work" data-link>About the Work</a>
+    <a href="/app/team" data-link>About the Team</a>
     <a href="/app/chat" data-link>Chat</a>
     <a href="/app/admin" data-link id="nav-admin" class="hidden">Admin</a>
   </nav>
@@ -46,6 +47,21 @@
 <main id="main" class="page" role="main">
   <div class="empty"><div class="spinner"></div><p class="mt16">Loading 3DFUN AI…</p></div>
 </main>
+
+<footer class="app-footer" style="padding:16px 24px;border-top:1px solid var(--border-soft);font-size:12.5px;color:var(--text-2);display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;background:var(--panel);">
+  <div>
+    <strong>3DFUN AI</strong> · 3D Computer Vision Course Project · <strong>IIIT Dharwad</strong><br>
+    <span>Team: <strong>J Ganesh</strong> (23BDS024) · <strong>M Jagadeshwar</strong> (23BDS033) · <strong>B Varshith</strong> (23BDS011) · <strong>Pranav Kashyap</strong> (23BCS098) · <strong>C Sai Aravind</strong> (23BDS075)</span><br>
+    <span>Project Supervisor: <strong>Dr. Shirshendu Layek</strong>, Dept. of Data Science &amp; AI</span>
+  </div>
+  <div class="row wrap gap8">
+    <a class="btn sm" href="/app/team" data-link>About the Team</a>
+    <a class="btn sm" href="/app/work" data-link>About the Work</a>
+    <a class="btn sm" href="/paper/main.pdf" target="_blank">IEEE Paper (.pdf)</a>
+    <a class="btn sm" href="/report.pdf" target="_blank">Report (.pdf)</a>
+    <a class="btn sm" href="/presentations/3DFUN-AI-Project.pptx" download="3DFUN-AI-Project.pptx">Deck (.pptx)</a>
+  </div>
+</footer>
 
 <div id="toasts" aria-live="polite" aria-atomic="true"></div>
 

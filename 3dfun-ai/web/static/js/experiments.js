@@ -55,6 +55,17 @@ export function experimentsPanel(runs, total, inference, scrollTable) {
     h('div', {}, h('h2', { class: 'mb0' }, 'Experiment notebook'),
       h('p', { class: 'hint mb0' }, total > runs.length ? `Latest ${runs.length} of ${total} runs` : 'Compare measurements from your local runs')),
     h('span', { class: 'runtime-chip' }, `Preferred inference · ${preferred}`));
+  const guide = h('details', { class: 'experiment-guide mt16' },
+    h('summary', {}, 'How to compare and read your results'),
+    h('p', { class: 'mt8' }, 'Hold the photo, quality, preview, and export settings fixed. Change one setting at a time, then rotate the results to the same angle and inspect the outline and hidden surfaces.'),
+    h('dl', {},
+      h('dt', {}, 'Inference'), h('dd', {}, 'The providers used by the models during this run. The preferred provider is the runtime setting. Meshing and file export run on the CPU.'),
+      h('dt', {}, 'Time'), h('dd', {}, 'Elapsed time from worker start through asset creation. Compare repeated runs on the same machine if you want to account for model startup.'),
+      h('dt', {}, 'Triangles and watertightness'), h('dd', {}, 'Triangles count mesh faces. Watertightness records whether the surface closes. Inspect the mesh to judge whether its shape is plausible.'),
+      h('dt', {}, 'Configuration hash'), h('dd', {}, 'Included in the CSV when available. Matching hashes identify the same recorded configuration. The image SHA-256 identifies the input file.')),
+    h('div', { class: 'row wrap gap12' },
+      h('a', { href: '/#guide' }, 'Read the lab guide'),
+      h('a', { href: '/app/benchmark', 'data-link': '' }, 'View the course benchmarks')));
   const comparison = h('div', { class: 'mt16' });
   if (!groups.size) {
     mount(comparison, h('p', { class: 'mb0' }, 'Run the same photo with different models to compare runtime, mesh size, and watertightness.'),
@@ -87,5 +98,5 @@ export function experimentsPanel(runs, total, inference, scrollTable) {
     mount(comparison, h('label', { class: 'field experiment-photo' }, h('span', {}, 'Compare runs on the same photo'), input), results);
     showComparison();
   }
-  return h('section', { class: 'card mt16' }, header, h('div', { class: 'grid c3 mt16' }, engineCards), comparison);
+  return h('section', { class: 'card mt16' }, header, h('div', { class: 'grid c3 mt16' }, engineCards), comparison, guide);
 }

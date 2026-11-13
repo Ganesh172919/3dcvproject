@@ -1,22 +1,9 @@
-# ADR 0002: ONNX Runtime INT8 CPU Inference Over PyTorch/CUDA
-
-## Status
-Accepted
-
-## Context
-Deploying deep learning vision backbones (U2-Net for foreground matting and Depth Anything V2 for relative depth) typically requires PyTorch, torchvision, and NVIDIA CUDA libraries. A complete PyTorch + CUDA virtual environment exceeds 4.5 GB of disk space and demands a high-end dedicated GPU with compatible driver versions. Academic computer lab environments and student laptops frequently lack dedicated GPUs or have locked driver permissions.
+# ADR 0002: ONNX Runtime for local inference
 
 ## Decision
-We standardized all neural network inference on **ONNX Runtime** using post-training **INT8 quantization**:
-1. All PyTorch models are converted to static computation graphs in the open ONNX format.
-2. Models are quantized using dynamic activation range calibration to 8-bit signed integers.
-3. ONNX Runtime executes multithreaded CPU inference using OpenMP, AVX2, and AVX-512 VNNI instructions.
+
+Use ONNX Runtime and downloaded, checksum-verified weights. The course benchmark uses the INT8 Depth Anything V2 Small graph and U²-Net portable. CPU is the default execution provider. The launcher also supports DirectML and CUDA environments.
 
 ## Consequences
-### Positive:
-- **Zero Heavy Dependencies:** The entire Python virtual environment is $<300$ MB, installable in seconds via `uv` or `pip`.
-- **Universal Hardware Execution:** Runs on standard x86-64 and ARM64 CPUs (including macOS Apple Silicon and Raspberry Pi 5).
-- **Sub-Second Latency:** Monocular depth inference executes in $\approx 350$ ms on consumer CPUs, making interactive web reconstruction practical without cloud GPU clusters.
 
-### Negative:
-- Slightly reduced float precision (mean relative depth discrepancy $\le 0.8\%$ compared to FP32).
+The same inference entry points can run on local CPU installations. Accelerator support depends on the runtime and model operators. Per-run manifests record the providers used. See the [GPU tutorial](../tutorials/gpu-acceleration.md) and [quantization explanation](../explanations/quantization-strategy.md).

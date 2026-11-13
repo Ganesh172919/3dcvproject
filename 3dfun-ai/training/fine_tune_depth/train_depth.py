@@ -4,8 +4,9 @@ Implements Scale-Invariant Logarithmic Loss (SILog), multi-scale gradient matchi
 and edge-aware smoothness loss for fine-tuning Depth Anything V2 / MiDaS backbones.
 
 Course: 3D Computer Vision Course Project (IIIT Dharwad)
-Authors: J Ganesh, M Jagadeshwar, B Varshith, Pranav Kashyap, C Sai Aravind
-Supervisor: Dr. Shirshendu Layek
+Authors: J Ganesh (23BDS024), M Jagadeshwar (23BDS033), B Varshith (23BDS011),
+         Pranav Kashyap (23BCS098), C Sai Aravind (23BDS075)
+Supervisor: Dr. Shirshendu Layek (Dept. of DSAI)
 """
 from __future__ import annotations
 

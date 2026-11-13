@@ -1,4 +1,10 @@
-"""End-to-end image-to-3D reconstruction pipeline (stage orchestration)."""
+"""End-to-end image-to-3D reconstruction pipeline (stage orchestration).
+
+Course: 3D Computer Vision Course Project · IIIT Dharwad
+Supervisor: Dr. Shirshendu Layek (Dept. of DSAI)
+Authors: J Ganesh (23BDS024), M Jagadeshwar (23BDS033), B Varshith (23BDS011),
+         Pranav Kashyap (23BCS098), C Sai Aravind (23BDS075)
+"""
 from __future__ import annotations
 
 import logging

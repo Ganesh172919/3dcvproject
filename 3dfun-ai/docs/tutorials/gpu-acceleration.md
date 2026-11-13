@@ -1,90 +1,42 @@
-# Tutorial: GPU Acceleration via DirectML & CUDA in ONNX Runtime
+# GPU inference in 3DFUN AI
 
-While 3DFUN AI defaults to highly optimized CPU execution via OpenMP and INT8 quantization, developers on Windows or Linux workstations with dedicated GPUs can enable hardware acceleration using ONNX Runtime execution providers.
+Use the same local photos and ONNX weights across execution providers. The Studio records the provider used at each inference stage in the model manifest. The dashboard shows those providers alongside the run measurements.
 
----
+## Windows
 
-## 1. Execution Provider Overview
-
-ONNX Runtime supports pluggable hardware execution providers (EPs):
-- **CPU (Default):** Runs cross-platform using multithreaded AVX2/AVX-512 vector instructions.
-- **DirectML (`DmlExecutionProvider`):** Microsoft DirectX 12 hardware acceleration supporting any modern GPU on Windows (NVIDIA, AMD Radeon, Intel Arc, and integrated Iris Xe).
-- **CUDA / TensorRT (`CUDAExecutionProvider`):** Native NVIDIA hardware acceleration for Linux and Windows workstations.
-
----
-
-## 2. Enabling DirectML Acceleration (Windows)
-
-DirectML provides broad hardware compatibility without requiring proprietary CUDA toolkits.
-
-### Step 1: Install the DirectML Package
-In your active virtual environment:
+Run these commands from the project directory. Stop the current server first if it already uses port 8010.
 
 ```powershell
-pip install onnxruntime-directml
+# DirectX 12 graphics on Windows
+powershell -ExecutionPolicy Bypass -File .\run.ps1 -Device directml
+
+# NVIDIA with CUDA 12.8 and cuDNN 9.x available
+powershell -ExecutionPolicy Bypass -File .\run.ps1 -Device cuda
 ```
 
-### Step 2: Configure Environment or Code
-To instruct the inference engine to request DirectML:
+The launcher creates a separate virtual environment for each ONNX Runtime package. Use `-InstallModels` to fetch every supported checkpoint. Use `-Device cpu` to start the default CPU build.
 
-```python
-import onnxruntime as ort
+## Linux with NVIDIA
 
-providers = [
-    ('DmlExecutionProvider', {
-        'device_id': 0,
-    }),
-    'CPUExecutionProvider',
-]
+Create a separate Python 3.12 environment and activate it. Install the CUDA 12.8 and cuDNN 9.x runtime libraries for the selected ONNX Runtime wheel. Then run:
 
-session = ort.InferenceSession("engine/models/depth_anything_v2_vits.onnx", providers=providers)
-print("Active execution providers:", session.get_providers())
-```
-
----
-
-## 3. Enabling CUDA Acceleration (NVIDIA Workstations)
-
-For Linux or Windows setups equipped with CUDA 11.8 or 12.x and cuDNN 8.x+:
-
-### Step 1: Install ONNX Runtime with CUDA Support
 ```bash
-pip uninstall -y onnxruntime
-pip install onnxruntime-gpu
+python -m pip install -r requirements-cuda.txt
+python scripts/fetch_models.py --all
+RECON_DEVICE=cuda ./run.sh
 ```
 
-### Step 2: Verification Script
-Verify that your GPU device is detected:
+## Compare a run
 
-```python
-import onnxruntime as ort
+1. Open the Studio and select a photo.
+2. Run Draft with Depth Anything V2 or MiDaS Small.
+3. Open the model details and inspect the inference provider.
+4. Run the same photo and quality on the CPU, then compare the results in the dashboard's experiment notebook.
 
-print("Available providers:", ort.get_available_providers())
-assert 'CUDAExecutionProvider' in ort.get_available_providers(), "CUDA EP not found!"
+DirectML can run background matting and the two depth estimators. The TripoSR encoder and decoder use the CPU in the DirectML build. The CUDA build can request GPU inference for all three engines. Unsupported operations may execute on the CPU, and an ONNX GPU session that fails is retried on the CPU. Meshing, texture baking, preview rendering, and export run on the CPU.
 
-session = ort.InferenceSession("engine/models/depth_anything_v2_vits.onnx", providers=['CUDAExecutionProvider'])
-print("Session initialized successfully on CUDA.")
-```
+For CUDA, `RECON_CUDA_MEMORY_MB` limits the ONNX CUDA allocator arena to 2,048 MiB by default. The CUDA driver and libraries can allocate memory outside that arena.
 
----
+Use the prototype's measured times to compare your machine's providers. An integrated GPU can take longer than the CPU when session setup and transfer time dominate.
 
-## 4. Performance Benchmarking Across Providers
-
-Inference latency on Depth Anything V2 Small ($518 \times 518$ input resolution):
-
-| Hardware / Provider | Execution Precision | Mean Latency (ms) | Speedup Factor |
-|---|---|---|---|
-| Intel Core i7-12700H (CPU) | INT8 Quantized | 348 ms | $1.0\times$ (Baseline) |
-| AMD Radeon RX 6800M (DirectML) | FP16 / INT8 | 72 ms | $4.8\times$ |
-| NVIDIA GeForce RTX 3080 (CUDA) | FP16 / TensorRT | 38 ms | $9.1\times$ |
-| NVIDIA RTX 4090 (TensorRT) | FP16 Graph Optimized | 19 ms | $18.3\times$ |
-
----
-
-## 5. Fallback Mechanism
-
-3DFUN AI includes automatic fallback in `engine/recon/depth.py`: if `CUDAExecutionProvider` or `DmlExecutionProvider` fails to allocate video memory or encounters driver incompatibility, it logs a warning and falls back to `CPUExecutionProvider` without crashing the reconstruction pipeline.
-
----
-*Evidence: Model loading logic in `engine/recon/depth.py` and `benchmarks/run_benchmarks.py`.*  
 *Authors: J Ganesh, M Jagadeshwar, B Varshith, Pranav Kashyap, C Sai Aravind (Supervisor: Dr. Shirshendu Layek, Dept. of DSAI, IIIT Dharwad).*

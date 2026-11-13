@@ -93,6 +93,7 @@ class Settings:
     generation_api_url: str = field(default_factory=lambda: _env("GENERATION_API_URL", ""))
     generation_api_key: str = field(default_factory=lambda: _env("GENERATION_API_KEY", ""))
     generation_model: str = field(default_factory=lambda: _env("GENERATION_MODEL", "3dfun-recon-v1"))
+    recon_warmup: bool = field(default_factory=lambda: _env_bool("RECON_WARMUP", False))
 
     # ---- billing / email --------------------------------------------
     stripe_secret_key: str = field(default_factory=lambda: _env("STRIPE_SECRET_KEY", ""))

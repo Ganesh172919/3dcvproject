@@ -5,6 +5,7 @@ import logging
 import os
 from functools import lru_cache
 from pathlib import Path
+from threading import Lock
 
 log = logging.getLogger(__name__)
 CPU = "CPUExecutionProvider"
@@ -43,6 +44,7 @@ class InferenceSession:
     def __init__(self, path: Path, options, provider: str | None = None):
         self.path = path
         self.options = options
+        self._run_lock = Lock()
         desired = provider or runtime_status()["preferred"]
         try:
             self.session = self._open(desired)
@@ -83,14 +85,15 @@ class InferenceSession:
         return self.session.get_inputs()
 
     def run(self, outputs, feeds):
-        try:
-            return self.session.run(outputs, feeds)
-        except Exception as error:
-            if self.provider == CPU:
-                raise
-            log.warning("%s failed on %s. Retrying on CPU (%s).", self.path.name, self.provider, type(error).__name__)
-            self.session = self._open(CPU)
-            return self.session.run(outputs, feeds)
+        with self._run_lock:
+            try:
+                return self.session.run(outputs, feeds)
+            except Exception as error:
+                if self.provider == CPU:
+                    raise
+                log.warning("%s failed on %s. Retrying on CPU (%s).", self.path.name, self.provider, type(error).__name__)
+                self.session = self._open(CPU)
+                return self.session.run(outputs, feeds)
 
 
 def inference_hardware(**stages: str | None) -> dict:

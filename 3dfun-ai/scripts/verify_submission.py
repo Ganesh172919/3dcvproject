@@ -1,5 +1,10 @@
 """Verify the submission end to end.
 
+Course: 3D Computer Vision Course Project · IIIT Dharwad
+Supervisor: Dr. Shirshendu Layek (Dept. of DSAI)
+Authors: J Ganesh (23BDS024), M Jagadeshwar (23BDS033), B Varshith (23BDS011),
+         Pranav Kashyap (23BCS098), C Sai Aravind (23BDS075)
+
     python3 scripts/verify_submission.py            # full check
     python3 scripts/verify_submission.py --fast     # skip the test suite
 
@@ -7,7 +12,7 @@ Checks, in order:
  1. layout / hygiene      — required files exist, no secrets, no large weights in git
  2. results integrity     — summary CSVs exist, are internally consistent, environment recorded
  3. figures               — every figure referenced by the paper exists and is non-empty
- 4. paper                 — main.tex compiles, zero undefined refs, zero overfull boxes
+ 4. paper                 — PDF and saved build diagnostics
  5. deck                  — every slide fits the 16:9 canvas, no text box overflows
  6. number cross-check    — every metric printed in paper/slides/report is traceable to
                             results/summary/*.csv (rounded to the printed precision)
@@ -24,7 +29,6 @@ import csv
 import json
 import os
 import re
-import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -45,13 +49,13 @@ def record(status: str, name: str, detail: str = "") -> None:
 
 # ---------------------------------------------------------------- 1. layout
 REQUIRED = [
-    "README.md", "AUTHORS.md", "LICENSE", "Makefile", "requirements.txt", "run.sh",
-    "engine/recon/__init__.py", "app/main.py", "web/app/index.html",
+    "README.md", "AUTHORS.md", "LICENSE", "Makefile", "requirements.txt", "run.sh", "run.ps1",
+    "engine/recon/__init__.py", "app/main.py", "web/app/index.html", "web/public/index.html",
     "benchmarks/run_benchmarks.py", "benchmarks/metrics.py",
     "scripts/fetch_models.py", "scripts/make_figures.py", "scripts/generate_paper.py",
     "scripts/generate_slides.py", "scripts/generate_report.py",
-    "paper/main.tex", "paper/references.bib",
-    "docs/report.md", "presentations/3DFUN-AI-Project.pptx",
+    "paper/main.tex", "paper/main.pdf", "paper/references.bib",
+    "docs/report.md", "docs/report.pdf", "presentations/3DFUN-AI-Project.pptx",
     "results/environment.json", "results/summary/main_table.csv",
 ]
 
@@ -63,12 +67,17 @@ def check_layout() -> None:
 
     # no credentials committed
     secret_pat = re.compile(r"(sk-[A-Za-z0-9]{16,}|AKIA[0-9A-Z]{16}|BEGIN [A-Z ]*PRIVATE KEY"
-                            r"|ghp_[A-Za-z0-9]{20,})")
+                            r"|ghp_[A-Za-z0-9]{20,}|AIza[0-9A-Za-z_-]{35})")
     hits = []
-    SKIP_DIRS = {".git", "node_modules", "__pycache__", "results", ".venv", ".venv-directml", ".pytest_cache"}
+    SKIP_DIRS = {".git", "node_modules", "__pycache__", "results", ".venv", ".venv-directml",
+                 ".venv-cuda", ".pytest_cache", "out", "uploads", "_photocache"}
     for dirpath, dirnames, filenames in os.walk(ROOT):
         dirnames[:] = [d for d in dirnames if d not in SKIP_DIRS]
+        if Path(dirpath) == ROOT:
+            dirnames[:] = [d for d in dirnames if d != "data"]
         for fname in filenames:
+            if fname.startswith(".env") and fname != ".env.example":
+                continue
             path = Path(dirpath) / fname
             if path.suffix in {".png", ".jpg", ".jpeg", ".glb", ".obj",
                                ".ply", ".onnx", ".pptx", ".pdf", ".pyc"}:
@@ -157,7 +166,7 @@ def check_figures() -> list[str]:
     tex = (ROOT / "paper" / "main.tex")
     wanted: set[str] = set()
     if tex.exists():
-        wanted = set(re.findall(r"includegraphics(?:\[[^\]]*\])?\{([^}]+)\}", tex.read_text()))
+        wanted = set(re.findall(r"includegraphics(?:\[[^\]]*\])?\{([^}]+)\}", tex.read_text(encoding="utf-8")))
     missing = sorted(w for w in wanted if w not in figures)
     record(PASS if not missing else FAIL, "every figure referenced by the paper exists",
            f"{len(figures)} figures, {len(wanted)} referenced"
@@ -175,34 +184,23 @@ def check_paper() -> None:
     if not tex.exists():
         record(FAIL, "paper source exists", "run `make paper`")
         return
-    if shutil.which("pdflatex"):
-        subprocess.run(["pdflatex", "-interaction=nonstopmode", "main.tex"],
-                       cwd=str(paper), capture_output=True)
-        if shutil.which("bibtex"):
-            subprocess.run(["bibtex", "main"], cwd=str(paper), capture_output=True)
-            subprocess.run(["pdflatex", "-interaction=nonstopmode", "main.tex"],
-                           cwd=str(paper), capture_output=True)
-            subprocess.run(["pdflatex", "-interaction=nonstopmode", "main.tex"],
-                           cwd=str(paper), capture_output=True)
-    elif sys.platform != "win32" and shutil.which("bash"):
-        subprocess.run(
-            ["bash", "-lc", "cd paper && pdflatex -interaction=nonstopmode main.tex >/dev/null 2>&1; "
-                            "bibtex main >/dev/null 2>&1; "
-                            "pdflatex -interaction=nonstopmode main.tex >/dev/null 2>&1; "
-                            "pdflatex -interaction=nonstopmode main.tex 2>&1 | tail -1"],
-            capture_output=True, text=True, cwd=str(ROOT))
     log = (paper / "main.log")
     text = log.read_text(encoding="utf-8", errors="ignore") if log.exists() else ""
-    undefined = re.findall(r"Reference `([^']+)' on page \d+ undefined", text)
-    record(PASS if not undefined else FAIL, "paper has no undefined references",
-           "clean" if not undefined else f"{len(set(undefined))} undefined: {sorted(set(undefined))[:6]}")
-    cites = re.findall(r"Citation `([^']+)' on page \d+ undefined", text)
-    record(PASS if not cites else FAIL, "no undefined citations",
-           "clean" if not cites else str(sorted(set(cites))[:6]))
-    overfull = re.findall(r"Overfull \\hbox \(([\d.]+)pt too wide\)", text)
-    record(PASS if not overfull else FAIL, "no overfull hboxes",
-           "clean" if not overfull else f"{len(overfull)} overfull boxes, worst "
-                                        f"{max(float(x) for x in overfull):.1f}pt")
+    if not text.strip():
+        record(WARN, "paper build diagnostics", "build with scripts/generate_paper.py --pdf")
+    else:
+        undefined = re.findall(r"Reference `([^']+)' on page \d+ undefined", text)
+        record(PASS if not undefined else FAIL, "paper has no undefined references",
+               "clean" if not undefined else f"{len(set(undefined))} undefined: {sorted(set(undefined))[:6]}")
+        cites = re.findall(r"Citation `([^']+)' on page \d+ undefined", text)
+        record(PASS if not cites else FAIL, "no undefined citations",
+               "clean" if not cites else str(sorted(set(cites))[:6]))
+        overfull = re.findall(r"Overfull \\hbox \(([\d.]+)pt too wide\)", text)
+        oversized = re.findall(r"Float too large for page by ([\d.]+)pt", text)
+        problems = overfull + oversized
+        record(PASS if not problems else FAIL, "paper has no oversized boxes or floats",
+               "clean" if not problems else f"{len(problems)} overflows, worst "
+                                            f"{max(float(x) for x in problems):.1f}pt")
     pdf = paper / "main.pdf"
     pages = 0
     if pdf.exists():

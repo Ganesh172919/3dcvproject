@@ -1,5 +1,10 @@
 """Build every figure used by the paper and the deck from ``results/`` only.
 
+Course: 3D Computer Vision Course Project · IIIT Dharwad
+Supervisor: Dr. Shirshendu Layek (Dept. of DSAI)
+Authors: J Ganesh (23BDS024), M Jagadeshwar (23BDS033), B Varshith (23BDS011),
+         Pranav Kashyap (23BCS098), C Sai Aravind (23BDS075)
+
     python3 scripts/make_figures.py
 
 Writes into ``results/figures/``:

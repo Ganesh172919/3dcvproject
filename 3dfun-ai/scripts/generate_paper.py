@@ -1,5 +1,10 @@
 """Generate the IEEEtran paper from ``results/`` — no number is typed by hand.
 
+Course: 3D Computer Vision Course Project · IIIT Dharwad
+Supervisor: Dr. Shirshendu Layek (Dept. of DSAI)
+Authors: J Ganesh (23BDS024), M Jagadeshwar (23BDS033), B Varshith (23BDS011),
+         Pranav Kashyap (23BCS098), C Sai Aravind (23BDS075)
+
     python3 scripts/generate_paper.py          # writes paper/main.tex + paper/results.tex
 
 Every table body and every inline figure in the text is produced here from
@@ -10,7 +15,10 @@ rules require.
 """
 from __future__ import annotations
 
+import argparse
 import csv
+import shutil
+import subprocess
 import json
 import re
 from pathlib import Path
@@ -108,9 +116,10 @@ def table_main(rows: list[dict]) -> str:
         "every image; time is wall clock per image on the CPU used for the experiments. "
         "Mean $\\pm$ standard deviation over repeated runs.}",
         "\\label{tab:main}",
+        "\\small\\setlength{\\tabcolsep}{2pt}",
         "\\begin{tabular}{lccccccc}", "\\toprule",
         "Method & Chamfer $\\downarrow$ & F-score@1\\% $\\uparrow$ & IoU $\\uparrow$ & "
-        "NC $\\uparrow$ & SSIM $\\uparrow$ & Silhouette IoU $\\uparrow$ & Time (s) \\\\",
+        "NC $\\uparrow$ & SSIM $\\uparrow$ & Mask IoU $\\uparrow$ & Time (s) \\\\",
         "\\midrule",
     ]
     for row in rows:
@@ -136,11 +145,11 @@ def table_ablation(rows: list[dict]) -> str:
                 "\\bottomrule\\end{tabular}\\end{table}\n")
     names = {
         "full": "Full pipeline",
-        "no_slab_core": "Without constant slab core ($f{=}0$)",
-        "depth_flat_slab": "Without depth modulation ($g{=}0$)",
-        "thin_inflation": "Thin solids ($0.35W$)",
-        "no_taubin_smoothing": "Without Taubin smoothing",
-        "coarse_grid": "Coarse volumetric grid ($64^3$)",
+        "no_slab_core": "No core",
+        "depth_flat_slab": "No depth",
+        "thin_inflation": "Thin slab",
+        "no_taubin_smoothing": "No Taubin",
+        "coarse_grid": "Coarse grid",
     }
     lines = [
         "\\begin{table}[t]", "\\centering",
@@ -148,6 +157,7 @@ def table_ablation(rows: list[dict]) -> str:
         "everything else identical, evaluated on the scenes with reference meshes. "
         "Mean $\\pm$ std. Timing comparison excludes preview rendering.}",
         "\\label{tab:ablation}",
+        "\\small\\setlength{\\tabcolsep}{3pt}",
         "\\begin{tabular}{p{17mm}ccc}", "\\toprule",
         "Config. & CD$\\downarrow$ & F$\\uparrow$ & IoU$\\uparrow$ \\\\",
         "\\midrule",
@@ -337,7 +347,6 @@ def build() -> None:
 \IEEEoverridecommandlockouts
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
-\usepackage{algorithmic}
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
@@ -363,13 +372,12 @@ Assistant Professor, Department of Data Science and Artificial Intelligence.}
 \maketitle
 
 \begin{abstract}
-We present \ours{}, an end-to-end system that turns a single photograph into a watertight,
-UV-textured 3D mesh and reports every number it produces. The pipeline is deliberately classical:
+We present \ours{}, an end-to-end system that turns a single photograph into a
+UV-textured 3D mesh and reports its topology. The pipeline combines learned image priors with classical geometry:
 U\textsuperscript{2}-Net saliency gives the object alpha matte, Depth Anything V2 predicts a
 relative-depth closeness field, and each silhouette pixel is inflated along the viewing axis into
-a slab whose thickness follows depth but is bounded by the object outline. Because the field is
-closed at the rim, the marching-cubes isosurface is watertight by construction, and because it is
-bounded by the silhouette it cannot leak outside the projected outline. The mesh is
+a slab whose thickness follows depth and whose occupancy is bounded by the sampled object outline.
+The volume is padded to reduce the risk of an open surface at the grid boundary. The mesh is
 Taubin-smoothed, unwrapped with a planar view-projection atlas, and textured by back-projecting
 the input, with de-lit albedo plus estimated ambient occlusion, roughness, metallic and normal
 maps. Around the engine we built the parts that make such a result usable: a FastAPI service with
@@ -398,11 +406,9 @@ the ambiguity with a data-driven prior and reach impressive quality, but they ne
 of large networks, which makes them hard to run, audit or reproduce inside a course setting or on
 commodity hardware.
 
-This paper takes the opposite trade. We keep a strong monocular depth network as the only learned
-component, and we resolve the ambiguity with two explicit geometric priors that a reader can check
-by hand: the object silhouette and a symmetry assumption. The result is a pipeline that runs in a
-few seconds on a CPU, produces meshes that are watertight by construction rather than by repair,
-and whose every parameter is recorded in a manifest next to the output.
+We use learned matting and monocular depth together with two explicit geometric priors: the
+object silhouette and a symmetry assumption. The priors constrain the ambiguous shape
+estimate. We measure mesh closure on the output and record the configuration in a manifest.
 
 Our contributions are:
 \begin{itemize}
@@ -419,7 +425,7 @@ regenerates every number in this paper (\S\ref{sec:exp}--\ref{sec:results}).
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=0.92\textwidth]{fig_qualitative.png}
+\includegraphics[width=0.92\textwidth,height=0.70\textheight,keepaspectratio]{fig_qualitative.png}
 \caption{Qualitative comparison. Each row is one evaluation image: the input photograph, then the
 mesh produced by \ours{}, by TSDF fusion and by a visual hull, rendered by the same renderer at the
 yaw whose projection best matches the input silhouette (the same search used for the SSIM column).
@@ -528,25 +534,24 @@ and the signed distance field is
 where $\mathrm{EDT}$ is the Euclidean distance transform, followed by a Gaussian of
 $\sigma=0.8$ voxels.
 
-\noindent\textbf{Lemma 1 (Watertightness Guarantee).} \emph{Let $\Omega = [-1,1]^3 \subset \mathbb{R}^3$ and let $\mathcal{O}$ be defined by \eqref{eq:occ} with $t_{\min} > 0$ and $\mathcal{O} \cap \partial\Omega = \emptyset$. Then the isosurface $\mathcal{M} = \phi^{-1}(0)$ extracted via marching cubes is a closed, orientable 2-manifold with empty boundary ($\partial\mathcal{M} = \emptyset$).}
+\noindent\textbf{Boundary and silhouette constraints.} A strictly positive signed distance on
+the grid boundary keeps the interpolated zero set away from that boundary. The padded grid
+is designed to support this condition. The occupancy in \eqref{eq:occ} projects inside the
+sampled mask. Voxel interpolation, filtering and mesh smoothing can shift the final silhouette.
+The implementation checks mesh closure after surface extraction and cleanup.
 
-\noindent\emph{Proof.} Because $t(x,y) \ge t_{\min} > 0$ for all $(x,y)$ where $\alpha(x,y) > \tfrac12$, the interior $\mathcal{O}^\circ$ is non-empty. Since the foreground mask is padded such that $\operatorname{dist}(\mathcal{O}, \partial\Omega) \ge \delta > 0$, the signed distance satisfies $\phi(x,y,z) = \mathrm{EDT}(\Omega\setminus\mathcal{O}) - \mathrm{EDT}(\mathcal{O}) \ge \delta > 0$ for all $(x,y,z) \in \partial\Omega$. Consequently, the zero level set $\phi^{-1}(0)$ is strictly interior to $\Omega$. By the topological completeness of the marching cubes lookup table on regular Cartesian cubic lattices, boundary cell faces have uniform positive signs and produce zero surface facets. Hence, all extracted triangular facets connect along shared internal edges, yielding a closed 2-manifold without boundary edges. \hfill$\blacksquare$
-
-\noindent Because $\mathcal{O}\subseteq\Omega\times\mathbb{R}$, the surface cannot extend beyond the projected
-silhouette --- the failure mode of unconstrained depth back-projection. The grid resolution is
+\noindent The grid resolution is
 calibrated rather than guessed: one probe meshing at $64^3$ measures the constant $c$ in
 $|\mathbf{F}|\approx c\,r^{2}$, and the final resolution is
-$r=\arg\min_r |c\,r^2 - |\mathbf{F}|_{\text{target}}|$ clipped to $[32,224]$. Decimating afterwards
-would break watertightness; changing the resolution does not.
+$r=\arg\min_r |c\,r^2 - |\mathbf{F}|_{\text{target}}|$ clipped to $[32,224]$. Calibrating the
+resolution reduces the need for decimation, which can change topology.
 
 \subsection{Meshing, atlas and texture}
 Marching cubes~\cite{lorensen1987marching} extracts $\phi^{-1}(0)$; disconnected components smaller
 than 2\% of the largest are dropped and the surface is smoothed with Taubin's
-filter~\cite{taubin1995signal} (12 iterations, $\lambda=0.5$, $\mu=-0.53$).
-
-\noindent\textbf{Proposition 1 (Taubin Volume Preservation).} \emph{Let $K = D^{-1}W - I$ be the discrete Laplacian operator with eigenvalues $k \in [0, 2]$. Alternating steps with parameters $\lambda > 0$ and $\mu < -\lambda < 0$ yield composite transfer function $f(k) = (1 - \lambda k)(1 - \mu k)$ which attenuates high frequencies without monotonic mesh shrinkage.}
-
-\noindent\emph{Proof.} Expanding the transfer function gives $f(k) = 1 - (\lambda + \mu)k + \lambda\mu k^2$. Because $\mu < -\lambda < 0$, the linear coefficient $-(\lambda + \mu)$ is strictly positive. At low spatial frequencies $k \approx 0$, $f(k) \ge 1$, which counteracts the inward shrinkage ($f(k) < 1, \forall k > 0$) characteristic of classical Laplacian smoothing ($I + \lambda K$). For high frequencies $k > k_{\text{cutoff}}$, $|f(k)| < 1$, filtering out high-frequency voxelization noise while strictly preserving total enclosed volume. \hfill$\blacksquare$
+filter~\cite{taubin1995signal}. The two passes alternate to limit the shrinkage of repeated
+Laplacian smoothing. The filter changes vertex positions, so the enclosed volume can change.
+The implementation also attempts to fill small holes before measuring topology.
 
 \noindent UVs come from a planar view-projection atlas --- the front sheet is the orthographic projection of the visible surface and
 the back sheet is its mirror --- which is exact for the camera-facing half and cheap to bake, at
@@ -563,7 +568,7 @@ gracefully instead of exhausting the 2 GB of the container.
 \subsection{Engine}
 The engine is plain NumPy/SciPy/OpenCV with two ONNX Runtime graphs
 (U\textsuperscript{2}-Net portable, __MB_U2NET__ MB; Depth Anything V2 Small int8,
-__MB_DEPTH__ MB). Inference is CPU-only with two intra-op threads on
+__MB_DEPTH__ MB). The reported evaluation uses CPU inference with two intra-op threads on
 __CPU_DESC__. A draft reconstruction takes
 __TIME_OURS__~s on the two-core machine used here, of which __TIME_RENDER_SHARE__ is preview and
 turntable rendering (Table~\ref{tab:stages}).
@@ -578,9 +583,8 @@ replaceable without touching the product.
 
 \subsection{Studio}
 The web client is a dependency-free ES-module SPA: upload with drag-and-drop, configuration, a live
-stage rail driven by the SSE stream, and a three.js viewer with orbit, wireframe, clay and
-screenshot modes. The landing page and the benchmark page both read their numbers from the same
-JSON that this paper is generated from.
+stage rail driven by generation status updates, and a three.js viewer with orbit, wireframe,
+clay and screenshot modes. The benchmark page reads the saved benchmark summaries.
 
 \section{Experimental Setup}
 \label{sec:exp}
@@ -623,14 +627,16 @@ different protocol would be misleading.
 Each (image, method) pair is run __REPS__ times. Geometry is compared after iterative closest-point
 free canonicalisation: both surfaces are centred, scaled to unit width and rotated into their
 inertial frame with a sign convention, and 20{,}000 points are sampled area-weighted from each.
-Metrics follow standard formal mathematical definitions:
+Write $\delta(p,S)=\min_{q\in S}\|p-q\|_2$ for the distance to the nearest point.
 \begin{align}
-d_{\mathrm{CD}}(S_1, S_2) &= \frac{1}{2|S_1|}\sum_{p\in S_1}\min_{q\in S_2}\|p-q\|_2 + \frac{1}{2|S_2|}\sum_{q\in S_2}\min_{p\in S_1}\|q-p\|_2, \label{eq:cd} \\
-F@\tau &= \frac{2 \cdot P(\tau) \cdot R(\tau)}{P(\tau) + R(\tau)}, \quad P(\tau) = \frac{1}{|S_1|}\sum_{p\in S_1}\mathbb{1}\Big[\min_{q\in S_2}\|p-q\|_2 < \tau\Big], \label{eq:fscore} \\
-\mathrm{IoU}(V_1, V_2) &= \frac{|V_1 \cap V_2|}{|V_1 \cup V_2|}, \quad \mathrm{NC}(S_1, S_2) = \frac{1}{|S_1|}\sum_{p\in S_1} |\langle \mathbf{n}_p, \mathbf{n}_{q^*(p)} \rangle|, \label{eq:nc}
+d_{\mathrm{CD}} &=
+\frac{\sum_{p\in S_1}\delta(p,S_2)}{2|S_1|}
++ \frac{\sum_{q\in S_2}\delta(q,S_1)}{2|S_2|}, \label{eq:cd}\\
+F@\tau &= \frac{2 P(\tau) R(\tau)}{P(\tau) + R(\tau)}, \label{eq:fscore}\\
+\mathrm{IoU} &= \frac{|V_1 \cap V_2|}{|V_1 \cup V_2|}. \label{eq:nc}
 \end{align}
-with $q^*(p) = \arg\min_{q \in S_2} \|p - q\|_2$ denoting the nearest neighbour. Chamfer distance is the mean of both directed mean nearest-neighbour distances; F-score is the
-harmonic mean of precision and recall at $\tau=0.01$; volumetric IoU is computed on a shared
+Precision $P$ and recall $R$ are the fractions of points in each respective cloud whose
+nearest point in the other cloud is within $\tau=0.01$. Volumetric IoU is computed on a shared
 $64^3$ occupancy grid; normal consistency is the mean $|\mathbf{n}_a\cdot\mathbf{n}_b|$ over nearest
 neighbours. For appearance, each mesh is rendered from the pose that best matches the input
 silhouette (searched in $30^\circ$ steps and applied identically to every method) and compared to
@@ -657,9 +663,8 @@ added thickness hurts, the sweep in Table~\ref{tab:sweep} shows it directly: inf
 ($\kappa=0.85$) lowers Chamfer to __CD_BEST__ but also lowers F-score and IoU, so the operating
 point is a choice among measured trade-offs rather than a free win.
 
-Appearance and topology behave differently. __SSIM_SENTENCE__ Watertightness separates the
-methods completely: __WATERTIGHT_SENTENCE__ The difference is a structural guarantee rather
-than a post-hoc repair. __TOPOLOGY_NOTE__ The cost is runtime: __TIME_OURS__~s per image
+Appearance and topology behave differently. __SSIM_SENTENCE__ The measured closure rates
+differ across methods. __WATERTIGHT_SENTENCE__ __TOPOLOGY_NOTE__ The cost is runtime: __TIME_OURS__~s per image
 versus __TIME_TSDF__~s and __TIME_HULL__~s, dominated by preview and turntable rendering
 (Table~\ref{tab:stages}) rather than by reconstruction; disabling the turntable removes most of
 the difference.
@@ -667,7 +672,7 @@ the difference.
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{fig_error_heatmaps.png}
-\caption{3D surface reconstruction error colormaps against analytic ground truth (Cylinder, Sphere, Cone, Prism). Front relief achieves tight geometric agreement ($<0.01$ units), with residual error concentrated along steep silhouette rims.}
+\caption{Surface error relative to analytic reference meshes for four synthetic examples. The colour scale shows the distance in normalized scene units.}
 \label{fig:error_heatmaps}
 \end{figure}
 
@@ -738,11 +743,10 @@ this environment. No number in this paper comes from a source other than our own
 \end{itemize}
 
 \section{Conclusion and Future Work}
-We presented \ours{}, a single-image reconstruction framework whose volumetric formulation makes
-watertightness and silhouette containment structural properties rather than post-processing steps,
-wrapped in a complete product and measured by a harness that regenerates every number in this
-paper. On __N_SCENES__ images the system beats two classical baselines on Chamfer distance,
-F-score and volumetric IoU while remaining CPU-only and fully reproducible.
+We presented \ours{}, a single-image reconstruction framework that uses a silhouette-constrained
+volume and measures topology after meshing. On the synthetic subset of the __N_SCENES__-image
+CPU evaluation, the course method improves Chamfer distance, F-score and volumetric IoU over
+the two classical baselines. The included raw results support these comparisons.
 
 Three directions follow directly. First, the slab prior can be replaced by a learned occupancy or
 SDF prior (a small triplane regressor is the natural candidate) without changing the service, the
@@ -933,5 +937,23 @@ def render_share(stages: list[dict]) -> str:
     return f"{100.0 * render / total:.0f}\\%"
 
 
+def compile_pdf() -> None:
+    tectonic = shutil.which("tectonic")
+    if tectonic:
+        subprocess.run([tectonic, "--keep-logs", "main.tex"], cwd=PAPER, check=True)
+        return
+    pdflatex, bibtex = shutil.which("pdflatex"), shutil.which("bibtex")
+    if not pdflatex or not bibtex:
+        raise SystemExit("Install Tectonic or pdflatex and bibtex to compile the paper.")
+    latex = [pdflatex, "-interaction=nonstopmode", "-halt-on-error", "main.tex"]
+    for command in (latex, [bibtex, "main"], latex, latex):
+        subprocess.run(command, cwd=PAPER, check=True)
+
+
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--pdf", action="store_true", help="also compile the IEEEtran PDF")
+    args = parser.parse_args()
     build()
+    if args.pdf:
+        compile_pdf()

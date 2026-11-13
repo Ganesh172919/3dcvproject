@@ -39,15 +39,14 @@ benchmark harness can drive the *same* reconstruction code the product runs.
 | `recon/export.py` | GLB, glTF-separate, OBJ+MTL, PLY, STL writers |
 | `recon/pipeline.py` | stage orchestration, timings, manifest assembly |
 
-Invariants the engine guarantees, stated once and tested:
+How the engine constrains and records the result:
 
-1. **Watertight by construction.** The thickness field is floored at `min_thickness` on every
-   silhouette pixel, so the occupancy volume is closed and `marching_cubes` returns a closed
-   surface. Nothing downstream fills holes.
-2. **Silhouette containment.** Occupancy is only defined inside the silhouette prism, so the
-   isosurface cannot extend outside the projected outline.
-3. **Reproducibility.** Same image + same `PipelineConfig` ⇒ same `config_hash` and the same
-   triangle count. The grid resolution is *calibrated* by a 64³ probe, never sampled randomly.
+1. **Mesh closure.** Padding helps keep the extracted surface away from the grid boundary.
+   Cleanup attempts to fill small holes, and the topology check records whether the mesh is closed.
+2. **Silhouette constraint.** Occupied voxels project inside the sampled mask. Interpolation and
+   mesh smoothing can shift the final outline.
+3. **Configuration.** The manifest records the settings through `config_hash`. A 64³ probe
+   estimates the grid resolution for the target triangle count.
 4. **Self-description.** Every run writes `manifest.json`: config hash, per-stage timings, mesh
    statistics (faces, vertices, boundary/non-manifold edges, Euler characteristic, watertight
    flag), texture size, UV coverage and the limitations that apply to that run.

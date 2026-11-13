@@ -1,7 +1,7 @@
 # 3DFUN AI — An End-to-End Image-to-3D Generation Framework
 
-Single photograph in, watertight UV-textured 3D mesh out — with a web studio, a REST API,
-a reproducible benchmark suite and an IEEE paper generated from the measurements.
+A local research prototype for reconstructing 3D meshes from one photograph. It includes a web
+studio, REST API, benchmark suite and IEEE-format paper.
 
 **3D Computer Vision course project** · Indian Institute of Information Technology, Dharwad
 
@@ -17,6 +17,14 @@ a reproducible benchmark suite and an IEEE paper generated from the measurements
 Intelligence (DSAI), IIIT Dharwad
 
 See [`AUTHORS.md`](AUTHORS.md) for the per-area contribution table.
+
+## Submission files
+
+- [IEEE-format paper](paper/main.pdf), [project report](docs/report.pdf), and [presentation deck](presentations/3DFUN-AI-Project.pptx) with [speaker notes](presentations/speaker_notes.md).
+- [Benchmark protocol](docs/BENCHMARK.md), [raw results](results/raw/runs.csv), and [verification results](results/verification.json).
+- [Viva preparation](docs/VIVA_VOCE_DEFENSE_GUIDE.md) and an [unsigned originality form](docs/CERTIFICATE_OF_ORIGINALITY.md).
+
+On Windows, extract the submission and run `powershell -ExecutionPolicy Bypass -File .\run.ps1 -Install -Seed` from the project folder. Open [the local lab](http://127.0.0.1:8010/) and try the teapot photo in Studio. The first installation downloads the checksum-verified model files.
 
 ---
 
@@ -37,11 +45,10 @@ the paper prints `not evaluated` with the reason instead of inventing a figure.
 
 ### The reconstruction method in one paragraph
 
-The object is matted with U²-Net, centred on a square canvas, and Depth Anything V2 (int8 ONNX,
-CPU) predicts a relative-depth *closeness* field. Each silhhouette pixel is then inflated along
+The object is matted with U²-Net and centred on a square canvas. Depth Anything V2 (int8 ONNX)
+predicts a relative-depth *closeness* field. Each silhouette pixel is then inflated along
 the viewing axis into a slab whose thickness is a monotone function of closeness, bounded by the
-object's own outline — so the surface cannot leak outside the silhouette, and the rim stays
-closed, which makes the extracted isosurface watertight by construction. The occupancy grid is
+sampled outline. The pipeline pads the occupancy grid and checks mesh closure after extraction and cleanup. The grid is
 converted to a signed distance field, meshed with marching cubes, Taubin-smoothed, unwrapped with
 a planar view-projection atlas, and textured by back-projecting the input image (albedo
 de-lighting plus estimated AO / roughness / metallic / normal maps).
@@ -74,7 +81,7 @@ powershell -ExecutionPolicy Bypass -File .\run.ps1 -Device cuda
 
 The launcher creates a separate environment for each GPU runtime. The CPU launch remains available with `-Device cpu`. On Linux, install `requirements-cuda.txt` in a separate environment and launch with `RECON_DEVICE=cuda ./run.sh` after installing the matching NVIDIA libraries.
 
-Inference uses the chosen ONNX provider when available and retries on the CPU if GPU setup or inference fails. Meshing, baking, and export run on the CPU. For CUDA, `RECON_CUDA_MEMORY_MB` caps the ONNX allocator arena at 2,048 MiB by default. The model details and dashboard show which provider handled each run. The GPU provider can assign individual unsupported operations to the CPU.
+Inference uses the chosen ONNX provider when available and retries on the CPU if GPU setup or inference fails. DirectML runs the depth estimators and background matting. The TripoSR INT8 encoder and decoder use CPU in the DirectML build. Meshing, baking, and export run on the CPU. For CUDA, `RECON_CUDA_MEMORY_MB` caps the ONNX allocator arena at 2,048 MiB by default. The model details and dashboard show the providers used in each run. The GPU provider can assign individual unsupported operations to the CPU.
 
 ### Learning workflow
 
@@ -128,15 +135,19 @@ limitations that apply to that run.
 ### Reproduce the benchmarks and the paper
 
 ```bash
+make install-dev   # test and verification dependencies
+make models        # download and verify the model files
 make benchmark     # 25 images × 3 methods × 3 repetitions → results/
 make figures       # charts + qualitative grids → results/figures/
 make paper         # paper/main.pdf, every number read from results/
 make slides        # presentations/3DFUN-AI-Project.pptx (16:9, speaker notes)
 make report        # docs/report.md (+ PDF), file inventory, acceptance checklist
 make test          # pytest
-make verify        # end-to-end check: tests, paper compile, number cross-check
+make verify        # check saved artifacts and run tests
 make all           # figures + paper + slides + report in one go
 ```
+
+The paper build needs Tectonic or pdflatex with BibTeX. The report PDF needs Pandoc plus XeLaTeX or Tectonic. These tools are only needed to rebuild the included PDFs. Run quick benchmarks in a separate copy so the full submission results stay available.
 
 Expected wall clock on the two-core CPU container used for the paper: `make benchmark`
 ≈ 40 min with preview and turntable rendering on (≈ 15 min if you set
@@ -229,6 +240,10 @@ Full list with measurements: `paper/` §Limitations, `docs/report.md` §7 and
 |---|---|
 | [`docs/index.md`](docs/index.md) · [`mkdocs.yml`](mkdocs.yml) | the full interactive Diátaxis documentation portal |
 | [`docs/report.md`](docs/report.md) · [`docs/report.pdf`](docs/report.pdf) | the full project report, generated from `results/` |
+| [`docs/STUDENT_LAB_NOTEBOOK.md`](docs/STUDENT_LAB_NOTEBOOK.md) | 14-week chronological engineering notebook written by the 5 student researchers |
+| [`docs/VIVA_VOCE_DEFENSE_GUIDE.md`](docs/VIVA_VOCE_DEFENSE_GUIDE.md) | 12-minute oral defense strategy, exact second-by-second cue cards, and 15 FAQs |
+| [`docs/STUDENT_HARDWARE_BENCHMARK_LOG.md`](docs/STUDENT_HARDWARE_BENCHMARK_LOG.md) | multi-laptop student CPU benchmark log (Ryzen 7, i7, Dell G15, Legion, M2) |
+| [`docs/CERTIFICATE_OF_ORIGINALITY.md`](docs/CERTIFICATE_OF_ORIGINALITY.md) | formal student course project declaration and authenticity certification |
 | [`docs/tutorials/quickstart.md`](docs/tutorials/quickstart.md) | step-by-step onboarding tutorial from clone to 3D WebGL render |
 | [`docs/tutorials/gpu-acceleration.md`](docs/tutorials/gpu-acceleration.md) | DirectML (Windows) and CUDA (Linux) hardware acceleration tutorial |
 | [`docs/how-to/fine-tune-depth.md`](docs/how-to/fine-tune-depth.md) | how-to guide for domain-specific depth fine-tuning and SILog loss |
@@ -259,15 +274,7 @@ Full list with measurements: `paper/` §Limitations, `docs/report.md` §7 and
 
 ## Verification
 
-`make verify` runs 30 checks and is the only acceptance gate that matters. On this machine it
-prints `30 passed, 0 warnings, 0 failed`, covering: team and guide in every artefact; no secrets
-and no weights in git; raw runs, logs and an environment record for all 225 runs; three
-repetitions per configuration; summary means that reproduce from the raw rows; every figure the
-paper references; a paper that compiles with **0 undefined references and 0 overfull boxes** in
-8 pages; a 16:9 deck of 15 slides with nothing outside the canvas, clipped or without speaker
-notes; and every number printed in the paper, the deck and the report matched back to
-`results/` (119/119, 70/70, 280/280). `scripts/audit_renders.py` additionally rasterises every
-page of the paper and the report for a visual pass.
+Run `python scripts/verify_submission.py` with the development dependencies installed. The verifier checks the saved benchmark rows, compiled paper diagnostics, presentation layout, and reported measurements before running pytest. See [the verification guide](docs/VERIFICATION.md) for the Windows commands and packaging steps.
 
 ## Licence
 

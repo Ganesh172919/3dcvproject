@@ -71,7 +71,7 @@
   },
   {
     "status": "PASS",
-    "check": "no overfull hboxes",
+    "check": "paper has no oversized boxes or floats",
     "detail": "clean"
   },
   {
@@ -117,12 +117,12 @@
   {
     "status": "PASS",
     "check": "numbers in the paper trace to results/",
-    "detail": "120/120 matched"
+    "detail": "119/119 matched"
   },
   {
     "status": "PASS",
     "check": "numbers in the report trace to results/",
-    "detail": "281/281 matched"
+    "detail": "280/280 matched"
   },
   {
     "status": "PASS",

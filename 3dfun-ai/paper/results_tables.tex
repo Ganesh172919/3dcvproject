@@ -2,9 +2,10 @@
 \centering
 \caption{Quantitative comparison on the evaluation set. Geometric metrics are computed on the 13 scenes that have reference meshes (ICT-normalised, object width = 1); SSIM and silhouette IoU are computed on every image; time is wall clock per image on the CPU used for the experiments. Mean $\pm$ standard deviation over repeated runs.}
 \label{tab:main}
+\small\setlength{\tabcolsep}{2pt}
 \begin{tabular}{lccccccc}
 \toprule
-Method & Chamfer $\downarrow$ & F-score@1\% $\uparrow$ & IoU $\uparrow$ & NC $\uparrow$ & SSIM $\uparrow$ & Silhouette IoU $\uparrow$ & Time (s) \\
+Method & Chamfer $\downarrow$ & F-score@1\% $\uparrow$ & IoU $\uparrow$ & NC $\uparrow$ & SSIM $\uparrow$ & Mask IoU $\uparrow$ & Time (s) \\
 \midrule
 3DFUN AI (ours) & 0.0639 $\pm$ 0.0372 & 0.148 $\pm$ 0.131 & 0.055 $\pm$ 0.042 & 0.796 $\pm$ 0.122 & 0.444 $\pm$ 0.079 & 0.426 $\pm$ 0.242 & 27.73 $\pm$ 5.26 \\
 TSDF fusion & 0.0962 $\pm$ 0.0268 & 0.053 $\pm$ 0.036 & 0.027 $\pm$ 0.023 & 0.607 $\pm$ 0.161 & 0.423 $\pm$ 0.072 & 0.436 $\pm$ 0.215 & 1.43 $\pm$ 0.24 \\
@@ -17,16 +18,17 @@ Visual hull & 0.0728 $\pm$ 0.0231 & 0.098 $\pm$ 0.053 & 0.038 $\pm$ 0.017 & 0.71
 \centering
 \caption{Ablation of the proposed pipeline: one setting changed at a time, everything else identical, evaluated on the scenes with reference meshes. Mean $\pm$ std. Timing comparison excludes preview rendering.}
 \label{tab:ablation}
+\small\setlength{\tabcolsep}{3pt}
 \begin{tabular}{p{17mm}ccc}
 \toprule
 Config. & CD$\downarrow$ & F$\uparrow$ & IoU$\uparrow$ \\
 \midrule
 Full pipeline & 0.0639 $\pm$ 0.0382 & 0.148 $\pm$ 0.135 & 0.055 $\pm$ 0.043 \\
-Without constant slab core ($f{=}0$) & 0.1016 $\pm$ 0.0339 & 0.071 $\pm$ 0.037 & 0.023 $\pm$ 0.007 \\
-Without depth modulation ($g{=}0$) & 0.0811 $\pm$ 0.0264 & 0.112 $\pm$ 0.087 & 0.041 $\pm$ 0.029 \\
-Thin solids ($0.35W$) & 0.0910 $\pm$ 0.0290 & 0.102 $\pm$ 0.070 & 0.036 $\pm$ 0.028 \\
-Without Taubin smoothing & 0.0639 $\pm$ 0.0383 & 0.148 $\pm$ 0.134 & 0.055 $\pm$ 0.044 \\
-Coarse volumetric grid ($64^3$) & 0.0637 $\pm$ 0.0378 & 0.142 $\pm$ 0.127 & 0.054 $\pm$ 0.041 \\
+No core & 0.1016 $\pm$ 0.0339 & 0.071 $\pm$ 0.037 & 0.023 $\pm$ 0.007 \\
+No depth & 0.0811 $\pm$ 0.0264 & 0.112 $\pm$ 0.087 & 0.041 $\pm$ 0.029 \\
+Thin slab & 0.0910 $\pm$ 0.0290 & 0.102 $\pm$ 0.070 & 0.036 $\pm$ 0.028 \\
+No Taubin & 0.0639 $\pm$ 0.0383 & 0.148 $\pm$ 0.134 & 0.055 $\pm$ 0.044 \\
+Coarse grid & 0.0637 $\pm$ 0.0378 & 0.142 $\pm$ 0.127 & 0.054 $\pm$ 0.041 \\
 \bottomrule
 \end{tabular}
 \end{table}

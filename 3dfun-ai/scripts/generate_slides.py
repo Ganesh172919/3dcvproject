@@ -1,5 +1,10 @@
 """Generate the 16:9 project deck (12-15 slides) from ``results/`` only.
 
+Course: 3D Computer Vision Course Project · IIIT Dharwad
+Supervisor: Dr. Shirshendu Layek (Dept. of DSAI)
+Authors: J Ganesh (23BDS024), M Jagadeshwar (23BDS033), B Varshith (23BDS011),
+         Pranav Kashyap (23BCS098), C Sai Aravind (23BDS075)
+
     python3 scripts/generate_slides.py
 
 Writes ``presentations/3DFUN-AI-Project.pptx`` (editable, python-pptx) and
@@ -301,16 +306,15 @@ def build() -> None:
     textbox(slide, Inches(0.95), Inches(4.95), Inches(11.4), Inches(0.4),
             "Our answer", size=12, colour=TEAL, bold=True)
     textbox(slide, Inches(0.95), Inches(5.3), Inches(11.4), Inches(0.8),
-            "Keep one learned component (monocular depth) and resolve the ambiguity with two "
-            "priors a reader can check by hand: the object silhouette and approximate symmetry. "
-            "The result is watertight by construction and runs in "
-            f"{f(ours.get('seconds_mean'), 1)} s on two CPU cores.",
+            "Use learned matting and depth with two geometric priors: the object silhouette "
+            "and approximate symmetry. On the reference CPU, the mean runtime was "
+            f"{f(ours.get('seconds_mean'), 1)} s per run.",
             size=14, line_spacing=1.2)
     notes(slide, "[Speaker: J Ganesh (23BDS024) | 0:45 - 1:30] Monocular 3D reconstruction is fundamentally ill-posed: any single view captures "
                  "only the visible front surface, leaving the back surface, interior, and occluded concavities "
                  "unobserved. Deep generative diffusion models require massive VRAM and hallucinate unpredictable backs. "
                  "Our approach introduces two mathematically verifiable priors: a silhouette prism constraint and "
-                 "monotonic distance-to-boundary inflation that guarantees watertightness in seconds on CPU.")
+                 "depth-dependent thickness. The pipeline then measures mesh closure after cleanup.")
 
     # 3 ---------------------------------------------------------------- motivation
     slide = new_slide(prs)
@@ -339,8 +343,8 @@ def build() -> None:
                 size=22, bold=True, colour=TEAL, align=PP_ALIGN.RIGHT)
     notes(slide, "[Speaker: J Ganesh (23BDS024) | 1:30 - 2:15] We designed 3DFUN AI around strict accessibility constraints: zero GPU dependency "
                  "in the target runtime. Using Depth Anything V2 Small quantized to INT8 (27 MB) and U²-Net portable (4.6 MB), "
-                 "our entire pipeline fits within 2 GB of RAM and executes in under 25 seconds on a standard dual-core CPU. "
-                 "Notice the four numbers on the right: all read dynamically from our benchmark results. Handing over to Jagadeshwar for Part 2.")
+                 "the evaluated pipeline runs on the reference dual-core CPU. "
+                 "The right side shows the measured runtime including rendering, mean peak RSS, triangle count and closure rate.")
 
     # 4 ---------------------------------------------------------------- related work
     slide = new_slide(prs)
@@ -428,22 +432,22 @@ def build() -> None:
         textbox(slide, Inches(3.3), y + Inches(0.15), Inches(5.3), Inches(0.4), body,
                 size=12, colour=INK)
     rect(slide, Inches(8.9), Inches(1.85), Inches(3.8), Inches(3.2), fill=PANEL, radius=True)
-    textbox(slide, Inches(9.15), Inches(2.05), Inches(3.3), Inches(0.4), "Two structural "
-            "guarantees", size=13, bold=True, colour=TEAL)
+    textbox(slide, Inches(9.15), Inches(2.05), Inches(3.3), Inches(0.4), "What the priors constrain",
+            size=13, bold=True, colour=TEAL)
     textbox(slide, Inches(9.15), Inches(2.55), Inches(3.35), Inches(2.4),
-            "1. The solid is closed at the rim (t ≥ t_min on the silhouette), so the isosurface "
-            "is watertight without hole filling.\n\n"
-            "2. The solid lives inside the silhouette prism, so the surface cannot leak outside "
-            "the projected outline — the classic failure of depth back-projection.",
+            "1. The grid is padded to keep the zero crossing away from the boundary. "
+            "The output mesh is checked for closure.\n\n"
+            "2. Occupied voxels project inside the sampled mask. Interpolation and smoothing "
+            "can shift the final outline.",
             size=11.5, colour=MUTED, line_spacing=1.2)
     textbox(slide, Inches(0.62), Inches(6.45), Inches(8.0), Inches(0.6),
-            f"Resolution is calibrated, not guessed: a 64³ probe solves the grid that lands on "
-            f"{f(ours.get('triangles_mean'), 0)} triangles, so decimation never breaks topology.",
+            f"A 64³ probe estimates the resolution needed for the face budget. "
+            f"The measured output averaged {f(ours.get('triangles_mean'), 0)} triangles.",
             size=12, colour=MUTED)
     notes(slide, "[Speaker: M Jagadeshwar (23BDS033) | 3:45 - 4:45] The reconstruction pipeline consists of 6 stages: 1) U²-Net foreground matting, "
                  "2) Depth Anything V2 monocular depth, 3) bilateral symmetry enforcement, 4) monotonic volumetric inflation "
                  "via Euclidean Distance Transform, 5) Marching Cubes and Taubin smoothing, and 6) PBR texture baking. "
-                 "We guarantee watertightness without hole filling by construction, bounded inside the silhouette prism. "
+                 "The code attempts to fill small holes before validating the mesh. "
                  "Handing over to Varshith for Part 3.")
 
     # 7 ---------------------------------------------------------------- dataset & metrics
@@ -515,15 +519,14 @@ def build() -> None:
         f"F-score and IoU favour our method because the slab keeps volume behind the visible "
         f"surface: {f(ours.get('f_score_mean'), 3)} and {f(ours.get('iou_mean'), 3)} against "
         f"{f(hull.get('f_score_mean'), 3)} and {f(hull.get('iou_mean'), 3)} for the hull.",
-        f"Visual hull keeps the best SSIM ({f(hull.get('ssim_mean'), 3)}) because it reproduces "
-        "the input silhouette by construction; ours is "
-        f"{f(ours.get('ssim_mean'), 3)}.",
+        f"Mean SSIM is {f(ours.get('ssim_mean'), 3)} for the course method and "
+        f"{f(hull.get('ssim_mean'), 3)} for the visual hull.",
         f"Cost: {f(ours.get('seconds_mean'), 1)} s against {f(hull.get('seconds_mean'), 2)} s, "
         "dominated by preview and turntable rendering rather than reconstruction.",
     ], size=12.5, spacing=7)
     notes(slide, "[Speaker: B Varshith (23BDS011) | 5:30 - 6:30] Read the table row by row, then present the F-score bar chart on the right. "
                  "Highlight where 3DFUN AI leads: F-score and Volumetric IoU due to closed-slab inflation. "
-                 "Then state plainly where we lose: SSIM and runtime due to turntable rendering. "
+                 "Explain the higher end-to-end runtime, which includes preview rendering. "
                  "Stress that all metrics were recorded across 3 repeated runs per scene on identical hardware.")
 
     # 9 ---------------------------------------------------------------- charts
@@ -582,7 +585,7 @@ def build() -> None:
             line_spacing=1.2)
     notes(slide, "[Speaker: Pranav Kashyap (23BCS098) | 7:30 - 8:30] Thank you Varshith. Our ablation isolates every pipeline stage: removing the slab core causes the steepest "
                  "Chamfer penalty and destroys watertightness; removing the depth term creates a flat silhouette plaque; "
-                 "and Taubin smoothing eliminates voxel staircase noise while preserving mesh volume without shrinkage. "
+                 "and Taubin smoothing reduces voxel staircase artifacts while limiting shrinkage. "
                  "The thickness sweep rigorously confirms κ = 0.70 as our optimal empirical setting.")
 
     # 11 --------------------------------------------------------------- qualitative
@@ -597,7 +600,7 @@ def build() -> None:
     bullets(slide, Inches(8.05), Inches(2.25), Inches(4.65), Inches(3.1), [
         "Visual Hull: Extrudes flat prism walls without curvature or surface relief.",
         "TSDF Fusion: Suffers boundary tears, missing backs and open non-manifold rims.",
-        "3DFUN AI (Ours): Depth-carved front relief with guaranteed watertight backside.",
+        "Course pipeline: Front relief from estimated depth. Hidden geometry is inferred.",
         "Error Heatmaps: Quantifies lower bidirectional metric deviation vs reference surfaces.",
         "Known Limit: Occluded hollow cavities are filled by silhouette constraint.",
     ], size=11, spacing=6)
@@ -607,7 +610,7 @@ def build() -> None:
             size=10, colour=MUTED, line_spacing=1.2)
     notes(slide, "[Speaker: Pranav Kashyap (23BCS098) | 8:30 - 9:30] In qualitative evaluation under identical canonical poses: Visual Hull produces extruded "
                  "prismatic blocks with zero curvature; TSDF suffers from open edges and torn boundaries; 3DFUN AI preserves "
-                 "front surface relief while producing closed, watertight solids. Acknowledged failure: hollow interiors are filled.")
+                 "front surface relief in these examples. Occluded hollow interiors can be filled by the slab prior.")
 
     # 12 --------------------------------------------------------------- demo screenshot
     slide = new_slide(prs)
@@ -623,14 +626,13 @@ def build() -> None:
                 "docs/screenshots/studio.png", size=13, colour=MUTED)
     bullets(slide, Inches(9.05), Inches(1.9), Inches(3.7), Inches(3.4), [
         "FastAPI service: JWT auth, rate limits, credit ledger, job state machine.",
-        "Server-sent progress events with sequence numbers and replay.",
-        "Viewer: orbit, wireframe, clay, screenshot; GLB / OBJ / PLY download.",
-        "Landing and benchmark pages read the same JSON that this deck is built from.",
+        "Studio polls generation status and shows progress for each stage.",
+        "Orbit the mesh in the viewer and download a GLB or another selected format.",
+        "The Experiment notebook compares runs on the same image and exports CSV.",
     ], size=12.5, spacing=10)
-    notes(slide, "[Speaker: Pranav Kashyap (23BCS098) | 9:30 - 10:15] Demonstrating the full-stack system: a single-page Three.js WebGL application "
-                 "with PBR, Normals, Wireframe, Clay, and Depth Cloud modes, paired with real-time SSE progress streaming. "
-                 "Users can interact with split 2D/3D sliders, inspect bounding dimensions, and export models in GLB, OBJ, PLY, and STL. "
-                 "Handing over to Sai Aravind for Part 5.")
+    notes(slide, "[Speaker: Pranav Kashyap (23BCS098) | 9:30 - 10:15] Use the sample photo to explain "
+                 "the upload, engine selection, and progress stages. Orbit a completed mesh, then show the export actions "
+                 "and the Experiment notebook.")
 
     # 13 --------------------------------------------------------------- limitations
     slide = new_slide(prs)
@@ -672,7 +674,7 @@ def build() -> None:
            speaker="C Sai Aravind (23BDS075) [Slides 13–15]")
     table(slide, Inches(0.62), Inches(1.9), Inches(6.2), [
         ["Delivered", "Evidence"],
-        ["End-to-end engine", "six stages, watertight output, manifest per run"],
+        ["End-to-end engine", "surface extraction, topology check, run manifest"],
         ["REST service + studio", "8 routers, SSE progress, WebGL viewer"],
         ["Benchmark harness", f"{scenes.get('total', 'n/a')} images, 2 baselines run, 3 repeats"],
         ["Paper and deck", "IEEEtran PDF, 15 slides, all numbers generated"],
@@ -690,9 +692,9 @@ def build() -> None:
     textbox(slide, Inches(0.62), Inches(6.4), Inches(12.1), Inches(0.6),
             "Reproduce everything with:  make benchmark  →  make figures  →  make paper  →  "
             "make slides  →  make verify", size=12.5, colour=TEAL)
-    notes(slide, "[Speaker: C Sai Aravind (23BDS075) | 11:00 - 11:30] In conclusion, we delivered a complete, watertight, accessible single-image 3D platform. "
+    notes(slide, "[Speaker: C Sai Aravind (23BDS075) | 11:00 - 11:30] The prototype generates meshes and records their topology. "
                  "Future directions include learned occupancy regressors for complex backs and conformal UV unwrapping. "
-                 "The entire submission is fully reproducible with four make commands.")
+                 "The README gives the commands for reproducing the benchmark and rebuilding the deliverables.")
 
     # 15 --------------------------------------------------------------- contributions + refs
     slide = new_slide(prs)

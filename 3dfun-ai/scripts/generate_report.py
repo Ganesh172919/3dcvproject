@@ -1,5 +1,10 @@
 """Generate the project report (Markdown + PDF) from ``results/`` only.
 
+Course: 3D Computer Vision Course Project · IIIT Dharwad
+Supervisor: Dr. Shirshendu Layek (Dept. of DSAI)
+Authors: J Ganesh (23BDS024), M Jagadeshwar (23BDS033), B Varshith (23BDS011),
+         Pranav Kashyap (23BCS098), C Sai Aravind (23BDS075)
+
     python3 scripts/generate_report.py
 
 Writes ``docs/report.md`` and, if pandoc/LaTeX are available, ``docs/report.pdf``.
@@ -14,6 +19,7 @@ import shutil
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 ROOT = Path(__file__).resolve().parents[1]
 RESULTS = ROOT / "results"
@@ -52,29 +58,30 @@ def main_table() -> str:
     rows = read_csv(RESULTS / "summary" / "main_table.csv")
     if not rows:
         return "_not evaluated --- run `make benchmark` first._\n"
-    head = ("| Method | Chamfer down | F-score@1% up | IoU up | NC up | SSIM up | Silhouette IoU up "
-            "| Time (s) |\n|---|---|---|---|---|---|---|---|\n")
-    body = ""
+    geometry = ("| Method | Chamfer ↓ | F-score@1% ↑ | IoU ↑ | Normal consistency ↑ |\n"
+                "|---|---|---|---|---|\n")
+    appearance = ("| Method | SSIM ↑ | Silhouette IoU ↑ | Time (s) |\n"
+                  "|---|---|---|---|\n")
     for r in rows:
-        body += (f"| **{LABELS.get(r['method'], r['method'])}** | "
-                 f"{f(r.get('chamfer_mean'))} ± {f(r.get('chamfer_std'))} | "
-                 f"{f(r.get('f_score_mean'), 3)} ± {f(r.get('f_score_std'), 3)} | "
-                 f"{f(r.get('iou_mean'), 3)} ± {f(r.get('iou_std'), 3)} | "
-                 f"{f(r.get('normal_consistency_mean'), 3)} | "
-                 f"{f(r.get('ssim_mean'), 3)} ± {f(r.get('ssim_std'), 3)} | "
-                 f"{f(r.get('silhouette_iou_mean'), 3)} | "
-                 f"{f(r.get('seconds_mean'), 2)} ± {f(r.get('seconds_std'), 2)} |\n")
-    return head + body
+        label = LABELS.get(r["method"], r["method"])
+        geometry += (f"| {label} | {f(r.get('chamfer_mean'))} ± {f(r.get('chamfer_std'))} | "
+                     f"{f(r.get('f_score_mean'), 3)} ± {f(r.get('f_score_std'), 3)} | "
+                     f"{f(r.get('iou_mean'), 3)} ± {f(r.get('iou_std'), 3)} | "
+                     f"{f(r.get('normal_consistency_mean'), 3)} |\n")
+        appearance += (f"| {label} | {f(r.get('ssim_mean'), 3)} ± {f(r.get('ssim_std'), 3)} | "
+                       f"{f(r.get('silhouette_iou_mean'), 3)} | "
+                       f"{f(r.get('seconds_mean'), 2)} ± {f(r.get('seconds_std'), 2)} |\n")
+    return geometry + "\n" + appearance
 
 
 def ablation_table() -> str:
     rows = read_csv(RESULTS / "summary" / "ablation_table.csv")
     if not rows:
         return "_not evaluated._\n"
-    out = "| Configuration | Chamfer down | F-score up | IoU up | Normal consistency up |\n|---|---|---|---|---|\n"
+    out = "| Configuration | Chamfer down | F-score up | IoU up |\n|---|---|---|---|\n"
     for r in rows:
-        out += (f"| {r['config']} | {f(r.get('chamfer_mean'))} | {f(r.get('f_score_mean'), 3)} | "
-                f"{f(r.get('iou_mean'), 3)} | {f(r.get('normal_consistency_mean'), 3)} |\n")
+        out += (f"| {r['config'].replace('_', ' ')} | {f(r.get('chamfer_mean'))} | "
+                f"{f(r.get('f_score_mean'), 3)} | {f(r.get('iou_mean'), 3)} |\n")
     return out
 
 
@@ -94,11 +101,14 @@ def per_scene_table() -> str:
     rows = read_csv(RESULTS / "summary" / "per_scene.csv")
     if not rows:
         return "_not evaluated (run `make benchmark`)._\n"
-    out = ("| Scene | Method | Chamfer | F-score | IoU | SSIM | Time (s) | Watertight |\n"
+    out = ("Dashes mark geometric metrics unavailable for photographs.\n\n"
+           "| Scene | Method | Chamfer | F-score | IoU | SSIM | Time (s) | Closed |\n"
            "|---|---|---|---|---|---|---|---|\n")
+    short_names = {"proposed": "Course", "tsdf": "TSDF", "visual_hull": "Visual hull"}
     for r in rows:
-        out += (f"| {r['entry_id']} | {LABELS.get(r['method'], r['method'])} | "
-                f"{f(r.get('chamfer'))} | {f(r.get('f_score'), 3)} | {f(r.get('iou'), 3)} | "
+        scene = r["entry_id"].replace("/", " / ").replace("_", " ")
+        out += (f"| {scene} | {short_names.get(r['method'], r['method'])} | "
+                f"{f(r.get('chamfer'), default='–')} | {f(r.get('f_score'), 3, '–')} | {f(r.get('iou'), 3, '–')} | "
                 f"{f(r.get('ssim'), 3)} | {f(r.get('seconds'), 2)} | "
                 f"{f(r.get('watertight_pct'), 0)}% |\n")
     return out
@@ -118,19 +128,19 @@ def failure_section() -> str:
     return out
 
 
-def theoretical_proofs() -> str:
+def method_notes() -> str:
     return """
-### 2.1 Theoretical Formulations & Proofs
+### 2.1 What the geometry constrains
 
-**Lemma 1 (Watertightness of Discrete Level Set).**  
-*Let $\\Omega = [-1,1]^3 \\subset \\mathbb{R}^3$ be a compact domain, and $\\mathcal{O}$ be defined by the bounded occupancy indicator with $t_{\\min} > 0$ and $\\mathcal{O} \\cap \\partial\\Omega = \\emptyset$. Then the isosurface $\\mathcal{M} = \\phi^{-1}(0)$ extracted via regular marching cubes is a closed, orientable 2-manifold with empty boundary ($\\partial\\mathcal{M} = \\emptyset$).*
+**Grid boundary.** Positive signed distance along the outside of the grid keeps the interpolated
+zero set away from that boundary. The pipeline pads the grid, attempts to fill small holes during
+cleanup, and measures watertightness on the resulting mesh.
 
-*Proof.* Because $t(x,y) \\ge t_{\\min} > 0$ everywhere on the foreground mask $\\{\\alpha > 0.5\\}$, the interior volume $\\mathcal{O}^\\circ$ is non-empty. With boundary padding enforcing $\\operatorname{dist}(\\mathcal{O}, \\partial\\Omega) \\ge \\delta > 0$, the signed distance satisfies $\\phi(x,y,z) = \\mathrm{EDT}(\\Omega\\setminus\\mathcal{O}) - \\mathrm{EDT}(\\mathcal{O}) \\ge \\delta > 0$ for all boundary voxels $(x,y,z) \\in \\partial\\Omega$. Consequently, the zero-crossing level set $\\phi^{-1}(0)$ is strictly interior to the volume $\\Omega$. Under the standard 256-entry marching cubes lookup table on regular Cartesian cubic lattices, boundary cell faces have uniform positive signs and produce zero surface facets. All extracted triangular facets connect along shared internal edges, guaranteeing zero boundary edges ($\\partial\\mathcal{M} = \\emptyset$) and complete watertightness without post-hoc hole-filling heuristics. $\\blacksquare$
+**Silhouette.** The occupied voxels project inside the sampled mask. Interpolation and smoothing
+can move the extracted surface, so projected agreement is measured with silhouette IoU.
 
-**Proposition 1 (Taubin Volume Preservation Transfer Function).**  
-*Let $K = D^{-1}W - I$ be the discrete Laplacian operator with eigenvalues $k \\in [0, 2]$. Alternating steps with parameters $\\lambda > 0$ and $\\mu < -\\lambda < 0$ yield transfer function $f(k) = (1 - \\lambda k)(1 - \\mu k)$ which acts as a low-pass filter without mesh shrinkage.*
-
-*Proof.* Expanding the transfer function gives $f(k) = 1 - (\\lambda + \\mu)k + \\lambda\\mu k^2$. Because $\\mu < -\\lambda < 0$, the linear coefficient satisfies $-(\\lambda + \\mu) > 0$. At low spatial frequencies $k \\approx 0$, $f(k) \\ge 1$, which counteracts the monotonic inward shrinkage ($f(k) < 1, \\forall k > 0$) characteristic of classical Laplacian smoothing ($I + \\lambda K$). For high frequencies $k > k_{\\text{cutoff}}$, $|f(k)| < 1$, filtering out high-frequency voxelization noise while strictly preserving total enclosed volume. $\\blacksquare$
+**Smoothing.** Taubin smoothing alternates two passes to limit shrinkage. The enclosed volume
+can still change as vertices move.
 """
 
 
@@ -186,7 +196,7 @@ regenerate with `make benchmark && make figures && make report`.*
 
 3DFUN AI takes one photograph of an object, removes the background, predicts relative depth,
 inflates the silhouette into a closed volumetric solid whose thickness follows that depth, extracts
-a watertight mesh, bakes an albedo and PBR texture set, and returns GLB / OBJ / PLY plus preview
+a triangle mesh, measures its topology, bakes an albedo and PBR texture set, and returns GLB / OBJ / PLY plus preview
 renders. It is served by a FastAPI backend with accounts, credits and job tracking, and a
 dependency-free web studio with a WebGL viewer.
 
@@ -207,16 +217,13 @@ in this document was typed by hand.
    `f = 0.55`, `g = 0.45`, `gamma = 0.85`, `t_min = 0.02`. The constant core f*Tmax keeps the rim closed; the depth term carves the front.
 5. **Field and surface.** phi = EDT(outside) $-$ EDT(inside), Gaussian-smoothed (sigma = 0.8 voxels);
    marching cubes extracts the zero level set; small islands are dropped and Taubin smoothing
-   (12 iterations, lambda = 0.5, mu = -0.53) removes staircase artefacts without shrinking.
+   reduces staircase artefacts.
 6. **Resolution calibration.** A 64^3 probe measures the triangle-count constant, then the grid is
    solved for the requested budget (8 000 triangles) and clipped to [32, 224].
 7. **Atlas and texture.** Planar view-projection UVs; albedo is back-projected and de-lit, ambient
    occlusion comes from local SDF visibility, roughness/metallic/normal maps are derived, and the
    texture is capped by a memory budget.
-{theoretical_proofs()}
-Two consequences are structural, not post-processing: the field is closed on the rim, so the mesh
-is watertight; and the solid lives inside the silhouette prism, so the surface cannot leak outside
-the outline in projection.
+{method_notes()}
 
 ## 3. Evaluation set
 
@@ -251,16 +258,15 @@ protocol would be dishonest.
 
 {main_table()}
 
-Figure: `results/figures/fig_chamfer_bar.png`, plus the qualitative grid
-`results/figures/fig_qualitative.png`.
+See the Chamfer plot and qualitative grid in `results/figures/`.
 
 Reading of the table: on the scenes that have reference geometry the proposed method reaches a
 Chamfer distance of **{f(ours.get('chamfer_mean'))}** against {f(tsdf.get('chamfer_mean'))} for TSDF
 fusion and {f(hull.get('chamfer_mean'))} for the visual hull, and it is the strongest method on
 F-score ({f(ours.get('f_score_mean'), 3)}) and volumetric IoU ({f(ours.get('iou_mean'), 3)}), i.e.
-it recovers solid volume rather than just aligning a thin surface. The visual hull keeps the best
-SSIM ({f(hull.get('ssim_mean'), 3)} against {f(ours.get('ssim_mean'), 3)}) because it reproduces the
-input silhouette by construction. Wall clock is {f(ours.get('seconds_mean'), 2)} s per image against
+the course method overlaps more of the reference volume. The course method has a mean SSIM of
+{f(ours.get('ssim_mean'), 3)} and the visual hull has a mean of {f(hull.get('ssim_mean'), 3)}.
+Wall clock is {f(ours.get('seconds_mean'), 2)} s per image against
 {f(tsdf.get('seconds_mean'), 2)} s and {f(hull.get('seconds_mean'), 2)} s; most of that difference is
 preview and turntable rendering, not reconstruction.
 
@@ -276,10 +282,7 @@ nearest-neighbor queries and mapped to a viridis colormap.
 
 Figure: `results/figures/fig_error_heatmaps.png`.
 
-The colormaps demonstrate that monocular depth guidance yields tight surface agreement (sub-voxel precision)
-across front-facing convex relief (e.g. cylinder mantle, sphere hemisphere, cone slope). Residual geometric
-error concentrates primarily along steep occluding boundaries and silhouette rims where the visual hull
-boundary constraint meets unobserved back-facing geometry.
+The colormaps show where local surface error varies across the selected synthetic examples.
 
 ### 5.4 Ablation
 
@@ -296,14 +299,14 @@ boundary constraint meets unobserved back-facing geometry.
 ## 6. Reproducibility
 
 ```bash
-make install     # Python deps
+make install-dev # Python deps, including the test suite
 make models      # ONNX weights (checksums printed, nothing large in git)
 make seed        # demo database + accounts
 make benchmark   # full evaluation -> results/
 make figures     # figures from results/
 make paper       # paper/main.pdf from results/
 make report      # this document
-make verify      # tests + paper compile + number cross-check
+make verify      # check saved artifacts and run tests
 ```
 
 Environment recorded in `results/environment.json`:
@@ -339,7 +342,7 @@ Environment recorded in `results/environment.json`:
 | `benchmarks/` | dataset generator, metrics, two baselines, harness |
 | `results/` | raw runs, logs, summary CSVs, figures, environment record |
 | `scripts/` | model fetcher, figure/paper/slide/report generators, verifier |
-| `tests/` | 38 tests (API, generation flow, real-engine smoke) |
+| `tests/` | pytest suite covering the API, job lifecycle and reconstruction |
 
 ## 9. Team Contributions & 12-Minute Defense Slide Allocation
 
@@ -359,30 +362,26 @@ IIIT Dharwad, for supervising this project and for insisting on measurement over
     (DOCS / "report.md").write_text(md, encoding="utf-8")
     print("wrote docs/report.md")
 
-    if shutil.which("pandoc"):
-        engine = "xelatex" if shutil.which("xelatex") else (
-            "pdflatex" if shutil.which("pdflatex") else None)
-        if engine == "pdflatex":
-            # the Markdown uses a few Unicode symbols; map them for 8-bit LaTeX
+    pandoc = shutil.which("pandoc")
+    engine = shutil.which("xelatex") or shutil.which("tectonic")
+    if pandoc and engine:
+        with TemporaryDirectory(dir=DOCS) as tmp:
+            pdf = Path(tmp) / "report.pdf"
             subprocess.run([
-                "pandoc", str(DOCS / "report.md"), "-o", "/tmp/report_body.tex",
-                "-s", "-V", "geometry:margin=2.2cm", "-V", "fontsize=11pt",
-                "--toc", "--number-sections", "-V", "colorlinks=true",
-            ], check=False, capture_output=True)
-        if engine:
-            subprocess.run([
-                "pandoc", str(DOCS / "report.md"), "-o", str(DOCS / "report.pdf"),
+                pandoc, str(DOCS / "report.md"), "-o", str(pdf),
                 f"--pdf-engine={engine}",
                 "-V", "geometry:margin=2.2cm", "-V", "fontsize=11pt",
-                "-V", "colorlinks=true", "--toc", "--number-sections",
-            ], check=False, capture_output=True)
-        if (DOCS / "report.pdf").exists():
-            print("wrote docs/report.pdf")
+                "-V", "colorlinks=true", "--toc", "--metadata=title:3DFUN AI Project Report",
+            ], cwd=tmp, check=True)
+            pdf.replace(DOCS / "report.pdf")
+        print("wrote docs/report.pdf")
+    else:
+        print("PDF build skipped (requires Pandoc and XeLaTeX or Tectonic).")
 
 
 # ------------------------------------------------------------------ inventory
 SKIP_DIRS = {".git", "__pycache__", ".pytest_cache", ".ruff_cache", ".venv", ".venv-directml",
-             "node_modules", "out", ".arena", "dist", "build"}
+             "node_modules", "out", ".arena", "dist", "build", ".venv-cuda", "_photocache"}
 SUFFIX_KIND = {
     ".py": "code", ".js": "code", ".css": "code", ".html": "code", ".sh": "code",
     ".md": "docs", ".txt": "docs", ".tex": "docs", ".bib": "docs",
@@ -398,9 +397,17 @@ def inventory() -> None:
     totals: dict[str, list[int]] = {}
     for dirpath, dirnames, filenames in os.walk(ROOT):
         dirnames[:] = [d for d in dirnames if d not in SKIP_DIRS]
+        if Path(dirpath) == ROOT:
+            dirnames[:] = [d for d in dirnames if d not in {"data", "uploads"}]
         for fname in sorted(filenames):
             path = Path(dirpath) / fname
             rel = path.relative_to(ROOT)
+            if (fname.startswith(".env") and fname != ".env.example") or path.suffix.lower() in {
+                ".onnx", ".part", ".aux", ".bbl", ".blg", ".out", ".sqlite", ".sqlite3", ".db",
+            }:
+                continue
+            if rel.as_posix().startswith(("results/raw/meshes/", "results/renders/")):
+                continue
             kind = SUFFIX_KIND.get(path.suffix.lower(), "other")
             lines = 0
             if kind in {"code", "docs", "data"} and path.stat().st_size < 3_000_000:
@@ -408,7 +415,7 @@ def inventory() -> None:
                     lines = sum(1 for _ in path.open("rb"))
                 except OSError:
                     lines = 0
-            rows.append((str(rel), kind, path.stat().st_size, lines))
+            rows.append((rel.as_posix(), kind, path.stat().st_size, lines))
             totals.setdefault(kind, [0, 0])
             totals[kind][0] += 1
             totals[kind][1] += lines
@@ -417,14 +424,13 @@ def inventory() -> None:
     md = ["# File inventory", "",
           f"Generated by `scripts/generate_report.py` on "
           f"{datetime.now(timezone.utc).strftime('%d %B %Y')}. "
-          f"{len(rows)} files tracked (build products, caches and model weights excluded from "
-          "the line counts).", "",
+          f"{len(rows)} project files listed. Local data, model weights and caches are omitted.", "",
           "| Kind | Files | Lines |", "|---|---|---|"]
     for kind, (count, lines) in sorted(totals.items(), key=lambda kv: -kv[1][0]):
         md.append(f"| {kind} | {count} | {lines:,} |")
     code_lines = totals.get("code", [0, 0])[1] + totals.get("docs", [0, 0])[1]
-    md += ["", f"**Hand-written code and documentation: {code_lines:,} lines.**", "",
-           "## Every tracked file", "", "| Path | Kind | Bytes | Lines |", "|---|---|---|---|"]
+    md += ["", f"**Source and documentation: {code_lines:,} lines.**", "",
+           "## Project files", "", "| Path | Kind | Bytes | Lines |", "|---|---|---|---|"]
     for rel, kind, size, lines in rows:
         md.append(f"| `{rel}` | {kind} | {size:,} | {lines or ''} |")
     (DOCS / "FILE_INVENTORY.md").write_text("\n".join(md) + "\n", encoding="utf-8")
@@ -436,40 +442,38 @@ def checklist() -> None:
     checks = [
         ("Team and guide named in README, AUTHORS.md, paper and deck",
          all((ROOT / p).exists() for p in ("README.md", "AUTHORS.md", "paper/main.tex"))),
-        ("Engine runs end to end and writes GLB/OBJ/PLY + manifest",
+        ("Engine source and export pipeline included",
          (ROOT / "engine/recon/__init__.py").exists()),
-        ("Web app, API and seeded demo data", (ROOT / "app" / "seed.py").exists()),
-        ("Tests present and green", (ROOT / "tests").exists()),
-        ("Evaluation set >= 20 images with licences",
-         (ROOT / "benchmarks" / "data" / "ATTRIBUTION.md").exists()),
-        ("Two baselines implemented and run on identical inputs",
+        ("Web app, API and demo account seed command", (ROOT / "app" / "seed.py").exists()),
+        ("Test suite and submission verifier included", (ROOT / "tests").exists()
+         and (ROOT / "scripts" / "verify_submission.py").exists()),
+        ("Evaluation set manifest and image attribution",
+         (DATA / "ATTRIBUTION.md").exists() and (DATA / "dataset.json").exists()),
+        ("Two baseline implementations and per-run evidence",
          (ROOT / "benchmarks" / "baselines" / "baseline_tsdf.py").exists()
          and (ROOT / "benchmarks" / "baselines" / "baseline_visual_hull.py").exists()
-         and (RESULTS / "raw" / "meshes").exists()),
+         and (RESULTS / "raw" / "runs.csv").exists()),
         ("Raw results, logs and environment record in results/",
          (RESULTS / "raw" / "runs.csv").exists() and (RESULTS / "environment.json").exists()),
         ("Summary tables, ablation and thickness sweep",
          (RESULTS / "summary" / "main_table.csv").exists()
          and (RESULTS / "summary" / "thickness_sweep.csv").exists()),
         ("Figures generated from results/", (RESULTS / "figures").exists()),
-        ("IEEEtran paper with BibTeX and no undefined references",
-         (ROOT / "paper" / "main.tex").exists() and (ROOT / "paper" / "references.bib").exists()),
-        ("16:9 deck with speaker notes",
+        ("Paper PDF, LaTeX source and bibliography",
+         all((ROOT / "paper" / name).exists() for name in ("main.tex", "main.pdf", "references.bib"))),
+        ("Presentation deck",
          (ROOT / "presentations" / "3DFUN-AI-Project.pptx").exists()),
-        ("Project report (Markdown + PDF when pandoc is available)",
-         (DOCS / "report.md").exists()),
+        ("Project report in Markdown and PDF",
+         (DOCS / "report.md").exists() and (DOCS / "report.pdf").exists()),
         ("Reproduce with one command per artefact (`make benchmark|figures|paper|slides|report`)",
          (ROOT / "Makefile").exists()),
-        ("No API keys or private keys in the tree", True),
         ("Large ONNX weights git-ignored and fetched by `make models`",
          (ROOT / ".gitignore").exists() and (ROOT / "scripts" / "fetch_models.py").exists()),
         ("LICENSE, .gitignore, sample input, demo commands",
          all((ROOT / p).exists() for p in ("LICENSE", ".gitignore", "engine/testdata/sneaker.png"))),
-        ("Verifier cross-checks every printed number against results/",
-         (ROOT / "scripts" / "verify_submission.py").exists()),
     ]
     md = ["# Acceptance checklist", "",
-          "Ticked automatically from the files on disk by `make report`.", ""]
+          "This checks which files are present. See results/verification.json for execution results.", ""]
     for label, ok in checks:
         md.append(f"- [{'x' if ok else ' '}] {label}")
     md += ["", "## Reproduce", "", "```bash", "make install && make models && make seed",

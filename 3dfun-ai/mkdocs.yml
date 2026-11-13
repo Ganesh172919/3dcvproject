@@ -1,8 +1,8 @@
 site_name: 3DFUN AI Documentation
 site_description: An End-to-End Image-to-3D Generation Framework (IIIT Dharwad 3DCV Course Project)
 site_author: J Ganesh, M Jagadeshwar, B Varshith, Pranav Kashyap, C Sai Aravind (Guide Dr. Shirshendu Layek)
-repo_url: https://github.com/iiitdwd/3dfun-ai
-repo_name: iiitdwd/3dfun-ai
+repo_url: https://github.com/Ganesh172919/3dcvproject
+repo_name: Ganesh172919/3dcvproject
 
 theme:
   name: material
@@ -42,7 +42,6 @@ markdown_extensions:
       permalink: true
 
 extra_javascript:
-  - https://polyfill.io/v3/polyfill.min.js?features=es6
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 
 nav:
@@ -52,7 +51,6 @@ nav:
       - GPU Acceleration (DirectML / CUDA): tutorials/gpu-acceleration.md
   - How-To Guides:
       - Fine-Tune Depth Estimators: how-to/fine-tune-depth.md
-      - Production Docker Deployment: how-to/deploy-docker.md
       - Export for 3D Printing: how-to/export-3d-printing.md
   - Reference:
       - REST API Specification: reference/api-spec.md
@@ -71,3 +69,8 @@ nav:
       - Technical Report: report.md
       - Acceptance Checklist: ACCEPTANCE_CHECKLIST.md
       - File Inventory: FILE_INVENTORY.md
+  - Student Academic Artifacts:
+      - Student Lab Notebook: STUDENT_LAB_NOTEBOOK.md
+      - Viva-Voce Defense Guide: VIVA_VOCE_DEFENSE_GUIDE.md
+      - Hardware Benchmark Log: STUDENT_HARDWARE_BENCHMARK_LOG.md
+      - Originality form (unsigned): CERTIFICATE_OF_ORIGINALITY.md

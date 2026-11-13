@@ -1,5 +1,10 @@
 """Reproducible benchmark driver for 3DFUN AI.
 
+Course: 3D Computer Vision Course Project · IIIT Dharwad
+Supervisor: Dr. Shirshendu Layek (Dept. of DSAI)
+Authors: J Ganesh (23BDS024), M Jagadeshwar (23BDS033), B Varshith (23BDS011),
+         Pranav Kashyap (23BCS098), C Sai Aravind (23BDS075)
+
 One command runs the whole evaluation and writes every artefact the paper and
 the slide deck consume:
 

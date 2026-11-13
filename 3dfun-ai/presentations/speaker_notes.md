@@ -26,12 +26,12 @@
 ---
 
 ### Slide 2
-[Speaker: J Ganesh (23BDS024) | 0:45 - 1:30] Monocular 3D reconstruction is fundamentally ill-posed: any single view captures only the visible front surface, leaving the back surface, interior, and occluded concavities unobserved. Deep generative diffusion models require massive VRAM and hallucinate unpredictable backs. Our approach introduces two mathematically verifiable priors: a silhouette prism constraint and monotonic distance-to-boundary inflation that guarantees watertightness in seconds on CPU.
+[Speaker: J Ganesh (23BDS024) | 0:45 - 1:30] Monocular 3D reconstruction is fundamentally ill-posed: any single view captures only the visible front surface, leaving the back surface, interior, and occluded concavities unobserved. Deep generative diffusion models require massive VRAM and hallucinate unpredictable backs. Our approach introduces two mathematically verifiable priors: a silhouette prism constraint and depth-dependent thickness. The pipeline then measures mesh closure after cleanup.
 
 ---
 
 ### Slide 3
-[Speaker: J Ganesh (23BDS024) | 1:30 - 2:15] We designed 3DFUN AI around strict accessibility constraints: zero GPU dependency in the target runtime. Using Depth Anything V2 Small quantized to INT8 (27 MB) and U²-Net portable (4.6 MB), our entire pipeline fits within 2 GB of RAM and executes in under 25 seconds on a standard dual-core CPU. Notice the four numbers on the right: all read dynamically from our benchmark results. Handing over to Jagadeshwar for Part 2.
+[Speaker: J Ganesh (23BDS024) | 1:30 - 2:15] We designed 3DFUN AI around strict accessibility constraints: zero GPU dependency in the target runtime. Using Depth Anything V2 Small quantized to INT8 (27 MB) and U²-Net portable (4.6 MB), the evaluated pipeline runs on the reference dual-core CPU. The right side shows the measured runtime including rendering, mean peak RSS, triangle count and closure rate.
 
 ---
 
@@ -49,7 +49,7 @@
 ---
 
 ### Slide 6
-[Speaker: M Jagadeshwar (23BDS033) | 3:45 - 4:45] The reconstruction pipeline consists of 6 stages: 1) U²-Net foreground matting, 2) Depth Anything V2 monocular depth, 3) bilateral symmetry enforcement, 4) monotonic volumetric inflation via Euclidean Distance Transform, 5) Marching Cubes and Taubin smoothing, and 6) PBR texture baking. We guarantee watertightness without hole filling by construction, bounded inside the silhouette prism. Handing over to Varshith for Part 3.
+[Speaker: M Jagadeshwar (23BDS033) | 3:45 - 4:45] The reconstruction pipeline consists of 6 stages: 1) U²-Net foreground matting, 2) Depth Anything V2 monocular depth, 3) bilateral symmetry enforcement, 4) monotonic volumetric inflation via Euclidean Distance Transform, 5) Marching Cubes and Taubin smoothing, and 6) PBR texture baking. The code attempts to fill small holes before validating the mesh. Handing over to Varshith for Part 3.
 
 ---
 
@@ -62,7 +62,7 @@
 ---
 
 ### Slide 8
-[Speaker: B Varshith (23BDS011) | 5:30 - 6:30] Read the table row by row, then present the F-score bar chart on the right. Highlight where 3DFUN AI leads: F-score and Volumetric IoU due to closed-slab inflation. Then state plainly where we lose: SSIM and runtime due to turntable rendering. Stress that all metrics were recorded across 3 repeated runs per scene on identical hardware.
+[Speaker: B Varshith (23BDS011) | 5:30 - 6:30] Read the table row by row, then present the F-score bar chart on the right. Highlight where 3DFUN AI leads: F-score and Volumetric IoU due to closed-slab inflation. Explain the higher end-to-end runtime, which includes preview rendering. Stress that all metrics were recorded across 3 repeated runs per scene on identical hardware.
 
 ---
 
@@ -75,17 +75,17 @@
 *Slides 10 to 12 [7:30 – 10:15] · Ablation, Quality & Web Studio*
 
 ### Slide 10
-[Speaker: Pranav Kashyap (23BCS098) | 7:30 - 8:30] Thank you Varshith. Our ablation isolates every pipeline stage: removing the slab core causes the steepest Chamfer penalty and destroys watertightness; removing the depth term creates a flat silhouette plaque; and Taubin smoothing eliminates voxel staircase noise while preserving mesh volume without shrinkage. The thickness sweep rigorously confirms κ = 0.70 as our optimal empirical setting.
+[Speaker: Pranav Kashyap (23BCS098) | 7:30 - 8:30] Thank you Varshith. Our ablation isolates every pipeline stage: removing the slab core causes the steepest Chamfer penalty and destroys watertightness; removing the depth term creates a flat silhouette plaque; and Taubin smoothing reduces voxel staircase artifacts while limiting shrinkage. The thickness sweep rigorously confirms κ = 0.70 as our optimal empirical setting.
 
 ---
 
 ### Slide 11
-[Speaker: Pranav Kashyap (23BCS098) | 8:30 - 9:30] In qualitative evaluation under identical canonical poses: Visual Hull produces extruded prismatic blocks with zero curvature; TSDF suffers from open edges and torn boundaries; 3DFUN AI preserves front surface relief while producing closed, watertight solids. Acknowledged failure: hollow interiors are filled.
+[Speaker: Pranav Kashyap (23BCS098) | 8:30 - 9:30] In qualitative evaluation under identical canonical poses: Visual Hull produces extruded prismatic blocks with zero curvature; TSDF suffers from open edges and torn boundaries; 3DFUN AI preserves front surface relief in these examples. Occluded hollow interiors can be filled by the slab prior.
 
 ---
 
 ### Slide 12
-[Speaker: Pranav Kashyap (23BCS098) | 9:30 - 10:15] Demonstrating the full-stack system: a single-page Three.js WebGL application with PBR, Normals, Wireframe, Clay, and Depth Cloud modes, paired with real-time SSE progress streaming. Users can interact with split 2D/3D sliders, inspect bounding dimensions, and export models in GLB, OBJ, PLY, and STL. Handing over to Sai Aravind for Part 5.
+[Speaker: Pranav Kashyap (23BCS098) | 9:30 - 10:15] Use the sample photo to explain the upload, engine selection, and progress stages. Orbit a completed mesh, then show the export actions and the Experiment notebook.
 
 ---
 
@@ -98,7 +98,7 @@
 ---
 
 ### Slide 14
-[Speaker: C Sai Aravind (23BDS075) | 11:00 - 11:30] In conclusion, we delivered a complete, watertight, accessible single-image 3D platform. Future directions include learned occupancy regressors for complex backs and conformal UV unwrapping. The entire submission is fully reproducible with four make commands.
+[Speaker: C Sai Aravind (23BDS075) | 11:00 - 11:30] The prototype generates meshes and records their topology. Future directions include learned occupancy regressors for complex backs and conformal UV unwrapping. The README gives the commands for reproducing the benchmark and rebuilding the deliverables.
 
 ---
 

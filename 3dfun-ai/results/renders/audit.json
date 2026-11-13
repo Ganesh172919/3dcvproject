@@ -1,108 +1,108 @@
 [
   {
-    "file": "paper/main.pdf",
+    "file": "paper\\main.pdf",
     "pages": [
       {
         "page": 1,
         "images": 0,
-        "blocks": 23,
-        "render": "results/renders/paper_p01.png"
+        "chars": 5194,
+        "blocks": 1
       },
       {
         "page": 2,
         "images": 0,
-        "blocks": 45,
-        "render": "results/renders/paper_p02.png"
+        "chars": 5120,
+        "blocks": 1
       },
       {
         "page": 3,
         "images": 0,
-        "blocks": 18,
-        "render": "results/renders/paper_p03.png"
+        "chars": 5823,
+        "blocks": 1
       },
       {
         "page": 4,
         "images": 0,
-        "blocks": 38,
-        "render": "results/renders/paper_p04.png"
+        "chars": 4727,
+        "blocks": 1
       },
       {
         "page": 5,
         "images": 0,
-        "blocks": 28,
-        "render": "results/renders/paper_p05.png"
+        "chars": 5171,
+        "blocks": 1
       },
       {
         "page": 6,
         "images": 0,
-        "blocks": 23,
-        "render": "results/renders/paper_p06.png"
+        "chars": 4289,
+        "blocks": 1
       },
       {
         "page": 7,
         "images": 1,
-        "blocks": 0,
-        "render": "results/renders/paper_p07.png"
+        "chars": 694,
+        "blocks": 1
       },
       {
         "page": 8,
         "images": 3,
-        "blocks": 6,
-        "render": "results/renders/paper_p08.png"
+        "chars": 876,
+        "blocks": 1
       }
     ],
     "problems": []
   },
   {
-    "file": "docs/report.pdf",
+    "file": "docs\\report.pdf",
     "pages": [
       {
         "page": 1,
         "images": 0,
-        "blocks": 12,
-        "render": "results/renders/report_p01.png"
+        "chars": 2615,
+        "blocks": 1
       },
       {
         "page": 2,
         "images": 0,
-        "blocks": 11,
-        "render": "results/renders/report_p02.png"
+        "chars": 2951,
+        "blocks": 1
       },
       {
         "page": 3,
         "images": 0,
-        "blocks": 21,
-        "render": "results/renders/report_p03.png"
+        "chars": 1887,
+        "blocks": 1
       },
       {
         "page": 4,
         "images": 0,
-        "blocks": 99,
-        "render": "results/renders/report_p04.png"
+        "chars": 1931,
+        "blocks": 1
       },
       {
         "page": 5,
         "images": 0,
-        "blocks": 98,
-        "render": "results/renders/report_p05.png"
+        "chars": 1940,
+        "blocks": 1
       },
       {
         "page": 6,
         "images": 0,
-        "blocks": 47,
-        "render": "results/renders/report_p06.png"
+        "chars": 1818,
+        "blocks": 1
       },
       {
         "page": 7,
         "images": 0,
-        "blocks": 16,
-        "render": "results/renders/report_p07.png"
+        "chars": 2117,
+        "blocks": 1
       },
       {
         "page": 8,
         "images": 0,
-        "blocks": 6,
-        "render": "results/renders/report_p08.png"
+        "chars": 727,
+        "blocks": 1
       }
     ],
     "problems": []

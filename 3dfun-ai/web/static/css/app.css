@@ -424,6 +424,11 @@ table.tbl .num { text-align: right; font-variant-numeric: tabular-nums; font-fam
 .experiment-photo { max-width: 480px; }
 .experiment-reference { display: flex; gap: 10px; align-items: center; color: var(--text-2); font-size: 13px; }
 .experiment-reference img { width: 48px; height: 48px; object-fit: contain; border-radius: 8px; background: var(--bg-2); }
+.experiment-guide { border-top: 1px solid var(--border-soft); padding-top: 12px; font-size: 14px; }
+.experiment-guide summary { width: fit-content; cursor: pointer; font-weight: 650; }
+.experiment-guide p, .experiment-guide dl { max-width: 78ch; }
+.experiment-guide dt { font-weight: 650; }
+.experiment-guide dd { margin: 0 0 8px; color: var(--text-2); }
 .chat-transcript { display: grid; align-content: start; gap: 12px; max-height: 48dvh; overflow: auto; }
 .chat-transcript:empty { display: none; }
 .chat-message { padding: 12px; border: 1px solid var(--border); border-radius: 9px; background: var(--bg-2); }

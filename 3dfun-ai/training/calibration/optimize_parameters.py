@@ -5,8 +5,9 @@ inflation parameters (t_max, f, g, gamma, sigma_sdf) to minimize Chamfer Distanc
 on synthetic reference models or specific object categories.
 
 Course: 3D Computer Vision Course Project (IIIT Dharwad)
-Authors: J Ganesh, M Jagadeshwar, B Varshith, Pranav Kashyap, C Sai Aravind
-Supervisor: Dr. Shirshendu Layek
+Authors: J Ganesh (23BDS024), M Jagadeshwar (23BDS033), B Varshith (23BDS011),
+         Pranav Kashyap (23BCS098), C Sai Aravind (23BDS075)
+Supervisor: Dr. Shirshendu Layek (Dept. of DSAI)
 """
 from __future__ import annotations
 
@@ -123,10 +124,12 @@ def run_optuna_study(n_trials: int = 20, output_file: Path | None = None) -> dic
 def main() -> None:
     parser = argparse.ArgumentParser(description="Optimize SDF volumetric inflation parameters")
     parser.add_argument("--trials", type=int, default=15)
+    parser.add_argument("--test", action="store_true", help="Run a quick 3-trial verification test")
     parser.add_argument("--output", type=Path, default=Path("training/checkpoints/optimal_params.json"))
     args = parser.parse_args()
 
-    run_optuna_study(n_trials=args.trials, output_file=args.output)
+    trials = 3 if args.test else args.trials
+    run_optuna_study(n_trials=trials, output_file=args.output)
 
 
 if __name__ == "__main__":

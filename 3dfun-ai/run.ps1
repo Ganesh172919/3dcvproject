@@ -31,11 +31,13 @@ try {
         if ($LASTEXITCODE -ne 0) { throw 'Could not install Python dependencies.' }
     }
 
-    if ($Install -or $InstallModels -or $InstallTripoSR -or -not (Test-Path 'engine/models/u2netp.onnx') -or
-        -not (Test-Path 'engine/models/depth_anything_v2_small_quantized.onnx')) {
+    $modelFiles = @('u2netp.onnx', 'depth_anything_v2_small_quantized.onnx', 'midas_v21_small.onnx',
+                    'triposr_encoder_int8.onnx', 'triposr_decoder.onnx')
+    $missingModels = $modelFiles | Where-Object { -not (Test-Path -LiteralPath "engine/models/$_" -PathType Leaf) }
+    if ($Install -or $InstallModels -or $InstallTripoSR -or $missingModels) {
         $modelArgs = @('scripts/fetch_models.py')
-        if ($Install -or $InstallModels) { $modelArgs += '--all' }
-        elseif ($InstallTripoSR) { $modelArgs += '--triposr' }
+        if ($Install -or $InstallModels -or -not $InstallTripoSR) { $modelArgs += '--all' }
+        else { $modelArgs += '--triposr' }
         & $python @modelArgs
         if ($LASTEXITCODE -ne 0) { throw 'Model setup failed. Check the download error above and rerun.' }
     }

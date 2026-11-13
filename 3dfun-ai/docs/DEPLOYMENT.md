@@ -1,8 +1,7 @@
 # 3DFUN AI — deployment and operations
 
-Everything here was executed on the machine that produced `results/`. Nothing in this document is
-aspirational: each command is copy-pasteable and each number is a measurement from
-`results/environment.json` or the shipped artefact.
+The benchmark reference environment is recorded in `results/environment.json`. The app also has
+a Windows PowerShell launcher for local use.
 
 ---
 
@@ -17,46 +16,43 @@ aspirational: each command is copy-pasteable and each number is a measurement fr
 | Disk | ~1.1 GB for code + models + results (179 MB of that is `results/raw/meshes`) |
 
 Runtime dependencies are pinned in `requirements.txt`; the exact resolved versions used for the
-results are in `results/environment.json`. Two model files are required and are **not** in the
-repository (27 MB + 4.6 MB):
+results are in `results/environment.json`. The reference benchmark uses these two model files:
 
 * `engine/models/depth_anything_v2_small_quantized.onnx` — 27.26 MB,
   SHA-256 `fcf51f1b…547f20d`
 * `engine/models/u2netp.onnx` — 4.57 MB, SHA-256 `309c8469…f4ddd8`
 
-`make models` fetches them and **refuses to install a file whose SHA-256 does not match** the
+`make models` fetches the benchmark and Studio model files and **refuses to install a file whose SHA-256 does not match** the
 pinned digest, so a corrupted or substituted network cannot silently change a reported number.
 
 ## 2. Local run (the supported path)
 
 ```bash
-git clone <repo> && cd 3dfun-ai
 python3 -m venv .venv && . .venv/bin/activate
 pip install -r requirements.txt
-make models                  # downloads + hash-checks the two ONNX graphs
-./run.sh --seed              # http://localhost:8000, dev data seeded
+make models                  # downloads and checksums the Studio models
+bash run.sh --seed           # http://localhost:8000, dev data seeded
 ```
 
 Open `http://localhost:8000` — the studio, dashboard, benchmark page and API docs are all served
 from the same process. `PORT=9000 ./run.sh` changes the port; `HOST` defaults to `0.0.0.0` so the
 server is reachable from another container or a preview proxy.
 
-One command reproduces all deliverables:
+Install the development requirements to verify the saved artifacts. Run the benchmark first if you need a new set of measurements.
 
 ```bash
-make all        # models → benchmark → figures → paper → slides → report → verify
-./run.sh --verify-only     # or: make verify
+make install-dev
+make benchmark   # overwrites the saved results with a new benchmark
+make all         # rebuild figures, paper, slides and report
+make verify
 ```
 
-`make all` on the reference machine takes roughly the runtimes listed in the README reproduce
-table; the 225-cell benchmark dominates. Interrupting it is safe — see §6.
+The 225-run benchmark is the longest step. See §6 for how to resume it.
 
 ## 3. Configuration
 
-12-factor, environment driven, all in `app/config.py`. **The application does not read `.env`
-files**: `Settings` reads `os.environ` (through `_env()`), and every knob has a working development
-default, so an empty environment is a valid local setup. Export what you want to change, or use
-your process manager's environment block:
+The application reads the project-root `.env` and gives the process environment precedence.
+See `.env.example` and `app/config.py` for defaults. You can also supply values from your process manager:
 
 ```bash
 export DATABASE_URL="sqlite:///$(pwd)/data/3dfun.db"

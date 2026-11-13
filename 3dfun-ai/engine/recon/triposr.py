@@ -1,4 +1,10 @@
-"""TripoSR inference using QtMeshEditor's MIT-licensed INT8 ONNX conversion."""
+"""TripoSR inference using QtMeshEditor's MIT-licensed INT8 ONNX conversion.
+
+Course: 3D Computer Vision Course Project · IIIT Dharwad
+Supervisor: Dr. Shirshendu Layek (Dept. of DSAI)
+Authors: J Ganesh (23BDS024), M Jagadeshwar (23BDS033), B Varshith (23BDS011),
+         Pranav Kashyap (23BCS098), C Sai Aravind (23BDS075)
+"""
 from __future__ import annotations
 
 import hashlib
@@ -15,7 +21,7 @@ from .meshing import MeshResult, mesh_metrics, normalize_transform
 from .pipeline import ReconstructionResult, _noop
 from .preprocessing import prepare_image
 from .render import render_preview, render_turntable
-from .runtime import InferenceSession, inference_hardware
+from .runtime import CPU, DIRECTML, InferenceSession, inference_hardware, runtime_status
 
 MODEL_ID = "triposr"
 MODEL_REVISION = "01b2f1add36601f964a89fd8a3159919ced4aa40"
@@ -39,7 +45,17 @@ def available() -> bool:
                for name, (size, _) in MODEL_FILES.items())
 
 
+_TRIPOSR_SESSIONS: dict[tuple[str, str], InferenceSession] = {}
+
+
 def _session(name: str):
+    preferred = runtime_status()["preferred"]
+    # These INT8 encoder and point decoder exports fall back on the tested DirectML path.
+    # Open CPU sessions directly on DirectML to skip the failing GPU initialization.
+    provider = CPU if preferred == DIRECTML else preferred
+    key = (name, provider)
+    if key in _TRIPOSR_SESSIONS:
+        return _TRIPOSR_SESSIONS[key]
     import onnxruntime as ort
 
     options = ort.SessionOptions()
@@ -48,7 +64,9 @@ def _session(name: str):
     options.enable_mem_pattern = False
     options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_EXTENDED
     options.add_session_config_entry("session.disable_prepacking", "1")
-    return InferenceSession(MODELS_DIR / name, options)
+    sess = InferenceSession(MODELS_DIR / name, options, provider)
+    _TRIPOSR_SESSIONS[key] = sess
+    return sess
 
 
 def reconstruct_triposr(image: bytes, out: Path, quality: str, options: dict,

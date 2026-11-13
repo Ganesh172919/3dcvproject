@@ -1,6 +1,9 @@
-// Reusable Three.js model viewer with orbit controls, PBR/albedo/wireframe/
-// clay modes, environment lighting, screenshot and correct GPU resource
-// disposal. Degrades to a static preview image if WebGL is unavailable.
+// Reusable Three.js Model Viewer with OrbitControls, PBR/Normals/Wireframe/
+// Clay/Depth Cloud modes, camera FOV, lighting environment, and PNG snapshot.
+// Course: 3D Computer Vision Course Project · IIIT Dharwad
+// Supervisor: Dr. Shirshendu Layek (Dept. of DSAI)
+// Authors: J Ganesh (23BDS024), M Jagadeshwar (23BDS033), B Varshith (23BDS011),
+//          Pranav Kashyap (23BCS098), C Sai Aravind (23BDS075)
 
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/OrbitControls.js';
@@ -253,6 +256,7 @@ export class ModelViewer {
   _applyMode() {
     if (!this.root) return;
     this.needsRender = true;
+    this._updateHud();
 
     if (this.mode === 'depthcloud') {
       this.root.visible = false;
@@ -376,9 +380,13 @@ export class ModelViewer {
   _updateHud() {
     if (!this.stats) return;
     const dim = this.dimensions ? `<span>📏 ${this.dimensions.x.toFixed(2)}×${this.dimensions.y.toFixed(2)}×${this.dimensions.z.toFixed(2)}</span>` : '';
+    const density = (this.mode === 'wire' && this.stats.vertices > 0)
+      ? `<span title="Topology mesh density">🕸 ${(this.stats.triangles / this.stats.vertices).toFixed(2)} tris/vert</span>`
+      : '';
     this.hud.innerHTML = `
       <span>${this.stats.triangles.toLocaleString()} tris</span>
       <span title="Vertices after export, including face corners and texture seams">${this.stats.vertices.toLocaleString()} render verts</span>
+      ${density}
       ${dim}
       <span>${this.stats.materials} mat</span>
       <span>${this.stats.textures} tex</span>`;

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>3DFUN AI · Image to 3D Lab</title>
-<meta name="description" content="A student-built 3D computer vision lab for reconstructing objects from a single photo. Try and compare three local CPU models.">
+<meta name="description" content="A student-built 3D computer vision lab for reconstructing objects from a single photo. Compare three local models and learn how their meshes are made.">
 <meta name="theme-color" content="#ffffff">
 <link rel="stylesheet" href="/static/css/app.css">
 <link rel="stylesheet" href="/static/css/landing.css">
@@ -19,7 +19,9 @@
   <a class="brand" href="/"><span class="brand-mark">3D</span> 3DFUN <span class="dim">AI</span></a>
   <nav class="nav" aria-label="Primary">
     <a href="#models">Models</a>
-    <a href="#course">Course project</a>
+    <a href="#guide">Lab guide</a>
+    <a href="#work">Method</a>
+    <a href="#team">Team</a>
     <a href="/app/benchmark">Benchmarks</a>
   </nav>
   <div class="topbar-right">
@@ -40,8 +42,8 @@
       <input id="home-file" type="file" accept="image/png,image/jpeg,image/webp,image/bmp,.bmp" hidden>
       <p id="home-upload-status" class="form-error" role="status"></p>
       <div class="row wrap gap8 mt8">
-        <a class="btn" href="/app/studio">Open image studio</a>
         <a class="btn" href="#models">Compare models</a>
+        <a class="btn" href="#guide">Read the lab guide</a>
       </div>
       <ol class="lab-flow" aria-label="Studio workflow">
         <li>Upload a photo</li><li>Choose a model</li><li>Inspect and export</li>
@@ -72,49 +74,171 @@
   </section>
   <section class="lab-methods" id="models">
     <h2>Models you can compare</h2>
-    <p>All three options run locally on the CPU. Try the same photo with each to see how the shape changes.</p>
+    <p>All three run locally and support CPU inference. Use the same teapot photo to see how each method handles its handle, spout, and hidden side.</p>
     <div class="lab-method-grid">
       <article class="card">
         <h3>TripoSR INT8</h3>
-        <p>Predicts a 3D density field from one image and colours the resulting mesh per vertex.</p>
-        <a href="/app/studio?sample=teapot&amp;engine=triposr">Try TripoSR with the teapot</a>
+        <p>Predicts a 3D density field from one photo. The lab extracts a mesh from that field and stores colour on its vertices.</p>
+        <div class="lab-card-links">
+          <a href="/app/studio?sample=teapot&amp;engine=triposr">Try TripoSR with the teapot</a>
+          <a class="lab-source-link" href="https://github.com/VAST-AI-Research/TripoSR">TripoSR on GitHub</a>
+        </div>
       </article>
       <article class="card">
         <h3>Depth Anything V2</h3>
-        <p>Estimates relative depth. Our course pipeline uses it to build a closed mesh with a texture atlas.</p>
-        <a href="/app/studio?sample=teapot&amp;engine=local">Try Depth Anything with the teapot</a>
+        <p>Estimates which visible surfaces are nearer to the camera. Our course pipeline turns that depth map and the object outline into a mesh with a texture atlas.</p>
+        <div class="lab-card-links">
+          <a href="/app/studio?sample=teapot&amp;engine=local">Try Depth Anything with the teapot</a>
+          <a class="lab-source-link" href="https://github.com/DepthAnything/Depth-Anything-V2">Depth Anything V2 on GitHub</a>
+        </div>
       </article>
       <article class="card">
         <h3>MiDaS v2.1 Small</h3>
-        <p>Uses a different depth estimator with the same course pipeline so you can compare the geometry.</p>
-        <a href="/app/studio?sample=teapot&amp;engine=midas">Try MiDaS with the teapot</a>
+        <p>Uses the same course pipeline as Depth Anything V2, with a different depth estimator. Compare these two to see how the depth map affects the final shape.</p>
+        <div class="lab-card-links">
+          <a href="/app/studio?sample=teapot&amp;engine=midas">Try MiDaS with the teapot</a>
+          <a class="lab-source-link" href="https://github.com/isl-org/MiDaS">MiDaS on GitHub</a>
+        </div>
       </article>
     </div>
   </section>
-  <section class="lab-about" id="course">
-    <div>
-      <h2>About the course project</h2>
-      <p>We built this lab to explore what a single image can tell us about 3D shape. Our method removes the background, estimates relative depth, builds a silhouette-constrained volume, then extracts a mesh with marching cubes.</p>
-      <a class="btn" href="/app/benchmark">View benchmark results</a>
+  <section class="lab-methods" id="guide">
+    <h2>Lab guide</h2>
+    <div class="lab-guide-grid">
+      <div>
+        <h3>Run a fair comparison</h3>
+        <ol class="lab-steps">
+          <li><strong>Pick one image.</strong> Start with the teapot or use a well-lit photo of one object. Keep the whole outline in frame.</li>
+          <li><strong>Keep the settings fixed.</strong> Use Draft for both runs and keep preview and export options the same. Change only the engine.</li>
+          <li><strong>Check both meshes.</strong> Rotate each result to the same angle. Compare the outline, thin features, and what each engine inferred on the back.</li>
+          <li><strong>Record what changed.</strong> Open the Experiment notebook, select the image, and download the CSV for your notes.</li>
+        </ol>
+        <a class="btn primary" href="/app/studio?sample=teapot&amp;engine=local&amp;quality=draft">Start with the teapot</a>
+      </div>
+      <aside class="card lab-guide-note" aria-labelledby="lab-measurements">
+        <h3 id="lab-measurements">What the results tell you</h3>
+        <dl>
+          <dt>Runtime</dt>
+          <dd>Elapsed time on the machine that ran the job. Preview and export settings can affect it.</dd>
+          <dt>Triangle count</dt>
+          <dd>The number of faces in the mesh. Compare the count alongside the shape you see in the viewer.</dd>
+          <dt>Watertightness</dt>
+          <dd>Whether the mesh passes the closed-surface check. Rotate the model to judge how closely that surface follows the object.</dd>
+        </dl>
+        <a href="/app/dashboard">Open the Experiment notebook</a>
+      </aside>
     </div>
+  </section>
+
+  <section class="lab-methods" id="work">
+    <h2>How the course pipeline builds a mesh</h2>
+    <p class="lab-intro">The sneaker shows the same reconstruction from the prepared image to the textured model. Depth Anything V2 and MiDaS use this pipeline.</p>
+    <div class="lab-method-grid lab-process">
+      <figure class="card">
+        <img src="/site/examples/source-canvas.png" loading="lazy" decoding="async" width="640" height="640" alt="Prepared side-view image of a teal sneaker">
+        <figcaption>
+          <h3>Prepare the photo</h3>
+          <p>Isolate and centre the object. Estimate relative depth within its outline to find nearer and farther surfaces.</p>
+        </figcaption>
+      </figure>
+      <figure class="card">
+        <img src="/site/examples/wireframe.png" loading="lazy" decoding="async" width="384" height="384" alt="Triangular wireframe of the reconstructed sneaker">
+        <figcaption>
+          <h3>Build the surface</h3>
+          <p>Use the depth map to give the outline thickness. Marching cubes turns that volume into a triangular surface, which the pipeline smooths.</p>
+        </figcaption>
+      </figure>
+      <figure class="card">
+        <img src="/site/examples/three-quarter.png" loading="lazy" decoding="async" width="384" height="384" alt="Angled view of the textured sneaker mesh showing the inferred side">
+        <figcaption>
+          <h3>Project the colour</h3>
+          <p>Map the photo onto the visible surface and export a GLB. As the model turns away from the photo angle, details can stretch or fade.</p>
+        </figcaption>
+      </figure>
+    </div>
+    <div class="row wrap gap8 mt16">
+      <a class="btn" href="/app/work">Read the technical notes</a>
+      <a class="btn" href="/app/benchmark">Explore the benchmark results</a>
+    </div>
+  </section>
+
+  <section class="lab-methods" id="team">
+    <h2>About the Team &amp; Oral Defense</h2>
+    <p>3DFUN AI is developed by five undergraduate researchers at the Indian Institute of Information Technology (IIIT), Dharwad under the guidance of Dr. Shirshendu Layek.</p>
+    <div class="card tight mb16" style="background:var(--panel-2);border-left:4px solid var(--accent)">
+      <strong>Project Supervisor:</strong> Dr. Shirshendu Layek, Assistant Professor, Dept. of Data Science and AI (DSAI), IIIT Dharwad.
+    </div>
+    <div class="lab-team-grid">
+      <article class="card">
+        <h3>J Ganesh · 23BDS024</h3>
+        <p><strong>Dept. of DSAI</strong> · Core Volumetric Engine, Distance Transform, Priors &amp; Bas-Relief Ambiguity Mitigation.<br><small class="muted">Part 1: Slides 1–3 (0:00–2:15)</small></p>
+      </article>
+      <article class="card">
+        <h3>M Jagadeshwar · 23BDS033</h3>
+        <p><strong>Dept. of DSAI</strong> · Meshing, Marching Cubes, Taubin Spectral Smoothing &amp; Normal Vector Generation.<br><small class="muted">Part 2: Slides 4–6 (2:15–4:45)</small></p>
+      </article>
+      <article class="card">
+        <h3>B Varshith · 23BDS011</h3>
+        <p><strong>Dept. of DSAI</strong> · Benchmark Suite (25 scenes), Geometric Metrics (Chamfer, F-Score, IoU) &amp; Latency Profiling.<br><small class="muted">Part 3: Slides 7–9 (4:45–7:30)</small></p>
+      </article>
+      <article class="card">
+        <h3>Pranav Kashyap · 23BCS098</h3>
+        <p><strong>Dept. of CSE</strong> · FastAPI Production Service, Authentication, Process Isolation &amp; Component Ablations.<br><small class="muted">Part 4: Slides 10–12 (7:30–10:15)</small></p>
+      </article>
+      <article class="card">
+        <h3>C Sai Aravind · 23BDS075</h3>
+        <p><strong>Dept. of DSAI</strong> · Web Studio SPA, Three.js Custom Shaders, Mobile AR &amp; 30-Gate Verification Suite.<br><small class="muted">Part 5: Slides 13–15 (10:15–12:00)</small></p>
+      </article>
+    </div>
+    <div class="row wrap gap8 mt16">
+      <a class="btn primary" href="/app/team">View defense schedule &amp; slides</a>
+      <a class="btn" href="/presentations/3DFUN-AI-Project.pptx" download="3DFUN-AI-Project.pptx">Download Deck (.pptx)</a>
+      <a class="btn" href="/paper/main.pdf" target="_blank">Download IEEE Paper (.pdf)</a>
+      <a class="btn" href="/report.pdf" target="_blank">Download Project Report (.pdf)</a>
+    </div>
+  </section>
+
+  <section class="lab-about" id="course">
+    <h2>Questions about the lab</h2>
     <div>
       <details>
-        <summary>What makes a good input photo?</summary>
-        <p>Use one clearly framed object, a plain background or a transparent PNG, and a view that shows some of the object's depth.</p>
+        <summary>Which images can I upload?</summary>
+        <p>Studio accepts PNG, JPEG, WebP, and BMP. The upload area shows the size limit. A plain background or transparent PNG makes the outline easier to isolate.</p>
       </details>
       <details>
-        <summary>What can I download?</summary>
-        <p>GLB is included by default. You can also select glTF, OBJ, PLY or STL in the Studio. The mesh estimates hidden surfaces from a single view.</p>
+        <summary>Which export format should I use?</summary>
+        <p>Use the included GLB for a single file with geometry and colour. Choose glTF or OBJ when you need separate files, PLY for mesh data, or STL for geometry only. Verify the mesh and set its real-world scale before preparing a print.</p>
+      </details>
+      <details>
+        <summary>Can I trust the back and dimensions?</summary>
+        <p>Hidden surfaces are inferred from the photo and can lose holes or fine detail. The exported model uses normalized coordinates. Real dimensions require a known measurement and rescaling.</p>
+      </details>
+      <details>
+        <summary>What runs on the GPU?</summary>
+        <p>On Windows, DirectML can accelerate background removal and depth estimation for Depth Anything V2 and MiDaS. TripoSR's encoder and decoder use the CPU in the DirectML build. The Experiment notebook shows which inference providers each run used.</p>
       </details>
       <details>
         <summary>Where does Gemini chat run?</summary>
-        <p>Reconstruction runs locally. Gemini sends chat messages to Google once you add your API key to the project's local configuration.</p>
+        <p>Image reconstruction runs locally. The optional chat feature sends messages to Google's Gemini API after you configure a key.</p>
       </details>
     </div>
   </section>
-  <footer class="lab-footer">
-    <p>3DFUN AI · J Ganesh · M Jagadeshwar · B Varshith · Pranav Kashyap · C Sai Aravind</p>
-    <div class="row wrap gap12"><a href="/docs">API reference</a><a href="/app/chat">Gemini chat</a></div>
+  <footer class="lab-footer" style="padding:24px 0;border-top:1px solid var(--border-soft);display:flex;flex-direction:column;gap:12px;">
+    <div class="spread wrap gap12">
+      <div>
+        <p class="m0" style="font-weight:700;color:var(--text);">3DFUN AI · 3D Computer Vision Course Project · Indian Institute of Information Technology (IIIT), Dharwad</p>
+        <p class="m0 mt4 text-2" style="font-size:13px;">Team: <strong>J Ganesh</strong> (23BDS024) · <strong>M Jagadeshwar</strong> (23BDS033) · <strong>B Varshith</strong> (23BDS011) · <strong>Pranav Kashyap</strong> (23BCS098) · <strong>C Sai Aravind</strong> (23BDS075)</p>
+        <p class="m0 mt2 muted" style="font-size:12px;">Project Guide: <strong>Dr. Shirshendu Layek</strong>, Assistant Professor, Dept. of Data Science and AI (DSAI), IIIT Dharwad</p>
+      </div>
+      <div class="row wrap gap12" style="align-items:center;">
+        <a class="btn sm" href="/app/team">About the Team &amp; Slides</a>
+        <a class="btn sm" href="/app/work">About the Work</a>
+        <a class="btn sm" href="/paper/main.pdf" target="_blank">IEEE Paper (.pdf)</a>
+        <a class="btn sm" href="/report.pdf" target="_blank">Report (.pdf)</a>
+        <a class="btn sm" href="/presentations/3DFUN-AI-Project.pptx" download="3DFUN-AI-Project.pptx">Deck (.pptx)</a>
+        <a href="/docs">API Reference</a>
+      </div>
+    </div>
   </footer>
 </main>
 <script type="module" src="/static/js/landing.js"></script>
