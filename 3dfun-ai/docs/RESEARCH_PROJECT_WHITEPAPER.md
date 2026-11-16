@@ -201,7 +201,82 @@ The AI Co-Pilot in `app/routers/chat.py` implements autonomous FastAPI function 
 
 ---
 
-## 5. Verification & Continuous Testing Evidence
+## 5. Deconstruction of Real-World Generative 3D Startups & Foundation Models
+
+To provide students and computer vision researchers with real-world industry context, we analyze the architectural paradigms, mathematical representations, and trade-offs of the leading commercial generative 3D startups:
+
+```
++-----------------------------------------------------------------------------------------------------------------------------+
+|                                COMMERCIAL IMAGE-TO-3D GENERATIVE TAXONOMY (2024 - 2026)                                     |
++-----------------------------------------------------------------------------------------------------------------------------+
+| Paradigm A: Feed-Forward Transformers (LRM, Tripo3D, TripoSR, Stable Fast 3D)                                               |
+|             Image -> ViT Tokenizer -> Cross-Attention Blocks -> Orthogonal Triplanes T_xy, T_xz, T_yz -> MLP -> Isosurface  |
+|                                                                                                                             |
+| Paradigm B: Multi-View Diffusion + DMTet (Meshy.ai, SV3D, Zero123++, Wonder3D)                                              |
+|             Image -> 2D Multi-View Latent Diffusion -> Score Distillation Sampling (SDS) -> Differentiable Marching Tetra |
+|                                                                                                                             |
+| Paradigm C: 3D Gaussian Splatting Synthesis (Luma AI Genie, Luma 3D)                                                        |
+|             Image -> 3D Splat Diffusion -> Continuous Radiance Primitives (mu, Sigma, alpha, c) -> Differentiable Rasterizer |
+|                                                                                                                             |
+| Paradigm D: Hybrid Deterministic Reconstruction (3DFUN AI Open Core)                                                        |
+|             Image -> DINOv2 Depth -> Ray Unprojection -> Euclidean SDF Transform -> Marching Cubes -> Taubin Filter         |
++-----------------------------------------------------------------------------------------------------------------------------+
+```
+
+### 5.1 Tripo3D & TripoSR (VAST AI Research)
+- **Core Architecture:** Large Reconstruction Model (LRM) Transformer.
+- **Mathematical Representation:** Triplane Neural Radiance Fields ($T_{xy}, T_{xz}, T_{yz} \in \mathbb{R}^{3 \times N \times N \times C}$).
+- **Inference Mechanism:** An input image $I$ is encoded by a vision transformer (DINO ViT). A sequence of multi-head self-attention and cross-attention transformer layers directly regresses features on the three orthogonal axis-aligned planes. For any continuous 3D query point $\mathbf{x} = (x, y, z)$, its feature vector is synthesized via bilinear interpolation:
+  $$f(\mathbf{x}) = \text{proj}_{xy}(T_{xy}, x, y) \oplus \text{proj}_{xz}(T_{xz}, x, z) \oplus \text{proj}_{yz}(T_{yz}, y, z)$$
+  A lightweight MLP evaluates volume density $\sigma(\mathbf{x})$ and RGB color $\mathbf{c}(\mathbf{x})$.
+- **Strengths:** Blazing inference speed (8 – 15 seconds), deterministic feed-forward runtime, no multi-view optimization loop.
+- **Limitations:** Spatial discretization of triplanes introduces resolution bottlenecks for micro-relief; requires training over vast datasets (Objaverse 800k+ models) across 64+ NVIDIA H100 clusters.
+
+### 5.2 Meshy.ai
+- **Core Architecture:** Multi-View Latent Diffusion + Differentiable Marching Tetrahedra (DMTet).
+- **Mathematical Representation:** Signed Distance Field on a deformable tetrahedral grid $\mathcal{T} = (\mathcal{V}_{\text{tet}}, \mathcal{E}_{\text{tet}})$.
+- **Inference Mechanism:** 
+  1. *View Synthesis:* Fine-tuned diffusion model generates four canonical azimuth views ($0^\circ, 90^\circ, 180^\circ, 270^\circ$).
+  2. *Surface Optimization:* DMTet optimizes vertex SDF values $s_i \in \mathbb{R}$ and displacement offsets $\Delta \mathbf{v}_i \in \mathbb{R}^3$ via Score Distillation Sampling (SDS) loss:
+     $$\nabla_\theta \mathcal{L}_{\text{SDS}} = \mathbb{E}_{t, \epsilon} \left[ w(t) (\hat{\epsilon}_\phi(\mathbf{z}_t; y, t) - \epsilon) \frac{\partial \mathbf{z}}{\partial \theta} \right]$$
+  3. *Post-Processing:* Quadric Error Metric (QEM) decimation to production quad topology and high-resolution PBR texture baking.
+- **Strengths:** Photorealistic material fidelity, clean quad topology suited for rigging and game engines.
+- **Limitations:** Slower latency (45 – 90 seconds); susceptible to the "Janus artifact" (multi-faced hallucinations) when multi-view cross-attention conditioning diverges.
+
+### 5.3 Luma AI Genie
+- **Core Architecture:** Latent 3D Diffusion + 3D Gaussian Splatting (3DGS).
+- **Mathematical Representation:** Mixture of 3D Gaussians $\mathcal{G}_i = (\mu_i, \Sigma_i, \alpha_i, \mathbf{c}_i)$ where covariance is factored into rotation quaternion $\mathbf{q}_i$ and scale $\mathbf{s}_i$:
+  $$\Sigma_i = R(\mathbf{q}_i) S(\mathbf{s}_i) S(\mathbf{s}_i)^T R(\mathbf{q}_i)^T$$
+- **Inference Mechanism:** Direct regression and denoising of Gaussian parameters from image conditioning, followed by tile-based rasterization and alpha blending.
+- **Strengths:** View-dependent specular highlights, complex non-Lambertian reflections, real-time 60 FPS viewport rendering.
+- **Limitations:** Splat representations are non-solid and non-manifold; converting 3D Gaussians into 3D-printable watertight solid meshes ($\chi = 2$) requires secondary Poisson or Marching Tetrahedra surface reconstruction which often degrades thin geometry.
+
+### 5.4 Spline 3D (Parametric WebGL & AI Generation)
+- **Core Architecture:** WebGL/WebGPU parametric geometry engine with cloud generative AI microservices.
+- **Representation:** Parametric NURBS, procedural subdivision surfaces, and polygon meshes with real-time physics.
+- **Focus:** Interactive web canvas integration, spatial user interactions, and game prototyping rather than single-view photorealistic inverse problem reconstruction.
+
+### 5.5 Kaedim 3D
+- **Core Architecture:** Machine Learning initial shape estimation coupled with automated and human-in-the-loop retopology.
+- **Focus:** Enterprise game development pipelines requiring strict sub-d quad geometry and strict vertex budgets.
+- **Latency & Cost:** High latency (15 – 30 minutes) and high enterprise subscription costs ($150 – $500/month).
+
+### 5.6 Comprehensive Industry Comparison Matrix
+
+| Startup / Platform | Core Mathematical Representation | Inference Backbone | Average Latency | Watertight Solid? | Educational Transparency | Offline Capable? | Free Trial Credits |
+|---|---|---|---|---|---|---|---|
+| **3DFUN AI (This Work)** | **Silhouette SDF + Marching Cubes** | **ONNX INT8 (CPU / DirectML / CUDA)** | **12 – 45 s** | **Yes (96.0%)** | **100% Open & Interactive** | **Yes (Zero Cloud)** | **50 Credits + 10 Daily** |
+| **Tripo3D (TripoSR)** | Orthogonal Triplane NeRF ($T_{xy}, T_{xz}, T_{yz}$) | Large Reconstruction Transformer | 8 – 15 s | Yes | Partial (TripoSR weights open) | No (Cloud API) | Limited daily quota |
+| **Meshy.ai** | Tetrahedral SDF (DMTet) | Multi-View Diffusion + SDS | 45 – 90 s | Yes | No (Proprietary Black Box) | No (Cloud API) | Paid credit packs |
+| **Luma Genie** | Explicit 3D Gaussians $(\mu, \Sigma, \alpha, c)$ | 3D Latent Diffusion | 20 – 60 s | No (Radiance Field) | No (Proprietary) | No (Cloud API) | Sandbox quota |
+| **Kaedim 3D** | Subdivision Quad Mesh | ML + Human Retopology Loop | 15 – 30 min | Yes | No (Enterprise B2B) | No (Cloud SaaS) | Paid subscription ($150+) |
+| **Spline 3D** | Parametric WebGL / Mesh | Web Canvas + Cloud AI | Interactive / 20 s | Yes | Partial (Editor UI open) | No (Web Cloud) | Free tier w/ watermark |
+| **Rodin (Deemos)** | Micro-Geometry Voxel Diffusion | Cloud Supercomputing Farm | 60 – 180 s | Yes | No (Proprietary) | No (Cloud API) | Paid credit packs |
+| **Stable Fast 3D** | Triplane Transformer + Material MLP | Feedforward ViT (Stability AI) | 0.5 – 2 s | Yes | Open weights | Yes (High VRAM GPU) | Open model release |
+
+---
+
+## 6. Verification & Continuous Testing Evidence
 
 ```
 ====================================================================================================

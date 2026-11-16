@@ -81,7 +81,7 @@ class Settings:
     job_concurrency: int = field(default_factory=lambda: _env_int("JOB_CONCURRENCY", 1))
 
     # ---- credits -----------------------------------------------------
-    signup_credits: int = field(default_factory=lambda: _env_int("CREDITS_SIGNUP_GRANT", _env_int("SIGNUP_CREDITS", 60)))
+    signup_credits: int = field(default_factory=lambda: _env_int("CREDITS_SIGNUP_GRANT", _env_int("SIGNUP_CREDITS", 50)))
     daily_streak_credits: int = field(default_factory=lambda: _env_int("DAILY_STREAK_CREDITS", 10))
     lab_run_credits: int = field(default_factory=lambda: _env_int("LAB_RUN_CREDITS", 10))
     credit_costs: dict[str, int] = field(default_factory=lambda: {

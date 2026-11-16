@@ -176,17 +176,68 @@ function messageBubble(author, text, toolCall = null) {
 }
 
 function formatMarkdownText(raw) {
-  const container = h('div');
-  // Simple clean markdown rendering for bold, lists, and code blocks
+  const container = h('div', { class: 'chat-rendered-text' });
   const lines = raw.split('\n');
+  let inCodeBlock = false;
+  let codeBuffer = [];
+
   lines.forEach(line => {
+    if (line.startsWith('```')) {
+      if (inCodeBlock) {
+        const pre = h('pre', { class: 'mono p8 mt4 mb4', style: 'background:rgba(0,0,0,0.4);border-radius:6px;overflow-x:auto;font-size:12px;' }, codeBuffer.join('\n'));
+        container.appendChild(pre);
+        codeBuffer = [];
+        inCodeBlock = false;
+      } else {
+        inCodeBlock = true;
+        codeBuffer = [];
+      }
+      return;
+    }
+    if (inCodeBlock) {
+      codeBuffer.push(line);
+      return;
+    }
+
     if (line.startsWith('### ')) {
-      container.appendChild(h('h4', { class: 'mt8 mb4', style: 'color:var(--text);font-size:14px;' }, line.slice(4)));
+      container.appendChild(h('h4', { class: 'mt8 mb4', style: 'color:var(--text);font-size:14px;font-weight:650;' }, line.slice(4)));
+    } else if (line.startsWith('## ')) {
+      container.appendChild(h('h3', { class: 'mt8 mb4', style: 'color:var(--text);font-size:15px;font-weight:700;' }, line.slice(3)));
     } else if (line.startsWith('- ')) {
-      container.appendChild(h('li', { style: 'margin-left:16px;font-size:13px;line-height:1.5;' }, line.slice(2)));
+      const li = h('li', { style: 'margin-left:16px;font-size:13px;line-height:1.5;color:var(--text-2);' });
+      li.innerHTML = formatInlineMarkdown(line.slice(2));
+      container.appendChild(li);
+    } else if (line.startsWith('$$') && line.endsWith('$$') && line.length > 4) {
+      const formula = line.slice(2, -2).trim();
+      const mathBox = h('div', { class: 'math-display-box my4 p8', style: 'background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.2);border-radius:6px;text-align:center;font-family:var(--mono);font-size:12.5px;color:var(--cyan);' }, formula);
+      container.appendChild(mathBox);
     } else if (line.trim().length > 0) {
-      container.appendChild(h('p', { class: 'mb4', style: 'font-size:13px;line-height:1.5;' }, line));
+      const p = h('p', { class: 'mb4', style: 'font-size:13px;line-height:1.5;color:var(--text-2);' });
+      p.innerHTML = formatInlineMarkdown(line);
+      container.appendChild(p);
     }
   });
+
+  if (inCodeBlock && codeBuffer.length > 0) {
+    const pre = h('pre', { class: 'mono p8 mt4 mb4', style: 'background:rgba(0,0,0,0.4);border-radius:6px;overflow-x:auto;font-size:12px;' }, codeBuffer.join('\n'));
+    container.appendChild(pre);
+  }
+
   return container;
+}
+
+function formatInlineMarkdown(text) {
+  let esc = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+  // Bold
+  esc = esc.replace(/\*\*(.*?)\*\*/g, '<strong style="color:var(--text);font-weight:600;">$1</strong>');
+  // Inline Code
+  esc = esc.replace(/`([^`]+)`/g, '<code class="mono" style="background:rgba(255,255,255,0.08);padding:2px 5px;border-radius:4px;font-size:12px;color:var(--cyan);">$1</code>');
+  // Math inline $...$
+  esc = esc.replace(/\$([^\$]+)\$/g, '<span style="font-family:var(--mono);color:var(--cyan);font-weight:500;">$1</span>');
+  // Links [text](url)
+  esc = esc.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" style="color:var(--accent);text-decoration:underline;">$1</a>');
+  return esc;
 }

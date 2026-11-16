@@ -4,7 +4,7 @@ The recorded evaluation used 25 scenes, three methods, and three repeated CPU ru
 
 ## Methods and metrics
 
-- **Depth + SDF** uses a silhouette and pretrained relative depth to construct a bounded volume. Marching cubes extracts the surface, which is cleaned, decimated and textured.
+- **Depth + SDF (3DFUN AI)** uses a silhouette and pretrained relative depth to construct a bounded volume. Marching cubes extracts the surface, which is cleaned, decimated and textured.
 - **TSDF-style baseline** builds a surface from a single estimated depth map.
 - **Visual-hull baseline** extrudes the silhouette to a depth-derived back plane.
 
@@ -12,7 +12,7 @@ Geometry metrics use 20,000 sampled points per mesh after normalization and iner
 
 | Method | Chamfer ↓ | F-score ↑ | Surface IoU ↑ | Closed | Mean wall time |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Depth + SDF | 0.0639 | 0.148 | 0.055 | 96% | 27.73 s |
+| Depth + SDF (3DFUN AI) | **0.0639** | **0.148** | **0.055** | **96%** | 27.73 s |
 | TSDF-style | 0.0962 | 0.053 | 0.027 | 0% | 1.43 s |
 | Visual hull | 0.0728 | 0.098 | 0.038 | 0% | 2.13 s |
 
@@ -21,6 +21,18 @@ Geometry columns use the synthetic split. Closure and wall time include all 25 s
 - `results/raw/runs.csv`, `results/summary/main_table.csv` and `results/summary/per_scene.csv`.
 - `results/summary/ablation_table.csv`, `results/summary/thickness_sweep.csv` and `results/summary/failures.csv`.
 - `results/environment.json`. This cohort predates the TripoSR, MiDaS and TinyDepth experiments.
+
+## Real-World Startups & Commercial Platform Comparison
+
+| Platform / Startup | Core Representation | Local / Offline | 3D Watertight Solid | Average Latency | Educational Transparency | Free Trial Credits |
+|---|---|---|---|---|---|---|
+| **3DFUN AI (This Platform)** | **Silhouette SDF + Marching Cubes** | **100% Local (ONNX)** | **Yes (96% Closed)** | **12 – 45 s** | **Open 8 Tensors + PyTorch Labs** | **50 Free Credits + 10 Daily** |
+| **Tripo3D (TripoSR)** | Orthogonal Triplanes ($T_{xy}, T_{xz}, T_{yz}$) | Hybrid (TripoSR open) | Yes | 8 – 15 s | Partial (Weight release) | Daily quota |
+| **Meshy.ai** | Tetrahedral SDF (DMTet) | Cloud API Only | Yes | 45 – 90 s | Proprietary Black Box | Paid packs |
+| **Luma AI Genie** | 3D Gaussian Splats $(\mu, \Sigma, \alpha, c)$ | Cloud API Only | No (Radiance Field) | 20 – 60 s | Closed Proprietary | Limited trial |
+| **Stable Fast 3D (SF3D)** | Triplane Transformer + Material MLP | High VRAM GPU | Yes | 0.5 – 2 s | Open weights (Stability AI) | Open source |
+| **Spline 3D** | Parametric WebGL + AI | Browser / Cloud | Yes | Interactive | Partial (Editor UI) | Free tier w/ watermark |
+| **Kaedim 3D** | Subdivision Quad Mesh | Cloud B2B SaaS | Yes | 15 – 30 min | Closed Enterprise | Paid ($150+/mo) |
 
 ## Run the benchmark
 

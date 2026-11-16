@@ -68,6 +68,10 @@ For geometric domains where single-image slab inflation is sub-optimal, `engine/
 
 | Module | Responsibility |
 |---|---|
+| `student_labs/lab1_depth_finetuning/` | Lightweight CNN/Transformer TinyDepth with SILog, multiscale gradient, and surface normal losses + ONNX export |
+| `student_labs/lab2_occupancy_network/` | Implicit neural representation MLP $f_\theta(x, y, z) \to [0, 1]$ learning CAD primitives with Marching Cubes extraction |
+| `student_labs/lab3_3dgs_mini/` | Differentiable 3D Gaussian Splatting (3DGS) parameter optimization and 2D footprint accumulation |
+| `student_labs/lab4_evaluator/` | 3D geometric accuracy benchmarking: symmetric Chamfer distance, EMD, and F-Score at $\tau = 0.01, 0.05$ |
 | `pipeline.py` | Automated multi-stage runner: synthetic rendering → training → ONNX export → 3D evaluation → ablation |
 | `evaluate_clouds.py` | Evaluates held-out camera-frame 3D point clouds against reference meshes (symmetric Chamfer & $F@0.01$) |
 | `fine_tune_depth/model.py` | TinyDepth architecture: 24,369-parameter model with a full-resolution skip connection |
@@ -80,12 +84,13 @@ For geometric domains where single-image slab inflation is sub-optimal, `engine/
 | Module | Responsibility |
 |---|---|
 | `main.py` | app factory, router mounting under `/api/v1`, static hosting of `web/`, security headers |
-| `routers/` | 8 routers: `auth`, `uploads`, `generations`, `assets`, `gallery`, `billing`, `admin`, `system` |
+| `routers/` | 10 routers: `auth`, `uploads`, `generations`, `assets`, `gallery`, `billing`, `admin`, `system`, `chat`, `student_labs` |
+| `agent_tools.py` | Autonomous AI co-pilot tools: reconstruction trigger, tensor telemetry inspection, mesh repair, QEM decimation, multi-format export |
 | `state_machine.py` | the only legal generation transitions (`queued → processing → completed/failed/cancelled`) |
 | `jobs.py` | job queue, worker loop, SSE event emission with sequence numbers and replay |
 | `events.py` | event log, heartbeats, last-event-id replay |
-| `credits.py` | immutable ledger: reserve → commit or refund, never an in-place balance edit |
-| `auth.py`, `security.py` | JWT access tokens, Argon2id hashing, session records, MFA hooks |
+| `credits.py` | immutable ledger: 50 Free Trial Credits on signup + 10 daily streak refill; two-phase reserve → commit or refund |
+| `auth.py`, `security.py` | JWT access tokens, SameSite=Lax HTTP-only cookies, Argon2id hashing, session rotation, MFA hooks |
 | `ratelimit.py` | per-route and per-identity limits |
 | `providers.py` | provider adapters: local engine, generic HTTP, mock |
 | `storage.py` | content-addressed local storage with SHA-256 names |

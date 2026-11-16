@@ -107,19 +107,20 @@ def run_evaluation(
     pred_path: str | Path | None = None,
     gt_path: str | Path | None = None,
     out_dir: str | Path = "out/student_labs/lab4",
+    num_points: int = 4000,
 ) -> dict[str, Any]:
     out_path = Path(out_dir)
     out_path.mkdir(parents=True, exist_ok=True)
 
     if pred_path and gt_path and Path(pred_path).exists() and Path(gt_path).exists():
         log.info("Evaluating real meshes: %s vs %s", pred_path, gt_path)
-        pts_pred = sample_mesh_surface(pred_path, num_points=4000)
-        pts_gt = sample_mesh_surface(gt_path, num_points=4000)
+        pts_pred = sample_mesh_surface(pred_path, num_points=num_points)
+        pts_gt = sample_mesh_surface(gt_path, num_points=num_points)
     else:
         # Synthetic evaluation demo: ground truth sphere vs noisy / slightly deformed predicted sphere
         log.info("Generating synthetic sphere comparison benchmark (GT vs Predicted with noise)")
-        theta = np.random.uniform(0, 2 * np.pi, 3000)
-        phi = np.arccos(np.random.uniform(-1, 1, 3000))
+        theta = np.random.uniform(0, 2 * np.pi, num_points)
+        phi = np.arccos(np.random.uniform(-1, 1, num_points))
         r_gt = 0.7
         x_gt = r_gt * np.sin(phi) * np.cos(theta)
         y_gt = r_gt * np.sin(phi) * np.sin(theta)
@@ -154,6 +155,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Lab 4: 3D Metric Evaluation Suite")
     parser.add_argument("--pred", type=str, default=None, help="Path to predicted mesh (.obj, .ply, .stl, .glb)")
     parser.add_argument("--gt", type=str, default=None, help="Path to ground truth mesh")
+    parser.add_argument("--num-points", type=int, default=4000, help="Number of surface points to sample")
     parser.add_argument("--out-dir", type=str, default="out/student_labs/lab4")
     args = parser.parse_args()
-    run_evaluation(args.pred, args.gt, args.out_dir)
+    run_evaluation(args.pred, args.gt, args.out_dir, num_points=args.num_points)
