@@ -258,8 +258,54 @@
             <td>Enterprise credit subscription</td>
             <td>Commercial B2B Game Dev Service</td>
           </tr>
+          <tr>
+            <td><strong>Spline 3D</strong></td>
+            <td>Parametric WebGL/WebGPU + AI Texture Generation</td>
+            <td>Browser Canvas + Cloud AI</td>
+            <td>Interactive (<1s / 20s AI)</td>
+            <td>Free tier with watermark, $24/mo Pro</td>
+            <td>Proprietary Web 3D Vector &amp; Physics Editor</td>
+          </tr>
+          <tr>
+            <td><strong>Rodin (Deemos Tech)</strong></td>
+            <td>Multi-View Diffusion + Micro-Geometry Sculpting</td>
+            <td>Cloud Supercomputing Farm</td>
+            <td>60 – 180 s</td>
+            <td>Monthly subscription &amp; credit packs</td>
+            <td>Commercial High-Fidelity Character &amp; Asset SaaS</td>
+          </tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- Startup Architectural Paradigms Grid -->
+    <div class="workflow-grid mt24" style="margin-top:24px;">
+      <article class="workflow-card">
+        <span class="workflow-step-num">PARADIGM 1</span>
+        <h3>Feed-Forward Transformers (LRM / Tripo3D / TripoSR)</h3>
+        <p>Uses Vision Transformers (ViT) to map single 2D image tokens into explicit triplane representations $T_{xy}, T_{xz}, T_{yz} \in \mathbb{R}^{3 \times N \times N \times C}$. Ray samples query a lightweight MLP decoder. Yields ultra-fast generation (&lt;15s) with continuous volumetric radiance.</p>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--cyan);background:rgba(6,182,212,0.08);padding:8px;border-radius:6px;margin-top:10px;">
+          ✦ Key Metric: 8–15s Latency · High VRAM Training (Objaverse 800k assets)
+        </div>
+      </article>
+
+      <article class="workflow-card">
+        <span class="workflow-step-num">PARADIGM 2</span>
+        <h3>Multi-View Diffusion &amp; DMTet (Meshy / SV3D)</h3>
+        <p>Employs image-conditioned 2D diffusion models (Zero-1-to-3, SV3D) to synthesize canonical views at 0°, 90°, 180°, 270°. Surface geometry is extracted via Differentiable Marching Tetrahedra (DMTet) with neural score distillation sampling and high-resolution PBR baking.</p>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--accent);background:rgba(99,102,241,0.08);padding:8px;border-radius:6px;margin-top:10px;">
+          ✦ Key Metric: High Visual Fidelity · 60–120s Compute · Quad Topology Optimization
+        </div>
+      </article>
+
+      <article class="workflow-card">
+        <span class="workflow-step-num">PARADIGM 3</span>
+        <h3>Hybrid Open Core Pipeline (3DFUN AI Course Platform)</h3>
+        <p>Combines foundational relative depth estimation (Depth Anything V2 DINOv2) with deterministic projective camera geometry, Euclidean distance transform $\Phi(x)$, Marching Cubes, and Taubin dual-pass smoothing. Zero cloud dependency, 100% student transparency, and local ONNX runtime.</p>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--success);background:rgba(16,185,129,0.08);padding:8px;border-radius:6px;margin-top:10px;">
+          ✦ Key Metric: 100% Free &amp; Offline Capable · 8-Stage Tensor Inspection · 4 Student Labs
+        </div>
+      </article>
     </div>
   </section>
   <section class="lab-methods" id="training" aria-labelledby="training-title">

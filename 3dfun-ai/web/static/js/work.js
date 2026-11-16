@@ -52,6 +52,22 @@ const STARTUP_COMPARISONS = [
     cost: 'Enterprise subscription ($150-$1000/mo)',
     transparency: 'Commercial B2B Game Development Asset Service',
   },
+  {
+    name: 'Spline 3D',
+    architecture: 'Parametric WebGL/WebGPU + AI Texture Generation',
+    runtime: 'Browser Canvas + Cloud AI backend',
+    latency: 'Interactive (<1s / 20s AI)',
+    cost: 'Free tier with watermarks, Pro subscription ($24/mo)',
+    transparency: 'Commercial Web-Native 3D Design Suite',
+  },
+  {
+    name: 'Rodin (Deemos Tech)',
+    architecture: 'Multi-View Diffusion + Micro-Geometry Sculpting',
+    runtime: 'Cloud Supercomputing Clusters',
+    latency: '60 – 180 s',
+    cost: 'Monthly subscription & credit packs',
+    transparency: 'Commercial High-Fidelity Character & Asset SaaS',
+  },
 ];
 
 const FIGURES = [
@@ -60,6 +76,86 @@ const FIGURES = [
   ['Stage Timing Breakdown', 'fig_time_stages.png', 'Elapsed time for each stage in the saved CPU benchmark, including rendering.'],
   ['Chamfer Distance Quantitative Benchmark', 'fig_chamfer_bar.png', 'Nearest-neighbour surface distance on scenes with reference meshes. Smaller values indicate closer surface agreement.'],
 ];
+
+function createRecommenderWidget() {
+  const container = h('div', { class: 'recommender-widget mt20', style: 'background:rgba(99,102,241,0.04);border:1px solid var(--border);border-radius:12px;padding:18px;' });
+  const options = [
+    {
+      id: 'gamedev',
+      label: '🎮 Game Dev & Real-Time XR',
+      rec: 'Meshy.ai / Kaedim 3D / 3DFUN AI (Decimated)',
+      arch: 'Multi-view Diffusion + Quad Remesh / QEM Polycount Decimation',
+      budget: 'Low poly (5k-15k faces), PBR Texture Maps (Albedo, Roughness, Normal)',
+      detail: 'Game engines (Unity/Unreal) require strict triangle budgets and clean topology loops for character skinning and GPU rasterization.',
+    },
+    {
+      id: 'printing',
+      label: '🖨 3D Printing & Fabrication',
+      rec: '3DFUN AI (This Platform) / Marching Cubes SDF',
+      arch: 'Signed Distance Field (SDF) + Watertight Isosurface Extraction',
+      budget: 'High density (20k-50k triangles), 100% Watertight (χ = 2, 0 open boundary loops)',
+      detail: 'Slicers (PrusaSlicer, Cura) require strictly closed 2-manifold STL/OBJ geometry without self-intersecting facets or zero-thickness walls.',
+    },
+    {
+      id: 'ecommerce',
+      label: '🛍 E-Commerce & AR QuickLook',
+      rec: 'Tripo3D / Luma Genie / 3DFUN AI glTF',
+      arch: 'Feed-Forward Triplane Transformer / DINOv2 Hybrid with Texture Baking',
+      budget: 'glTF 2.0 / USDZ (<10MB file size), PBR Metallic-Roughness workflow',
+      detail: 'Mobile web browsers require fast asynchronous downloading, glTF DRACO compression, and iOS QuickLook USDZ compatibility.',
+    },
+    {
+      id: 'cvresearch',
+      label: '🎓 Academic Research & Student Labs',
+      rec: '3DFUN AI Open Core (100% Recommended)',
+      arch: 'Deterministic Hybrid Depth + Voxel Grid + 8-Stage Tensors + 4 PyTorch Labs',
+      budget: '100% Free, zero telemetry leakage, inspectable intermediate matrices',
+      detail: 'Commercial platforms are closed SaaS black boxes. 3DFUN AI demystifies every tensor transformation from raw image to textured manifold.',
+    },
+  ];
+
+  let currentId = 'gamedev';
+  const detailBox = h('div', { class: 'recommender-detail mt14 p14', style: 'background:var(--panel-2);border-radius:8px;border:1px solid var(--border);' });
+
+  function update() {
+    const opt = options.find(o => o.id === currentId);
+    detailBox.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
+        <span style="font-weight:700;color:var(--cyan);font-size:14px;">Optimal Architecture: ${opt.rec}</span>
+        <span class="badge active" style="font-size:11px;">Recommended Workflow</span>
+      </div>
+      <div style="font-size:13px;line-height:1.6;margin-bottom:6px;"><strong>Core Engine:</strong> ${opt.arch}</div>
+      <div style="font-size:13px;line-height:1.6;margin-bottom:6px;"><strong>Asset Budget:</strong> ${opt.budget}</div>
+      <p class="muted mb0" style="font-size:12.5px;">${opt.detail}</p>
+    `;
+  }
+
+  const buttons = h('div', { class: 'row wrap gap8' },
+    options.map(opt => {
+      const b = h('button', {
+        class: `btn sm ${opt.id === currentId ? 'primary' : 'ghost'}`,
+        type: 'button',
+        onclick: () => {
+          currentId = opt.id;
+          buttons.querySelectorAll('button').forEach((btn, i) => {
+            btn.className = `btn sm ${options[i].id === currentId ? 'primary' : 'ghost'}`;
+          });
+          update();
+        }
+      }, opt.label);
+      return b;
+    }));
+
+  mount(container,
+    h('div', { style: 'margin-bottom:12px;' },
+      h('h3', { style: 'margin:0 0 4px 0;font-size:15px;color:var(--accent);' }, '⚡ Interactive Startup Architecture & Use-Case Recommender'),
+      h('p', { class: 'muted mb0', style: 'font-size:13px;' }, 'Select your deployment target to see optimal representation, hardware budget, and topological requirements.')),
+    buttons,
+    detailBox);
+
+  update();
+  return container;
+}
 
 export function renderWork(main) {
   mount(main,
@@ -99,7 +195,8 @@ export function renderWork(main) {
               h('td', {}, s.runtime),
               h('td', {}, h('span', { class: 'mono' }, s.latency)),
               h('td', {}, s.cost),
-              h('td', {}, s.transparency))))))),
+              h('td', {}, s.transparency)))))),
+      createRecommenderWidget()),
 
     // 8-Stage Breakdown
     h('h2', { class: 'mt32' }, 'Eight-Stage Image-to-3D Pipeline'),
@@ -128,7 +225,15 @@ export function renderWork(main) {
         h('div', { class: 'card tight', style: 'background:#07090e;' },
           h('h4', { style: 'color:var(--cyan);' }, 'Taubin Dual-Pass Non-Shrinking Smoothing'),
           h('pre', { class: 'mono', style: 'color:#a5b4fc;font-size:12px;padding:8px;' }, "x' = x + λ L(x),  x'' = x' + μ L(x'),  (1/λ + 1/μ < 0)"),
-          h('p', { class: 'muted mb0', style: 'font-size:12px;' }, 'Attenuates high-frequency voxel noise without contracting the overall mesh volume.')))),
+          h('p', { class: 'muted mb0', style: 'font-size:12px;' }, 'Attenuates high-frequency voxel noise without contracting the overall mesh volume.')),
+        h('div', { class: 'card tight', style: 'background:#07090e;' },
+          h('h4', { style: 'color:var(--cyan);' }, 'Euler-Poincaré Characteristic (χ = V - E + F)'),
+          h('pre', { class: 'mono', style: 'color:#a5b4fc;font-size:12px;padding:8px;' }, 'χ = V - E + F = 2(1 - g) - b'),
+          h('p', { class: 'muted mb0', style: 'font-size:12px;' }, 'Topological invariant validating 2-manifold surfaces. For closed sphere-like meshes with genus g = 0 and boundary loops b = 0, χ = 2.')),
+        h('div', { class: 'card tight', style: 'background:#07090e;' },
+          h('h4', { style: 'color:var(--cyan);' }, 'Quadric Error Metric (QEM) Decimation'),
+          h('pre', { class: 'mono', style: 'color:#a5b4fc;font-size:12px;padding:8px;' }, 'Δ(v) = vᵀ Q v = Σ_{p ∈ planes(v)} (pᵀ v)²'),
+          h('p', { class: 'muted mb0', style: 'font-size:12px;' }, 'Calculates the sum of squared distances to incident planes, enabling extreme polygon reduction while preserving boundary creases.')))),
 
     // Benchmark Evidence
     h('h2', { class: 'mt32' }, 'Empirical Benchmark Evidence & Error Analysis'),
