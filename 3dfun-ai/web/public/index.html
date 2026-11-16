@@ -275,6 +275,22 @@
             <td>Monthly subscription &amp; credit packs</td>
             <td>Commercial High-Fidelity Character &amp; Asset SaaS</td>
           </tr>
+          <tr>
+            <td><strong>CSM.ai (Common Sense Machines)</strong></td>
+            <td>Neural Inverse CAD / B-Rep + Eikonal SDF Optimization</td>
+            <td>Multi-View Video Diffusion + Learned SfM</td>
+            <td>60 – 180 s</td>
+            <td>Free trial tokens, enterprise subscription</td>
+            <td>Closed Proprietary Cloud API</td>
+          </tr>
+          <tr>
+            <td><strong>Tencent Hunyuan3D 2.0</strong></td>
+            <td>Multi-View DiT + Sparse Voxel Triplane Occupancy</td>
+            <td>Hunyuan Diffusion Transformer + Triplane Decoder</td>
+            <td>25 – 50 s</td>
+            <td>Open foundation model weights (commercial license)</td>
+            <td>Open Weights — Self-host (16 GB+ GPU required)</td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -456,24 +472,36 @@
     </div>
     <div class="math-explainer-grid">
       <div class="math-card">
-        <h4>1. Scale-Invariant Logarithmic (SILog) Loss</h4>
-        <pre>L_SILog = sqrt( (1/N) * sum(d_i^2) - (lambda / N^2) * (sum(d_i))^2 )</pre>
-        <p>Penalizes relative geometric errors independent of global scale factor, preserving fine silhouette relief and depth ordering.</p>
+        <h4>1. LRM Triplane NeRF (Tripo3D / TripoSR)</h4>
+        <pre>f(x) = proj_xy(T_xy, x,y) ⊕ proj_xz(T_xz, x,z) ⊕ proj_yz(T_yz, y,z)
+Ĉ(r) = ∫ T(t)·σ(r(t))·c(r(t),d) dt,  T(t) = exp(−∫σ(r(s))ds)</pre>
+        <p>Orthogonal triplane features queried by bilinear projection and decoded by an MLP into volume density and colour. Feed-forward 8–15s generation on 800k Objaverse assets.</p>
       </div>
       <div class="math-card">
-        <h4>2. Camera Ray Unprojection Matrix K</h4>
-        <pre>X = (u - c_x)*Z / f_x,  Y = (v - c_y)*Z / f_y,  Z = depth(u, v)</pre>
-        <p>Inverts the perspective projection of pinhole cameras to backproject 2D pixels into metric 3D camera coordinate space.</p>
+        <h4>2. DMTet Score Distillation Sampling (Meshy.ai)</h4>
+        <pre>∇_θ L_SDS = E_t,ε[ w(t) (ε̂_φ(z_t; y, t) − ε) · ∂z/∂θ ]
+z_t = √(ᾱ_t)·z + √(1−ᾱ_t)·ε  (noisy render latent)</pre>
+        <p>Differentiable Marching Tetrahedra optimizes per-vertex SDF values via Score Distillation backpropagated from a frozen 2D diffusion prior. Photorealistic PBR, 45–90s, Janus-artifact risk.</p>
       </div>
       <div class="math-card">
-        <h4>3. Volumetric Signed Distance Field (SDF)</h4>
-        <pre>Phi(x) = min_{y in dOmega} ||x - y|| * sgn(x)</pre>
-        <p>Encodes the 3D surface as the zero-level set of a continuous volumetric distance grid, enabling topological manifold extraction.</p>
+        <h4>3. 3DGS Covariance Splatting (Luma AI Genie)</h4>
+        <pre>Σ_i = R(q_i) S(s_i) S(s_i)ᵀ R(q_i)ᵀ
+Σ'_i = J W Σ_i Wᵀ Jᵀ   (2D projection)
+C = Σ c_i α_i Π_{j&lt;i}(1 − α_j)  (alpha compositing)</pre>
+        <p>Explicit Gaussian radiance field factored via rotation quaternion and anisotropic scale. Tile-based rasterization at 60 FPS. Non-solid — requires secondary Poisson for 3D printing.</p>
       </div>
       <div class="math-card">
-        <h4>4. Taubin Dual-Pass Non-Shrinking Smoothing</h4>
-        <pre>x' = x + lambda * L(x),  x'' = x' + mu * L(x'),  (1/lambda + 1/mu &lt; 0)</pre>
-        <p>Attenuates high-frequency surface noise and marching cubes discretization artifacts without shrinking the volume of the 3D model.</p>
+        <h4>4. Inverse CAD B-Rep / Eikonal SDF (CSM.ai)</h4>
+        <pre>L_eikonal = E[(‖∇_x f_ψ(x)‖₂ − 1)²]
+L_CSM = L_photo + λ_n·L_normal + λ_e·L_eikonal</pre>
+        <p>Implicit occupancy network with joint SfM pose optimization. Eikonal term enforces unit-gradient SDF regularity. Post-processing recovers sharp B-Rep edges for CAD/STEP export. 60–180s.</p>
+      </div>
+      <div class="math-card">
+        <h4>5. Volumetric SDF + Marching Cubes (3DFUN AI — This Work)</h4>
+        <pre>Φ(x) = ±min_{y∈∂V} ‖x−y‖  (silhouette-constrained 128³ grid)
+p = v_a + (τ−Φ(v_a))/(Φ(v_b)−Φ(v_a)) · (v_b−v_a)
+χ = V − E + F = 2  (genus-0 watertight manifold, τ = 0)</pre>
+        <p>Deterministic: silhouette-constrained SDF → Marching Cubes → Taubin dual-pass smoothing (λ&gt;0, μ&lt;−λ). Result: 96% watertight, Chamfer 0.0639, F@1% 0.148. 100% local ONNX, zero cloud.</p>
       </div>
     </div>
   </section>

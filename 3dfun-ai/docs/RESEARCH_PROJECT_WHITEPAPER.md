@@ -201,7 +201,99 @@ The AI Co-Pilot in `app/routers/chat.py` implements autonomous FastAPI function 
 
 ---
 
-## 5. Deconstruction of Real-World Generative 3D Startups & Foundation Models
+## 5. Five Foundational Mathematical Paradigms of Image-to-3D Generation
+
+The generative 3D industry converges on five canonical mathematical paradigms. Each encodes 3D information in a fundamentally different mathematical structure, with distinct trade-offs in resolution, differentiability, watertightness, and computational cost.
+
+### Paradigm 1: LRM Triplane Neural Radiance Fields (Tripo3D, TripoSR, Stable Fast 3D)
+
+The Large Reconstruction Model (LRM) encodes a 3D scene as three axis-aligned orthogonal feature planes $T_{xy}, T_{xz}, T_{yz} \in \mathbb{R}^{N \times N \times C}$. For any continuous query point $\mathbf{x} = (x, y, z)$, the feature vector is obtained by bilinear projection and channel-wise concatenation:
+
+$$f(\mathbf{x}) = \underbrace{\text{proj}_{xy}(T_{xy}, x, y)}_{\text{XY plane}} \oplus \underbrace{\text{proj}_{xz}(T_{xz}, x, z)}_{\text{XZ plane}} \oplus \underbrace{\text{proj}_{yz}(T_{yz}, y, z)}_{\text{YZ plane}}$$
+
+A vision transformer (ViT/DINO) tokenizes the input image and cross-attends over triplane positions. A lightweight MLP evaluates volume density $\sigma(\mathbf{x}) \geq 0$ and color $\mathbf{c}(\mathbf{x}) \in [0,1]^3$. Volume rendering integrates radiance along each camera ray $\mathbf{r}(t) = \mathbf{o} + t\mathbf{d}$:
+
+$$\hat{C}(\mathbf{r}) = \int_{t_n}^{t_f} T(t)\, \sigma(\mathbf{r}(t))\, \mathbf{c}(\mathbf{r}(t), \mathbf{d})\; dt, \qquad T(t) = \exp\!\left(-\int_{t_n}^{t} \sigma(\mathbf{r}(s))\, ds\right)$$
+
+**Key properties:** Feed-forward (8–15s); $O(N^2)$ memory; resolution limited by $N$; trained on Objaverse 800k+ objects across 64+ H100 clusters.
+
+---
+
+### Paradigm 2: DMTet Score Distillation Sampling (Meshy.ai, SV3D, Wonder3D)
+
+Differentiable Marching Tetrahedra (DMTet) maintains a deformable tetrahedral grid $\mathcal{T} = (\mathcal{V}_\text{tet}, \mathcal{E}_\text{tet})$ where each vertex $i$ stores a learnable SDF value $s_i \in \mathbb{R}$ and displacement $\Delta\mathbf{v}_i \in \mathbb{R}^3$. The triangle mesh is differentiably extracted from the zero-crossing of these SDF values.
+
+Optimization is driven by Score Distillation Sampling (SDS), which backpropagates gradients from a frozen 2D diffusion prior $\hat{\epsilon}_\phi$ into the 3D parameters $\theta$:
+
+$$\nabla_\theta \mathcal{L}_{\text{SDS}} = \mathbb{E}_{t, \epsilon, \mathbf{c}} \left[ w(t) \bigl(\hat{\epsilon}_\phi(\mathbf{z}_t;\, y,\, t) - \epsilon\bigr) \frac{\partial \mathbf{z}}{\partial \theta} \right]$$
+
+where $\mathbf{z}_t = \sqrt{\bar{\alpha}_t}\,\mathbf{z} + \sqrt{1-\bar{\alpha}_t}\,\epsilon$ is the noisy render latent, $y$ is the text/image conditioning, and $w(t)$ is a time-dependent weighting schedule.
+
+**Key properties:** Photorealistic PBR textures; clean quad topology; 45–90s due to iterative SDS optimization; Janus (multi-face) artifact risk when multi-view conditioning diverges.
+
+---
+
+### Paradigm 3: 3D Gaussian Splatting Covariance (Luma AI Genie, Luma 3D)
+
+Each Gaussian primitive $\mathcal{G}_i$ is parameterized by center $\mu_i \in \mathbb{R}^3$, 3D covariance matrix $\Sigma_i$, opacity $\alpha_i \in [0,1]$, and spherical harmonics color coefficients $\mathbf{c}_i$. The covariance is factored via rotation quaternion $\mathbf{q}_i$ and anisotropic scale $\mathbf{s}_i$:
+
+$$\Sigma_i = R(\mathbf{q}_i)\, S(\mathbf{s}_i)\, S(\mathbf{s}_i)^T\, R(\mathbf{q}_i)^T$$
+
+The 3D Gaussian is evaluated as:
+
+$$\mathcal{G}_i(\mathbf{x}) = \exp\!\left(-\tfrac{1}{2}(\mathbf{x} - \mu_i)^T \Sigma_i^{-1} (\mathbf{x} - \mu_i)\right)$$
+
+For 2D rendering, $\Sigma_i$ is projected through the viewing transform $W$ and affine Jacobian $J$ of the perspective map:
+
+$$\Sigma'_i = J\, W\, \Sigma_i\, W^T\, J^T$$
+
+Pixel color is accumulated by depth-sorted alpha compositing:
+
+$$C = \sum_{i \in \mathcal{N}} \mathbf{c}_i\, \alpha_i \prod_{j=1}^{i-1}(1 - \alpha_j)$$
+
+**Key properties:** Real-time 60 FPS rasterization; view-dependent specular; non-solid/non-manifold representation requires secondary Poisson reconstruction for 3D printing.
+
+---
+
+### Paradigm 4: Inverse CAD Boundary Representation (CSM.ai)
+
+CSM.ai optimizes a continuous implicit occupancy network $f_\psi: \mathbb{R}^3 \to [0, 1]$ jointly with camera poses $\{R_k, \mathbf{t}_k\}$ recovered by learned Structure-from-Motion. The composite loss enforces photometric, normal, and Eikonal constraints:
+
+$$\mathcal{L}_{\text{CSM}} = \mathcal{L}_{\text{photo}} + \lambda_n\, \mathcal{L}_{\text{normal}} + \lambda_e\, \mathcal{L}_{\text{eikonal}}$$
+
+The Eikonal term enforces the signed distance function regularity $\|\nabla f\| = 1$ almost everywhere:
+
+$$\mathcal{L}_{\text{eikonal}} = \mathbb{E}_{\mathbf{x}}\!\left[\bigl(\|\nabla_{\mathbf{x}} f_\psi(\mathbf{x})\|_2 - 1\bigr)^2\right]$$
+
+The boundary surface (B-Rep) at $f_\psi(\mathbf{x}) = 0.5$ is post-processed by feature-line detection and sharp-edge reconstruction for CAD export.
+
+**Key properties:** Manufacturably sharp edges; native STEP/IGES CAD export; 60–180s; sensitive to motion blur in casual video captures.
+
+---
+
+### Paradigm 5: Volumetric SDF + Marching Cubes (3DFUN AI — This Work)
+
+3DFUN AI constructs a voxel grid SDF $\Phi: \Omega_V \subset \mathbb{R}^3 \to \mathbb{R}$ on a regular $N^3$ lattice (typically $128^3$) by:
+
+$$\Phi(\mathbf{x}) = \begin{cases} -\min_{\mathbf{y} \in \partial\mathcal{V}} \|\mathbf{x} - \mathbf{y}\|, & \mathbf{x} \in \mathcal{V} \text{ (inside)} \\ +\min_{\mathbf{y} \in \partial\mathcal{V}} \|\mathbf{x} - \mathbf{y}\|, & \mathbf{x} \notin \mathcal{V} \text{ (outside)} \end{cases}$$
+
+The silhouette constraint ensures only voxels projecting inside the foreground mask $M(u,v) = 1$ are occupied. Isosurface extraction at $\tau = 0.0$ via Marching Cubes (Lorensen & Cline, 1987) linearly interpolates triangle vertices:
+
+$$\mathbf{p} = \mathbf{v}_a + \frac{\tau - \Phi(\mathbf{v}_a)}{\Phi(\mathbf{v}_b) - \Phi(\mathbf{v}_a)}(\mathbf{v}_b - \mathbf{v}_a)$$
+
+The resulting manifold satisfies the Euler characteristic for genus-0 objects:
+
+$$\chi = V - E + F = 2 \quad (g = 0, \text{ homeomorphic to sphere})$$
+
+Taubin dual-pass smoothing with $\lambda > 0,\; \mu < -\lambda$ eliminates stairstep quantization without volume shrinkage:
+
+$$\mathbf{p}^{(n+\frac{1}{2})}_i = \mathbf{p}^{(n)}_i + \lambda \sum_{j \in \mathcal{N}(i)} w_{ij}(\mathbf{p}^{(n)}_j - \mathbf{p}^{(n)}_i), \quad \mathbf{p}^{(n+1)}_i = \mathbf{p}^{(n+\frac{1}{2})}_i + \mu \sum_{j \in \mathcal{N}(i)} w_{ij}(\mathbf{p}^{(n+\frac{1}{2})}_j - \mathbf{p}^{(n+\frac{1}{2})}_i)$$
+
+**Key properties:** 100% local ONNX (CPU/DirectML); no cloud; guaranteed $\chi=2$ watertight manifold (96%); 12–45s; full 8-stage tensor telemetry for education.
+
+---
+
+## 6. Deconstruction of Real-World Generative 3D Startups & Foundation Models
 
 To provide students and computer vision researchers with real-world industry context, we analyze the architectural paradigms, mathematical representations, and trade-offs of the leading commercial generative 3D startups:
 
@@ -223,7 +315,7 @@ To provide students and computer vision researchers with real-world industry con
 +-----------------------------------------------------------------------------------------------------------------------------+
 ```
 
-### 5.1 Tripo3D & TripoSR (VAST AI Research)
+### 6.1 Tripo3D & TripoSR (VAST AI Research)
 - **Core Architecture:** Large Reconstruction Model (LRM) Transformer.
 - **Mathematical Representation:** Triplane Neural Radiance Fields ($T_{xy}, T_{xz}, T_{yz} \in \mathbb{R}^{3 \times N \times N \times C}$).
 - **Inference Mechanism:** An input image $I$ is encoded by a vision transformer (DINO ViT). A sequence of multi-head self-attention and cross-attention transformer layers directly regresses features on the three orthogonal axis-aligned planes. For any continuous 3D query point $\mathbf{x} = (x, y, z)$, its feature vector is synthesized via bilinear interpolation:
@@ -232,7 +324,7 @@ To provide students and computer vision researchers with real-world industry con
 - **Strengths:** Blazing inference speed (8 – 15 seconds), deterministic feed-forward runtime, no multi-view optimization loop.
 - **Limitations:** Spatial discretization of triplanes introduces resolution bottlenecks for micro-relief; requires training over vast datasets (Objaverse 800k+ models) across 64+ NVIDIA H100 clusters.
 
-### 5.2 Meshy.ai
+### 6.2 Meshy.ai
 - **Core Architecture:** Multi-View Latent Diffusion + Differentiable Marching Tetrahedra (DMTet).
 - **Mathematical Representation:** Signed Distance Field on a deformable tetrahedral grid $\mathcal{T} = (\mathcal{V}_{\text{tet}}, \mathcal{E}_{\text{tet}})$.
 - **Inference Mechanism:** 
@@ -243,7 +335,7 @@ To provide students and computer vision researchers with real-world industry con
 - **Strengths:** Photorealistic material fidelity, clean quad topology suited for rigging and game engines.
 - **Limitations:** Slower latency (45 – 90 seconds); susceptible to the "Janus artifact" (multi-faced hallucinations) when multi-view cross-attention conditioning diverges.
 
-### 5.3 Luma AI Genie
+### 6.3 Luma AI Genie
 - **Core Architecture:** Latent 3D Diffusion + 3D Gaussian Splatting (3DGS).
 - **Mathematical Representation:** Mixture of 3D Gaussians $\mathcal{G}_i = (\mu_i, \Sigma_i, \alpha_i, \mathbf{c}_i)$ where covariance is factored into rotation quaternion $\mathbf{q}_i$ and scale $\mathbf{s}_i$:
   $$\Sigma_i = R(\mathbf{q}_i) S(\mathbf{s}_i) S(\mathbf{s}_i)^T R(\mathbf{q}_i)^T$$
@@ -251,33 +343,49 @@ To provide students and computer vision researchers with real-world industry con
 - **Strengths:** View-dependent specular highlights, complex non-Lambertian reflections, real-time 60 FPS viewport rendering.
 - **Limitations:** Splat representations are non-solid and non-manifold; converting 3D Gaussians into 3D-printable watertight solid meshes ($\chi = 2$) requires secondary Poisson or Marching Tetrahedra surface reconstruction which often degrades thin geometry.
 
-### 5.4 Spline 3D (Parametric WebGL & AI Generation)
+### 6.4 Spline 3D (Parametric WebGL & AI Generation)
 - **Core Architecture:** WebGL/WebGPU parametric geometry engine with cloud generative AI microservices.
 - **Representation:** Parametric NURBS, procedural subdivision surfaces, and polygon meshes with real-time physics.
 - **Focus:** Interactive web canvas integration, spatial user interactions, and game prototyping rather than single-view photorealistic inverse problem reconstruction.
 
-### 5.5 Kaedim 3D
+### 6.5 Kaedim 3D
 - **Core Architecture:** Machine Learning initial shape estimation coupled with automated and human-in-the-loop retopology.
 - **Focus:** Enterprise game development pipelines requiring strict sub-d quad geometry and strict vertex budgets.
 - **Latency & Cost:** High latency (15 – 30 minutes) and high enterprise subscription costs ($150 – $500/month).
 
-### 5.6 CSM.ai (Common Sense Machines)
+### 6.6 CSM.ai (Common Sense Machines)
 - **Core Architecture:** Multi-view Video-to-3D diffusion + Neural Inverse CAD representation.
-- **Mathematical Representation:** Continuous boundary representation (B-Rep) and volumetric occupancy networks conditioned on casual monocular video scans or multi-turn single images.
+- **Mathematical Representation:** Continuous Boundary Representation (B-Rep). An implicit occupancy network $f_\psi: \mathbb{R}^3 \to [0, 1]$ is optimized jointly with camera pose graph $\{R_k, \mathbf{t}_k\}$ recovered by learned Structure-from-Motion. The volumetric loss combines photometric re-projection and surface normal consistency:
+  $$\mathcal{L}_{\text{CSM}} = \mathcal{L}_{\text{photo}} + \lambda_n \mathcal{L}_{\text{normal}} + \lambda_e \mathcal{L}_{\text{eikonal}}$$
+  where the Eikonal term enforces unit-gradient SDF regularity:
+  $$\mathcal{L}_{\text{eikonal}} = \mathbb{E}_{\mathbf{x}}\!\left[\left(\|\nabla f_\psi(\mathbf{x})\|_2 - 1\right)^2\right]$$
+  Sharp B-Rep edges are recovered post-hoc by feature-line detection on the extracted mesh normals.
 - **Inference Mechanism:** Ingests a short rotating video or orthographic snapshots, computes camera pose trajectories via learned Structure-from-Motion (SfM), and optimizes an implicit field with surface normal regularizers to generate CAD-compatible geometric surfaces.
 - **Strengths:** High geometric accuracy on industrial objects, sharp edges suitable for manufacturing, native CAD export format support.
 - **Limitations:** Higher latency (60 – 180 seconds); sensitive to motion blur in casual smartphone video captures.
 
-### 5.7 Tencent Hunyuan3D 1.0 & 2.0
+### 6.7 Rodin Gen-2 (Deemos Technology)
+- **Core Architecture:** Micro-Geometry Voxel Diffusion Model running on cloud supercomputing clusters.
+- **Mathematical Representation:** Denoising diffusion process operating on a high-resolution voxel latent field $\mathbf{z} \in \mathbb{R}^{V \times V \times V \times C}$. The forward diffusion process corrupts latents as:
+  $$q(\mathbf{z}_t | \mathbf{z}_0) = \mathcal{N}(\mathbf{z}_t; \sqrt{\bar{\alpha}_t}\,\mathbf{z}_0,\; (1 - \bar{\alpha}_t)\mathbf{I})$$
+  Reverse denoising conditioned on image embedding $\mathbf{e}_I$ yields micro-geometry detail via:
+  $$p_\theta(\mathbf{z}_{t-1} | \mathbf{z}_t, \mathbf{e}_I) = \mathcal{N}(\mathbf{z}_{t-1};\; \mu_\theta(\mathbf{z}_t, t, \mathbf{e}_I),\; \sigma_t^2 \mathbf{I})$$
+- **Inference Mechanism:** Image-conditioned latent diffusion reverse process followed by high-fidelity mesh extraction with subdivision surface refinement and displacement-mapped micro-geometry.
+- **Strengths:** Best-in-class surface micro-detail and human character fidelity; suited for cinematic VFX character pipelines.
+- **Limitations:** Proprietary cloud-only; latency 60–180 seconds; paid subscription credit model; zero educational transparency.
+
+### 6.8 Tencent Hunyuan3D 1.0 & 2.0
 - **Core Architecture:** Two-Stage Foundation Model: Multi-view Diffusion Transformer (Hunyuan-DiT) + Feed-Forward Sparse Voxel Reconstruction.
-- **Mathematical Representation:** High-resolution multi-view color & normal maps followed by feed-forward Marching Cubes extraction with progressive upsampling.
+- **Mathematical Representation:** Sparse-voxel triplane occupancy field. The diffusion transformer encodes image conditioning $\mathbf{c}$ and predicts multi-view normal maps $\hat{N}_k$ for $k$ canonical views. A triplane decoder $f_\phi: \mathbb{R}^{3 \times N \times N \times C} \to [0,1]$ yields continuous occupancy:
+  $$o(\mathbf{x}) = \sigma\!\left(f_\phi\bigl(\text{proj}_{xy}(T_{xy}, x, y) \oplus \text{proj}_{xz}(T_{xz}, x, z) \oplus \text{proj}_{yz}(T_{yz}, y, z)\bigr)\right)$$
+  where $\sigma$ is the sigmoid function and the surface is extracted at the $o(\mathbf{x}) = 0.5$ iso-level.
 - **Inference Mechanism:** 
   1. *View Generation:* Conditioned on text or image prompts, a diffusion transformer synthesizes multi-view normal and RGB projections.
   2. *Volume Reconstruction:* A sparse-voxel triplane backbone decodes occupancy without slow Score Distillation Sampling (SDS).
 - **Strengths:** High geometric consistency across views, open foundation model weights, sharp texture baking with specular decoupling.
 - **Limitations:** Requires high GPU memory (minimum 16 GB VRAM) for local deployment.
 
-### 5.8 Comprehensive Industry Comparison Matrix
+### 6.9 Comprehensive Industry Comparison Matrix
 
 | Startup / Platform | Core Mathematical Representation | Inference Backbone | Average Latency | Watertight Solid? | Educational Transparency | Offline Capable? | Free Trial Credits |
 |---|---|---|---|---|---|---|---|
@@ -294,7 +402,7 @@ To provide students and computer vision researchers with real-world industry con
 
 ---
 
-## 6. Verification & Continuous Testing Evidence
+## 7. Verification & Continuous Testing Evidence
 
 ```
 ====================================================================================================
