@@ -326,5 +326,9 @@ def export_all(outdir: Path, mesh: MeshResult, tex: TextureResult | None,
             p = outdir / f"{name}.png"
             cv2.imwrite(str(p), cv2.cvtColor(tex.maps[name], cv2.COLOR_RGBA2BGRA))
             files[f"tex_{name}"] = p
+        # Student clarity: save albedo.png as alias to basecolor
+        albedo_p = outdir / "albedo.png"
+        cv2.imwrite(str(albedo_p), cv2.cvtColor(tex.maps["basecolor"], cv2.COLOR_RGBA2BGRA))
+        files["tex_albedo"] = albedo_p
     sizes = {k: int(p.stat().st_size) for k, p in files.items() if p.exists()}
     return ExportResult(files=files, stats={"file_bytes": sizes, "formats": sorted(formats)})

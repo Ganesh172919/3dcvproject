@@ -1,53 +1,27 @@
-# Reference: Configuration & Parameter Reference
+# Configuration reference
 
-This document provides a comprehensive reference for environment variables, reconstruction pipeline parameters, meshing budgets, and server operational settings.
+The app reads `.env` in the project source directory. Process environment values take precedence. See `.env.example` and `app/config.py` for the full application settings.
 
----
+| Setting | Default or behavior |
+| --- | --- |
+| `APP_URL` | `http://localhost:8000`. Set it to the origin you use for the app. |
+| `NODE_ENV` | `development`. |
+| `DATABASE_URL` | SQLite in the project's `data/` directory. |
+| `STORAGE_DRIVER` | `local`. |
+| `STORAGE_ROOT` | `data/storage` under the project directory. |
+| `GENERATION_PROVIDER` | `local`. |
+| `RECON_DEVICE` | CPU by default. Use a matching DirectML or CUDA wheel for GPU inference. |
+| `RECON_WARMUP` | `false`. |
+| `MAX_UPLOAD_MB` | `20`. |
+| `JOB_CONCURRENCY` | `1`. |
+| `JOB_TIMEOUT_SECONDS` | `480`. |
+| `SIGNUP_CREDITS` | `60`. |
+| `ALLOW_REGISTRATION` | `true`. |
+| `GEMINI_API_KEY` | Optional server-side chat key. |
+| `GEMINI_MODEL` | Optional chat model override. |
 
-## 1. Environment Variables
+The Windows launcher calls Uvicorn on port 8010 by default. The POSIX launcher defaults to port 8000. The server reports limits and installed model features in `GET /api/v1/meta`.
 
-Variables can be defined in a `.env` file at the project root or passed via the runtime environment:
+## Surface extraction and smoothing settings
 
-| Variable | Type | Default | Description |
-|---|---|---|---|
-| `APP_ENV` | string | `development` | Environment mode (`development`, `testing`, `production`). |
-| `DATABASE_URL` | string | `sqlite:///data/3dfun.db` | SQLAlchemy database connection URI. |
-| `SECRET_KEY` | string | *auto-generated* | HMAC secret used to sign JWT tokens. |
-| `ONNX_THREADS` | integer | `4` | Number of intra-op threads allocated to ONNX Runtime sessions. |
-| `ONNX_INTER_THREADS` | integer | `1` | Number of inter-op threads allocated to ONNX Runtime sessions. |
-| `MAX_UPLOAD_MB` | integer | `25` | Maximum permissible file upload size in megabytes. |
-| `CACHE_DIR` | path | `engine/models` | Local directory for cached ONNX weight graphs. |
-| `DEFAULT_TRIANGLE_BUDGET` | integer | `8000` | Target triangle polygon count when omitted by caller. |
-
----
-
-## 2. Volumetric Inflation Parameters
-
-The geometric core inflates foreground silhouette pixels into volumetric solids according to:
-$$t(p) = t_{\min} + (t_{\max} - t_{\min}) \cdot \left(f + g \cdot d(p)^\gamma\right)$$
-
-| Parameter | Symbol | Default | Acceptable Range | Physical Meaning |
-|---|---|---|---|---|
-| `thickness_max` | $t_{\max}$ | `0.70` | $[0.20, 1.20]$ | Maximum volumetric depth relative to silhouette width $W$. |
-| `thickness_min` | $t_{\min}$ | `0.02` | $[0.005, 0.10]$ | Minimum structural core thickness preventing zero-volume collapse. |
-| `constant_core` | $f$ | `0.55` | $[0.30, 0.80]$ | Constant inflation fraction guaranteeing closed rim watertightness. |
-| `depth_scale` | $g$ | `0.45` | $[0.20, 0.70]$ | Depth modulation scale carving front-facing surface relief. |
-| `depth_gamma` | $\gamma$ | `0.85` | $[0.50, 1.50]$ | Non-linear gamma curve adjusting mid-tone relief slope. |
-| `sdf_sigma` | $\sigma_{\text{sdf}}$ | `0.80` | $[0.40, 2.00]$ | Standard deviation (voxels) for 3D Gaussian field smoothing. |
-
----
-
-## 3. Surface Extraction & Smoothing Settings
-
-| Parameter | Default | Range | Description |
-|---|---|---|---|
-| `target_triangles` | `8000` | $[1000, 50000]$ | Desired mesh complexity used to calibrate Cartesian grid resolution. |
-| `grid_min` | `32` | $[16, 64]$ | Minimum allowed grid dimension along shortest bounding axis. |
-| `grid_max` | `224` | $[128, 512]$ | Maximum allowed grid dimension along longest bounding axis. |
-| `taubin_iterations` | `12` | $[4, 30]$ | Number of dual-step Taubin non-shrinking smoothing iterations. |
-| `taubin_lambda` | `0.50` | $(0.0, 1.0]$ | Positive forward contraction parameter. |
-| `taubin_mu` | `-0.53` | $(-\infty, -\lambda)$ | Negative backward expansion parameter ($\mu < -\lambda < 0$). |
-
----
-*Evidence: Configuration schemas in `engine/recon/config.py` and `app/core/config.py`.*  
-*Authors: J Ganesh, M Jagadeshwar, B Varshith, Pranav Kashyap, C Sai Aravind (Supervisor: Dr. Shirshendu Layek, Dept. of DSAI, IIIT Dharwad).*
+Draft, Standard, and High map to presets in `engine/recon/config.py`. The CLI accepts `--quality`, `--faces`, and `--voxels`. Other slab and meshing settings live in `PipelineConfig` and the calibration program. For measured parameter changes, see the [benchmark](../BENCHMARK.md) and [theory notes](../explanations/volumetric-inflation.md).

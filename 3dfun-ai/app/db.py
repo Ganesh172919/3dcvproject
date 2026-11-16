@@ -19,7 +19,7 @@ from typing import Iterator
 
 from sqlalchemy import (
     JSON, Boolean, CheckConstraint, DateTime, Enum, Float, ForeignKey, Index,
-    Integer, String, Text, UniqueConstraint, create_engine, event, select,
+    Integer, String, Text, UniqueConstraint, create_engine, event,
 )
 from sqlalchemy.orm import (DeclarativeBase, Mapped, mapped_column, relationship,
                             sessionmaker, Session)
@@ -66,6 +66,10 @@ class Visibility(str, enum.Enum):
 
 class CreditReason(str, enum.Enum):
     SIGNUP_GRANT = "SIGNUP_GRANT"
+    SIGNUP_BONUS = "SIGNUP_BONUS"
+    DAILY_STREAK = "DAILY_STREAK"
+    STUDENT_LAB = "STUDENT_LAB"
+    TOOL_ACTION = "TOOL_ACTION"
     RESERVATION = "RESERVATION"
     SPEND = "SPEND"
     REFUND = "REFUND"
@@ -95,10 +99,12 @@ class User(Base):
     deleted_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     last_login_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_daily_claim_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     sessions: Mapped[list["UserSession"]] = relationship(back_populates="user",
                                                          cascade="all, delete-orphan")
     wallet: Mapped["CreditWallet | None"] = relationship(back_populates="user", uselist=False)
+    lab_runs: Mapped[list["StudentLabRun"]] = relationship(back_populates="user", cascade="all, delete-orphan")
 
 
 class UserSession(Base):
@@ -458,6 +464,23 @@ class UsageRecord(Base):
     created_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
 
 
+class StudentLabRun(Base):
+    __tablename__ = "student_lab_runs"
+    id: Mapped[str] = mapped_column(String(40), primary_key=True, default=lambda: new_id("lab"))
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    lab_id: Mapped[str] = mapped_column(String(60), index=True)  # lab1_depth, lab2_occupancy, lab3_3dgs, lab4_evaluator
+    name: Mapped[str] = mapped_column(String(120), default="")
+    status: Mapped[str] = mapped_column(String(30), default="queued")  # queued | running | completed | failed
+    config: Mapped[dict] = mapped_column(JSON, default=dict)
+    metrics: Mapped[dict] = mapped_column(JSON, default=dict)
+    logs: Mapped[str] = mapped_column(Text, default="")
+    artifacts: Mapped[dict] = mapped_column(JSON, default=dict)
+    created_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+    completed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    user: Mapped[User] = relationship(back_populates="lab_runs")
+
+
 # ---------------------------------------------------------------------------
 # engine / session factory
 # ---------------------------------------------------------------------------
@@ -491,6 +514,15 @@ def get_db() -> Iterator[Session]:
 
 def init_db() -> None:
     Base.metadata.create_all(engine)
+    if settings.database_url.startswith("sqlite"):
+        try:
+            with engine.begin() as conn:
+                res = conn.exec_driver_sql("PRAGMA table_info(users)").fetchall()
+                cols = {row[1] for row in res}
+                if cols and "last_daily_claim_at" not in cols:
+                    conn.exec_driver_sql("ALTER TABLE users ADD COLUMN last_daily_claim_at DATETIME")
+        except Exception:
+            pass
 
 
 def reset_db() -> None:

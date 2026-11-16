@@ -1,7 +1,6 @@
 """FastAPI dependencies for authentication, CSRF and RBAC."""
 from __future__ import annotations
 
-import datetime as dt
 from typing import Annotated
 
 import jwt
@@ -9,7 +8,6 @@ from fastapi import Depends, Request
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from .config import settings
 from .db import Generation, User, UserSession, get_db, utcnow
 from .schemas import ApiError
 from .security import decode_access_token, is_expired

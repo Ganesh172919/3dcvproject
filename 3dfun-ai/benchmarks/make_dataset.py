@@ -111,7 +111,7 @@ def _sample_mesh(v: np.ndarray, f: np.ndarray, count: int, seed: int) -> tuple[n
     key = np.round(pts / 0.012).astype(np.int64)
     uniq, inverse = np.unique(key, axis=0, return_inverse=True)
     # rebuild faces from the original triangles using welded indices
-    ai = inverse[idx * 3 + 0] if False else None
+    inverse[idx * 3 + 0] if False else None
     verts = np.zeros_like(uniq, dtype=np.float64)
     for i, k in enumerate(uniq):
         verts[i] = key[i] * 0.012
@@ -137,80 +137,6 @@ def _rotate(v: np.ndarray, yaw_deg: float = YAW_DEG, pitch_deg: float = PITCH_DE
     return v @ _rot_matrix(yaw_deg, pitch_deg).T
 
 
-def _zbuffer_render(v: np.ndarray, f: np.ndarray, albedo: tuple[int, int, int],
-                    size: int = RES, return_camera: bool = False):
-    """Z-buffered Lambert/Blinn render of the reference surface.
-
-    A depth buffer (not painter's ordering) prevents the silhouette and coplanar
-    face artefacts that fillPoly ordering produces, so the synthetic inputs look
-    like photographs of matte plastic rather than shaded wireframes.
-    """
-    v = _rotate(v)
-    tri = v[f]
-    fn = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0])
-    area = 0.5 * np.linalg.norm(fn, axis=1)
-    fn = fn / np.maximum(np.linalg.norm(fn, axis=1, keepdims=True), 1e-9)
-
-    vn = np.zeros_like(v)
-    for c in range(3):
-        np.add.at(vn, f[:, c], fn * area[:, None])
-    vn /= np.maximum(np.linalg.norm(vn, axis=1, keepdims=True), 1e-9)
-
-    uv = np.stack([v[:, 0], -v[:, 1]], axis=1)
-    lo, hi = uv.min(axis=0), uv.max(axis=0)
-    span = float(max(hi - lo))
-    scale = size * 0.70 / max(span, 1e-9)
-    centre = (lo + hi) / 2.0
-    scr = (uv - centre) * scale + size / 2.0
-
-    z = np.full((size, size), -np.inf, np.float32)
-    img = np.full((size, size, 3), 247.0, np.float32)
-    light = np.array([-0.42, 0.62, 0.66]); light /= np.linalg.norm(light)
-    view = np.array([0.0, 0.0, 1.0])
-    half = light + view; half /= np.linalg.norm(half)
-    face_n = vn[f].mean(axis=1)
-    face_n /= np.maximum(np.linalg.norm(face_n, axis=1, keepdims=True), 1e-9)
-    lam = 0.44 + 0.50 * np.clip(face_n @ light, 0, 1) + 0.10 * np.clip(face_n @ view, 0, 1)
-    spec = np.clip(face_n @ half, 0, 1) ** 18 * 0.20
-    base = np.array(albedo, float) / 255.0
-
-    depth = tri[:, :, 2].mean(axis=1)
-    order = np.argsort(depth)                     # cheap early rejection order
-    for i in order:
-        x0, y0 = scr[f[i], 0], scr[f[i], 1]
-        xmin, xmax = int(max(0, np.floor(x0.min()))), int(min(size - 1, np.ceil(x0.max())))
-        ymin, ymax = int(max(0, np.floor(y0.min()))), int(min(size - 1, np.ceil(y0.max())))
-        if xmax < xmin or ymax < ymin:
-            continue
-        xs, ys = np.meshgrid(np.arange(xmin, xmax + 1) + 0.5, np.arange(ymin, ymax + 1) + 0.5)
-        det = ((y0[1] - y0[2]) * (x0[0] - x0[2]) + (x0[2] - x0[1]) * (y0[0] - y0[2]))
-        if abs(det) < 1e-12:
-            continue
-        w0 = ((y0[1] - y0[2]) * (xs - x0[2]) + (x0[2] - x0[1]) * (ys - y0[2])) / det
-        w1 = ((y0[2] - y0[0]) * (xs - x0[2]) + (x0[0] - x0[2]) * (ys - y0[2])) / det
-        w2 = 1.0 - w0 - w1
-        inside = (w0 >= -1e-6) & (w1 >= -1e-6) & (w2 >= -1e-6)
-        if not inside.any():
-            continue
-        zval = w0 * tri[i, 0, 2] + w1 * tri[i, 1, 2] + w2 * tri[i, 2, 2]
-        sub_z = z[ymin:ymax + 1, xmin:xmax + 1]
-        mask = inside & (zval > sub_z)
-        if not mask.any():
-            continue
-        sub_z[mask] = zval[mask]
-        colour = base * lam[i] + spec[i]
-        colour = colour * (0.94 + 0.06 * np.clip(face_n[i][1] + 1.0, 0, 2.0))
-        img[ymin:ymax + 1, xmin:xmax + 1][mask] = np.clip(colour * 255, 0, 255)
-
-    out = cv2.GaussianBlur(np.clip(img, 0, 255).astype(np.uint8), (3, 3), 0.55)
-    if not return_camera:
-        return out
-    rot = _rot_matrix()
-    return out, {"rotation": rot.tolist(), "scale": float(scale),
-                 "centre_uv": centre.tolist(), "size": int(size),
-                 "z_min": float(z.min()), "z_max": float(z.max())}
-
-
 # ------------------------------------------------------------------ analytic GTs
 # Every generator below emits a watertight surface with consistent outward
 # winding. ``n`` controls tessellation, so the same function produces both a
@@ -225,7 +151,7 @@ def make_box(w: float, h: float, d: float, n: int = 10):
     specs = [(0, -1, 1, 2), (0, 1, 1, 2), (1, -1, 2, 0), (1, 1, 2, 0),
              (2, -1, 0, 1), (2, 1, 0, 1)]
     for axis, side, ua, va in specs:
-        base = len(verts)
+        len(verts)
         grid = {}
         for iu in range(n + 1):
             for iv in range(n + 1):
@@ -308,7 +234,8 @@ def make_cone(r: float, h: float, seg: int = 96, rings: int = 10):
 
 def make_sphere(r: float, rings: int = 48, seg: int = 96):
     verts, faces = [], []
-    top = len(verts); verts.append([0.0, r, 0.0])
+    top = len(verts)
+    verts.append([0.0, r, 0.0])
     phi = np.linspace(0, np.pi, rings + 1)[1:-1]
     index = {}
     for pi, p in enumerate(phi):
@@ -316,7 +243,8 @@ def make_sphere(r: float, rings: int = 48, seg: int = 96):
             t = 2 * np.pi * si / seg
             index[(pi, si)] = len(verts)
             verts.append([r * np.sin(p) * np.cos(t), r * np.cos(p), r * np.sin(p) * np.sin(t)])
-    bottom = len(verts); verts.append([0.0, -r, 0.0])
+    bottom = len(verts)
+    verts.append([0.0, -r, 0.0])
     for si in range(seg):
         faces.append([top, index[(0, si)], index[(0, (si + 1) % seg)]])
     for pi in range(len(phi) - 1):
@@ -474,435 +402,10 @@ def make_frustum(r_bottom: float, r_top: float, h: float, seg: int = 96, rings: 
             a, b = index[(li, si)], index[(li, sj)]
             c, e = index[(li + 1, sj)], index[(li + 1, si)]
             faces += [[a, b, c], [a, c, e]]
-    bottom = len(verts); verts.append([0.0, -h / 2, 0.0])
-    top = len(verts); verts.append([0.0, h / 2, 0.0])
-    for si in range(seg):
-        sj = (si + 1) % seg
-        faces.append([bottom, index[(0, sj)], index[(0, si)]])
-        faces.append([top, index[(rings, si)], index[(rings, sj)]])
-    return np.array(verts, float), np.array(faces, np.int64)
-
-
-def make_capsule(r: float, h: float, seg: int = 72, rings: int = 12):
-    """Cylinder of height h capped by two hemispheres of radius r."""
-    verts, faces = [], []
-    prof = []
-    for i in range(rings + 1):
-        phi = (np.pi / 2) * i / rings
-        prof.append((r * np.sin(phi), h / 2 + r * np.cos(phi)))
-    for i in range(rings + 1):
-        phi = (np.pi / 2) * i / rings
-        prof.append((r * np.cos(phi), -h / 2 - r * np.sin(phi)))
-    index = {}
-    for pi, (rad, y) in enumerate(prof):
-        for si in range(seg):
-            a = 2 * np.pi * si / seg
-            index[(pi, si)] = len(verts)
-            verts.append([rad * np.cos(a), y, rad * np.sin(a)])
-    top = len(verts); verts.append([0.0, h / 2 + r, 0.0])
-    bottom = len(verts); verts.append([0.0, -h / 2 - r, 0.0])
-    for si in range(seg):
-        sj = (si + 1) % seg
-        faces.append([top, index[(0, si)], index[(0, sj)]])
-        faces.append([bottom, index[(len(prof) - 1, sj)], index[(len(prof) - 1, si)]])
-    for pi in range(len(prof) - 1):
-        for si in range(seg):
-            sj = (si + 1) % seg
-            a, b = index[(pi, si)], index[(pi, sj)]
-            c, e = index[(pi + 1, sj)], index[(pi + 1, si)]
-            faces += [[a, c, b], [a, e, c]]
-    m = trimesh.Trimesh(vertices=np.array(verts, float),
-                        faces=np.array(faces, np.int64), process=False)
-    if m.volume < 0:                                   # guarantee outward polarity
-        m.invert()
-    return np.asarray(m.vertices, float), np.asarray(m.faces, np.int64)
-
-
-def make_ring(outer_r: float, inner_r: float, h: float, seg: int = 96):
-    """Hollow tube: an annulus extruded along y (four watertight walls)."""
-    verts, faces, index = [], [], {}
-    for sign, y in ((-1, -h / 2), (1, h / 2)):
-        for which, rad in (("o", outer_r), ("i", inner_r)):
-            for si in range(seg):
-                a = 2 * np.pi * si / seg
-                index[(sign, which, si)] = len(verts)
-                verts.append([rad * np.cos(a), y, rad * np.sin(a)])
-    for si in range(seg):
-        sj = (si + 1) % seg
-        o0, o1 = index[(-1, "o", si)], index[(-1, "o", sj)]
-        p0, p1 = index[(1, "o", si)], index[(1, "o", sj)]
-        i0, i1 = index[(-1, "i", si)], index[(-1, "i", sj)]
-        q0, q1 = index[(1, "i", si)], index[(1, "i", sj)]
-        faces += [[o0, o1, p1], [o0, p1, p0]]          # outer wall
-        faces += [[i0, i1, q1], [i0, q1, q0]]          # inner wall
-        faces += [[p0, p1, q1], [p0, q1, q0]]          # top annulus
-        faces += [[o0, o1, i1], [o0, i1, i0]]          # bottom annulus
-    m = trimesh.Trimesh(vertices=np.array(verts, float),
-                        faces=np.array(faces, np.int64), process=False)
-    m.fix_normals()                                    # consistent outward winding
-    return np.asarray(m.vertices, float), np.asarray(m.faces, np.int64)
-
-
-def make_stairs(steps: int = 4, w: float = 1.2, h: float = 1.1, d: float = 0.9):
-    """Stepped profile extruded along z: one closed, consistently wound solid."""
-    prof = [[-w / 2, -h / 2]]
-    for k in range(steps):
-        x = -w / 2 + w * k / steps
-        y = -h / 2 + h * (k + 1) / steps
-        prof += [[x, y], [x + w / steps, y]]
-    prof.append([w / 2, -h / 2])
-    prof = np.array(prof, float)
-    keep = np.ones(len(prof), bool)
-    keep[1:] = np.any(np.abs(np.diff(prof, axis=0)) > 1e-9, axis=1)
-    return make_extrusion(prof[keep], d)
-
-
-def make_lamp(w: float = 1.0, h: float = 1.3, d: float = 0.6):
-    """Lamp body: tapered box extruded from a trapezoid profile."""
-    prof = np.array([[-w / 2, -h / 2], [w / 2, -h / 2],
-                     [w * 0.30, h / 2], [-w * 0.30, h / 2]])
-    return make_extrusion(prof, d)
-
-
-def _zbuffer_render(v: np.ndarray, f: np.ndarray, albedo: tuple[int, int, int],
-                    size: int = RES, return_camera: bool = False):
-    """Z-buffered Lambert/Blinn render of the reference surface.
-
-    A depth buffer (not painter's ordering) prevents the silhouette and coplanar
-    face artefacts that fillPoly ordering produces, so the synthetic inputs look
-    like photographs of matte plastic rather than shaded wireframes.
-    """
-    v = _rotate(v)
-    tri = v[f]
-    fn = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0])
-    area = 0.5 * np.linalg.norm(fn, axis=1)
-    fn = fn / np.maximum(np.linalg.norm(fn, axis=1, keepdims=True), 1e-9)
-
-    vn = np.zeros_like(v)
-    for c in range(3):
-        np.add.at(vn, f[:, c], fn * area[:, None])
-    vn /= np.maximum(np.linalg.norm(vn, axis=1, keepdims=True), 1e-9)
-
-    uv = np.stack([v[:, 0], -v[:, 1]], axis=1)
-    lo, hi = uv.min(axis=0), uv.max(axis=0)
-    span = float(max(hi - lo))
-    scale = size * 0.70 / max(span, 1e-9)
-    centre = (lo + hi) / 2.0
-    scr = (uv - centre) * scale + size / 2.0
-
-    z = np.full((size, size), -np.inf, np.float32)
-    img = np.full((size, size, 3), 247.0, np.float32)
-    light = np.array([-0.42, 0.62, 0.66]); light /= np.linalg.norm(light)
-    view = np.array([0.0, 0.0, 1.0])
-    half = light + view; half /= np.linalg.norm(half)
-    face_n = vn[f].mean(axis=1)
-    face_n /= np.maximum(np.linalg.norm(face_n, axis=1, keepdims=True), 1e-9)
-    lam = 0.44 + 0.50 * np.clip(face_n @ light, 0, 1) + 0.10 * np.clip(face_n @ view, 0, 1)
-    spec = np.clip(face_n @ half, 0, 1) ** 18 * 0.20
-    base = np.array(albedo, float) / 255.0
-
-    depth = tri[:, :, 2].mean(axis=1)
-    order = np.argsort(depth)                     # cheap early rejection order
-    for i in order:
-        x0, y0 = scr[f[i], 0], scr[f[i], 1]
-        xmin, xmax = int(max(0, np.floor(x0.min()))), int(min(size - 1, np.ceil(x0.max())))
-        ymin, ymax = int(max(0, np.floor(y0.min()))), int(min(size - 1, np.ceil(y0.max())))
-        if xmax < xmin or ymax < ymin:
-            continue
-        xs, ys = np.meshgrid(np.arange(xmin, xmax + 1) + 0.5, np.arange(ymin, ymax + 1) + 0.5)
-        det = ((y0[1] - y0[2]) * (x0[0] - x0[2]) + (x0[2] - x0[1]) * (y0[0] - y0[2]))
-        if abs(det) < 1e-12:
-            continue
-        w0 = ((y0[1] - y0[2]) * (xs - x0[2]) + (x0[2] - x0[1]) * (ys - y0[2])) / det
-        w1 = ((y0[2] - y0[0]) * (xs - x0[2]) + (x0[0] - x0[2]) * (ys - y0[2])) / det
-        w2 = 1.0 - w0 - w1
-        inside = (w0 >= -1e-6) & (w1 >= -1e-6) & (w2 >= -1e-6)
-        if not inside.any():
-            continue
-        zval = w0 * tri[i, 0, 2] + w1 * tri[i, 1, 2] + w2 * tri[i, 2, 2]
-        sub_z = z[ymin:ymax + 1, xmin:xmax + 1]
-        mask = inside & (zval > sub_z)
-        if not mask.any():
-            continue
-        sub_z[mask] = zval[mask]
-        colour = base * lam[i] + spec[i]
-        colour = colour * (0.94 + 0.06 * np.clip(face_n[i][1] + 1.0, 0, 2.0))
-        img[ymin:ymax + 1, xmin:xmax + 1][mask] = np.clip(colour * 255, 0, 255)
-
-    out = cv2.GaussianBlur(np.clip(img, 0, 255).astype(np.uint8), (3, 3), 0.55)
-    if not return_camera:
-        return out
-    rot = _rot_matrix()
-    return out, {"rotation": rot.tolist(), "scale": float(scale),
-                 "centre_uv": centre.tolist(), "size": int(size),
-                 "z_min": float(z.min()), "z_max": float(z.max())}
-
-
-# ------------------------------------------------------------------ analytic GTs
-# Every generator below emits a watertight surface with consistent outward
-# winding. ``n`` controls tessellation, so the same function produces both a
-# dense reference mesh (n large) and its shaded render.
-
-def make_box(w: float, h: float, d: float, n: int = 10):
-    """Axis-aligned box with each face split into n x n quads."""
-    faces_out = []
-    verts = []
-    half = np.array([w, h, d], float) / 2.0
-    # (axis of the face normal, side, u axis, v axis)
-    specs = [(0, -1, 1, 2), (0, 1, 1, 2), (1, -1, 2, 0), (1, 1, 2, 0),
-             (2, -1, 0, 1), (2, 1, 0, 1)]
-    for axis, side, ua, va in specs:
-        base = len(verts)
-        grid = {}
-        for iu in range(n + 1):
-            for iv in range(n + 1):
-                p = np.zeros(3)
-                p[axis] = side * half[axis]
-                p[ua] = (iu / n - 0.5) * 2 * half[ua]
-                p[va] = (iv / n - 0.5) * 2 * half[va]
-                grid[(iu, iv)] = len(verts)
-                verts.append(p)
-        for iu in range(n):
-            for iv in range(n):
-                a = grid[(iu, iv)]
-                b = grid[(iu + 1, iv)]
-                c = grid[(iu + 1, iv + 1)]
-                e = grid[(iu, iv + 1)]
-                quad = [a, b, c, e]
-                # orient outward: the normal of the first triangle must match +axis*side
-                p0, p1, p2 = np.array(verts[a]), np.array(verts[b]), np.array(verts[c])
-                nrm = np.cross(p1 - p0, p2 - p0)
-                if nrm[axis] * side < 0:
-                    quad = quad[::-1]
-                faces_out += [[quad[0], quad[1], quad[2]], [quad[0], quad[2], quad[3]]]
-    return np.array(verts, float), np.array(faces_out, np.int64)
-
-
-def make_cylinder(r: float, h: float, seg: int = 96, rings: int = 8):
-    ang = np.linspace(0, 2 * np.pi, seg, endpoint=False)
-    levels = np.linspace(-h / 2, h / 2, rings + 1)
-    verts = []
-    index = {}
-    for li, y in enumerate(levels):
-        for si, a in enumerate(ang):
-            index[(li, si)] = len(verts)
-            verts.append([r * np.cos(a), y, r * np.sin(a)])
-    faces = []
-    for li in range(rings):
-        for si in range(seg):
-            sj = (si + 1) % seg
-            a, b = index[(li, si)], index[(li, sj)]
-            c, d = index[(li + 1, sj)], index[(li + 1, si)]
-            faces += [[a, b, c], [a, c, d]]
-    # caps (fan around a centre vertex)
-    for sign, li in ((-1, 0), (1, rings)):
-        centre = len(verts)
-        verts.append([0.0, sign * h / 2, 0.0])
-        for si in range(seg):
-            sj = (si + 1) % seg
-            a, b = index[(li, si)], index[(li, sj)]
-            faces.append([centre, b, a] if sign < 0 else [centre, a, b])
-    return np.array(verts, float), np.array(faces, np.int64)
-
-
-def make_cone(r: float, h: float, seg: int = 96, rings: int = 10):
-    verts, faces = [], []
-    apex = 0
-    verts.append([0.0, h / 2, 0.0])
-    levels = np.linspace(-h / 2, h / 2, rings + 1)[:-1]
-    index = {}
-    for li, y in enumerate(levels):
-        radius = r * (1.0 - (y + h / 2) / h)
-        for si in range(seg):
-            a = 2 * np.pi * si / seg
-            index[(li, si)] = len(verts)
-            verts.append([radius * np.cos(a), y, radius * np.sin(a)])
-    for si in range(seg):
-        faces.append([apex, index[(0, si)], index[(0, (si + 1) % seg)]])
-    for li in range(len(levels) - 1):
-        for si in range(seg):
-            sj = (si + 1) % seg
-            a, b = index[(li, si)], index[(li, sj)]
-            c, d = index[(li + 1, sj)], index[(li + 1, si)]
-            faces += [[a, b, c], [a, c, d]]
-    base_centre = len(verts)
+    bottom = len(verts)
     verts.append([0.0, -h / 2, 0.0])
-    for si in range(seg):
-        faces.append([base_centre, index[(len(levels) - 1, (si + 1) % seg)],
-                      index[(len(levels) - 1, si)]])
-    return np.array(verts, float), np.array(faces, np.int64)
-
-
-def make_sphere(r: float, rings: int = 48, seg: int = 96):
-    verts, faces = [], []
-    top = len(verts); verts.append([0.0, r, 0.0])
-    phi = np.linspace(0, np.pi, rings + 1)[1:-1]
-    index = {}
-    for pi, p in enumerate(phi):
-        for si in range(seg):
-            t = 2 * np.pi * si / seg
-            index[(pi, si)] = len(verts)
-            verts.append([r * np.sin(p) * np.cos(t), r * np.cos(p), r * np.sin(p) * np.sin(t)])
-    bottom = len(verts); verts.append([0.0, -r, 0.0])
-    for si in range(seg):
-        faces.append([top, index[(0, si)], index[(0, (si + 1) % seg)]])
-    for pi in range(len(phi) - 1):
-        for si in range(seg):
-            sj = (si + 1) % seg
-            a, b = index[(pi, si)], index[(pi, sj)]
-            c, d = index[(pi + 1, sj)], index[(pi + 1, si)]
-            faces += [[a, b, c], [a, c, d]]
-    for si in range(seg):
-        faces.append([bottom, index[(len(phi) - 1, (si + 1) % seg)],
-                      index[(len(phi) - 1, si)]])
-    return np.array(verts, float), np.array(faces, np.int64)
-
-
-def make_prism(w: float, h: float, d: float, n: int = 6):
-    """Triangular prism: tessellated caps plus one quad per side wall."""
-    outline = np.array([[-w / 2, -h / 2], [w / 2, -h / 2], [0.0, h / 2]])
-
-    def subdivide(tri, depth):
-        if depth == 0:
-            return [np.array(tri, float)]
-        a, b, c = tri
-        ab, bc, ca = (a + b) / 2, (b + c) / 2, (c + a) / 2
-        return (subdivide([a, ab, ca], depth - 1) + subdivide([ab, b, bc], depth - 1)
-                + subdivide([ca, bc, c], depth - 1) + subdivide([ab, bc, ca], depth - 1))
-
-    tris = subdivide(outline, n)
-    verts, faces, lookup = [], [], {}
-
-    def key(p, z):
-        k = (round(float(p[0]), 9), round(float(p[1]), 9), round(float(z), 9))
-        if k not in lookup:
-            lookup[k] = len(verts)
-            verts.append([p[0], p[1], z])
-        return lookup[k]
-
-    for tri in tris:                                   # back cap, outward -z
-        idx = [key(q, -d / 2) for q in tri]
-        faces.append([idx[0], idx[2], idx[1]])
-    for tri in tris:                                   # front cap, outward +z
-        idx = [key(q, d / 2) for q in tri]
-        faces.append(idx)
-    # Side walls, one quad per *subdivided* outline edge so that no T-junctions
-    # are introduced between a cap and its wall.
-    centroid = outline.mean(axis=0)          # reference point for "outward"
-    for i in range(3):
-        a, b = outline[i], outline[(i + 1) % 3]
-        divisions = 2 ** n                     # matches the cap subdivision depth
-        for k in range(divisions):
-            p = a + (b - a) * (k / divisions)
-            q = a + (b - a) * ((k + 1) / divisions)
-            quad = [key(p, -d / 2), key(q, -d / 2), key(q, d / 2), key(p, d / 2)]
-            p0, p1, p2 = (np.array(verts[quad[0]]), np.array(verts[quad[1]]),
-                          np.array(verts[quad[2]]))
-            nrm = np.cross(p1 - p0, p2 - p0)
-            edge_mid = (np.array(verts[quad[0]]) + np.array(verts[quad[1]])) / 2
-            outward = np.array([edge_mid[0] - centroid[0],
-                              edge_mid[1] - centroid[1], 0.0])
-            if float(nrm @ outward) < 0:
-                quad = quad[::-1]
-            faces += [[quad[0], quad[1], quad[2]], [quad[0], quad[2], quad[3]]]
-    return np.array(verts, float), np.array(faces, np.int64)
-
-
-def _ear_clip(profile: np.ndarray) -> list[tuple[int, int, int]]:
-    """Triangulate a simple polygon by ear clipping (used for extrusion caps)."""
-    pts = np.asarray(profile, float)
-    n = len(pts)
-    idx = list(range(n))
-    if _signed_area(pts) < 0:
-        idx = idx[::-1]
-    tris = []
-    guard = 0
-    while len(idx) > 3 and guard < 4 * n * n:
-        guard += 1
-        clipped = False
-        for k in range(len(idx)):
-            i0, i1, i2 = idx[k - 1], idx[k], idx[(k + 1) % len(idx)]
-            a, b, c = pts[i0], pts[i1], pts[i2]
-            cross = (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
-            if cross <= 1e-12:
-                continue
-            inside = False
-            for j in idx:
-                if j in (i0, i1, i2):
-                    continue
-                q = pts[j]
-                d1 = (b[0] - a[0]) * (q[1] - a[1]) - (b[1] - a[1]) * (q[0] - a[0])
-                d2 = (c[0] - b[0]) * (q[1] - b[1]) - (c[1] - b[1]) * (q[0] - b[0])
-                d3 = (a[0] - c[0]) * (q[1] - c[1]) - (a[1] - c[1]) * (q[0] - c[0])
-                if d1 >= -1e-12 and d2 >= -1e-12 and d3 >= -1e-12:
-                    inside = True
-                    break
-            if inside:
-                continue
-            tris.append((i0, i1, i2))
-            idx.pop(k)
-            clipped = True
-            break
-        if not clipped:
-            break
-    if len(idx) == 3:
-        tris.append((idx[0], idx[1], idx[2]))
-    return tris
-
-
-def _signed_area(pts: np.ndarray) -> float:
-    x, y = pts[:, 0], pts[:, 1]
-    return 0.5 * float(np.sum(x * np.roll(y, -1) - np.roll(x, -1) * y))
-
-
-def make_extrusion(profile: np.ndarray, d: float):
-    """Watertight solid from a simple polygon extruded along z."""
-    prof = np.asarray(profile, float)
-    if _signed_area(prof) < 0:
-        prof = prof[::-1]
-    n = len(prof)
-    centre = prof.mean(axis=0)
-    tris = _ear_clip(prof)
-    verts = np.vstack([np.column_stack([prof, np.full(n, -d / 2)]),
-                       np.column_stack([prof, np.full(n, d / 2)])])
-    lookup = {k: k for k in range(n)}
-    for k in range(n):
-        lookup[("f", k)] = n + k
-    faces = [[v[0], v[2], v[1]] for v in tris]                       # back cap, -z
-    faces += [[n + v[0], n + v[1], n + v[2]] for v in tris]          # front cap, +z
-    for i in range(n):
-        j = (i + 1) % n
-        quad = [i, j, n + j, n + i]
-        p0, p1, p2 = verts[quad[0]], verts[quad[1]], verts[quad[2]]
-        nrm = np.cross(p1 - p0, p2 - p0)
-        edge_mid = (p0 + p1) / 2.0
-        outward = np.array([edge_mid[0] - centre[0], edge_mid[1] - centre[1], 0.0])
-        if float(nrm @ outward) < 0:
-            quad = quad[::-1]
-            faces += [[quad[0], quad[1], quad[2]], [quad[0], quad[2], quad[3]]]
-        else:
-            faces += [[quad[0], quad[1], quad[2]], [quad[0], quad[2], quad[3]]]
-    return verts, np.array(faces, np.int64)
-
-
-def make_frustum(r_bottom: float, r_top: float, h: float, seg: int = 96, rings: int = 6):
-    """Truncated cone (a frustum), caps included."""
-    levels = np.linspace(-h / 2, h / 2, rings + 1)
-    verts, faces, index = [], [], {}
-    for li, y in enumerate(levels):
-        r = r_bottom + (r_top - r_bottom) * (li / rings)
-        for si in range(seg):
-            a = 2 * np.pi * si / seg
-            index[(li, si)] = len(verts)
-            verts.append([r * np.cos(a), y, r * np.sin(a)])
-    for li in range(rings):
-        for si in range(seg):
-            sj = (si + 1) % seg
-            a, b = index[(li, si)], index[(li, sj)]
-            c, e = index[(li + 1, sj)], index[(li + 1, si)]
-            faces += [[a, b, c], [a, c, e]]
-    bottom = len(verts); verts.append([0.0, -h / 2, 0.0])
-    top = len(verts); verts.append([0.0, h / 2, 0.0])
+    top = len(verts)
+    verts.append([0.0, h / 2, 0.0])
     for si in range(seg):
         sj = (si + 1) % seg
         faces.append([bottom, index[(0, sj)], index[(0, si)]])
@@ -926,8 +429,10 @@ def make_capsule(r: float, h: float, seg: int = 72, rings: int = 12):
             a = 2 * np.pi * si / seg
             index[(pi, si)] = len(verts)
             verts.append([rad * np.cos(a), y, rad * np.sin(a)])
-    top = len(verts); verts.append([0.0, h / 2 + r, 0.0])
-    bottom = len(verts); verts.append([0.0, -h / 2 - r, 0.0])
+    top = len(verts)
+    verts.append([0.0, h / 2 + r, 0.0])
+    bottom = len(verts)
+    verts.append([0.0, -h / 2 - r, 0.0])
     for si in range(seg):
         sj = (si + 1) % seg
         faces.append([top, index[(0, si)], index[(0, sj)]])
@@ -1000,6 +505,13 @@ def make_stairs(steps: int = 4, w: float = 1.2, h: float = 1.1, d: float = 0.9):
     return verts, np.array(faces, np.int64)
 
 
+def make_lamp(w: float = 1.0, h: float = 1.3, d: float = 0.6):
+    """Lamp body: tapered box extruded from a trapezoid profile."""
+    profile = np.array([[-w / 2, -h / 2], [w / 2, -h / 2],
+                        [w * 0.30, h / 2], [-w * 0.30, h / 2]])
+    return make_extrusion(profile, d)
+
+
 def _zbuffer_render(v: np.ndarray, f: np.ndarray, albedo: tuple[int, int, int],
                     size: int = RES, return_camera: bool = False):
     """Z-buffered Lambert/Blinn render of the reference surface.
@@ -1028,9 +540,11 @@ def _zbuffer_render(v: np.ndarray, f: np.ndarray, albedo: tuple[int, int, int],
 
     z = np.full((size, size), -np.inf, np.float32)
     img = np.full((size, size, 3), 247.0, np.float32)
-    light = np.array([-0.42, 0.62, 0.66]); light /= np.linalg.norm(light)
+    light = np.array([-0.42, 0.62, 0.66])
+    light /= np.linalg.norm(light)
     view = np.array([0.0, 0.0, 1.0])
-    half = light + view; half /= np.linalg.norm(half)
+    half = light + view
+    half /= np.linalg.norm(half)
     face_n = vn[f].mean(axis=1)
     face_n /= np.maximum(np.linalg.norm(face_n, axis=1, keepdims=True), 1e-9)
     lam = 0.44 + 0.50 * np.clip(face_n @ light, 0, 1) + 0.10 * np.clip(face_n @ view, 0, 1)
@@ -1243,11 +757,21 @@ def _mesh_report(v: np.ndarray, f: np.ndarray) -> dict:
     }
 
 
-def _save_render_bundle(path_stem: str, img: np.ndarray, params: dict) -> None:
+def _save_render_bundle(path_stem: str, params: dict) -> None:
     """Persist a rasterised view plus the camera parameters used to make it."""
     meta = OUT / "synthetic" / "views"
     meta.mkdir(parents=True, exist_ok=True)
     (meta / f"{path_stem}.json").write_text(json.dumps(params, indent=2), encoding="utf-8")
+
+
+def write_synthetic_scene(name: str, image_path: Path, mesh_path: Path) -> tuple[dict, dict]:
+    """Render one analytic scene and write its matching reference mesh."""
+    spec = SCENES[name]
+    vertices, faces = spec["builder"]()
+    image, camera = _zbuffer_render(vertices, faces, spec["albedo"], return_camera=True)
+    _write_png(image_path, image)
+    _write_obj(mesh_path, vertices, faces)
+    return _mesh_report(vertices, faces), camera
 
 
 def _write_attribution(dataset: dict) -> None:
@@ -1283,17 +807,12 @@ def build() -> dict:
     entries = []
 
     # ---- synthetic split ---------------------------------------------------
-    for name, spec in SCENES.items():
-        gt_v, gt_f = spec["builder"]()
-        img, camera = _zbuffer_render(gt_v, gt_f, spec["albedo"], return_camera=True)
-        _save_render_bundle(name, img, {"scene": name, "camera": camera,
-                                        "yaw_deg": YAW_DEG, "pitch_deg": PITCH_DEG,
-                                        "resolution": RES})
+    for name in SCENES:
         img_path = OUT / "synthetic" / "images" / f"{name}.png"
         gt_path = OUT / "synthetic" / "gt" / f"{name}.obj"
-        _write_png(img_path, img)
-        _write_obj(gt_path, gt_v, gt_f)
-        report = _mesh_report(gt_v, gt_f)
+        report, camera = write_synthetic_scene(name, img_path, gt_path)
+        _save_render_bundle(name, {"scene": name, "camera": camera, "yaw_deg": YAW_DEG,
+                                   "pitch_deg": PITCH_DEG, "resolution": RES})
         min_tris = 12 if name in {"stairs", "lamp"} else 200
         assert report["triangles"] >= min_tris, f"{name}: reference mesh too coarse"
         entries.append({

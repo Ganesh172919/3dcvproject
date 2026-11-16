@@ -12,8 +12,6 @@ sizes, and saves a full-page screenshot per route.
 from __future__ import annotations
 
 import json
-import re
-import sys
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright

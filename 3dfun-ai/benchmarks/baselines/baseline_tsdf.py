@@ -61,7 +61,7 @@ def run(image_path: str | Path | np.ndarray, voxel_res: int = 72,
     d = np.clip((rel - lo) / max(hi - lo, 1e-6), 0.0, 1.0)
 
     h, w = d.shape
-    scale = max(h, w) / 1.0
+    max(h, w) / 1.0
     grid = voxel_res
     xs = (np.arange(grid) + 0.5) / grid - 0.5
     ys = (np.arange(grid) + 0.5) / grid - 0.5

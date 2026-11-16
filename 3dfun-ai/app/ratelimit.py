@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import threading
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from .config import settings
 from .schemas import ApiError
@@ -57,13 +57,13 @@ upload_limiter = RateLimiter(30, 60)
 generation_limiter = RateLimiter(12, 60)
 
 
-def enforce(l: RateLimiter, key: str, scope: str, cost: float = 1.0) -> None:
-    allowed, remaining = l.check(key, cost)
+def enforce(rate_limiter: RateLimiter, key: str, scope: str, cost: float = 1.0) -> None:
+    allowed, _ = rate_limiter.check(key, cost)
     if not allowed:
         raise ApiError("RATE_LIMITED",
                        f"Too many {scope} requests. Try again shortly.",
                        status=429, retryable=True,
-                       details=[{"retryAfterSeconds": l.retry_after(key)}])
+                       details=[{"retryAfterSeconds": rate_limiter.retry_after(key)}])
 
 
 def login_locked(db_user) -> bool:

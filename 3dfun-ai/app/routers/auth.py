@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import datetime as dt
-import secrets
 
 from fastapi import APIRouter, Request, Response
 from sqlalchemy import select
@@ -11,14 +10,14 @@ from .. import credits, notifications
 from ..auth import (ACCESS_COOKIE, CSRF_COOKIE, REFRESH_COOKIE, client_ip,
                     get_current_user, get_optional_user, purge_expired_sessions)
 from ..config import settings
-from ..db import (AuditLog, User, UserSession, VerificationToken, get_db, utcnow)
+from ..db import (AuditLog, CreditReason, User, UserSession, VerificationToken, get_db, utcnow)
 from ..ratelimit import auth_limiter, enforce, login_locked
 from ..schemas import (ApiError, LoginRequest, RegisterRequest, UpdateProfileRequest,
-                       UserPublic, ok)
-from ..security import (create_access_token, create_refresh_token, hash_password,
-                        is_expired, password_strength, random_token, sha256_hex,
-                        totp_now, totp_provisioning_uri, verify_password, verify_totp,
-                        generate_totp_secret)
+                       ok)
+from ..security import (create_access_token, create_refresh_token, evaluate_password_zxcvbn,
+                        hash_password, is_expired, password_strength, random_token,
+                        sha256_hex, totp_now, totp_provisioning_uri, verify_password,
+                        verify_totp, generate_totp_secret)
 from ..serializers import user_public
 from fastapi import Depends
 from sqlalchemy.orm import Session
@@ -27,6 +26,16 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 MAX_FAILED_LOGINS = settings.login_max_attempts
 LOCK_MINUTES = 15
+
+
+def _diff_seconds(t1: dt.datetime | None, t2: dt.datetime | None) -> float:
+    if not t1 or not t2:
+        return 0.0
+    if t1.tzinfo is None:
+        t1 = t1.replace(tzinfo=dt.timezone.utc)
+    if t2.tzinfo is None:
+        t2 = t2.replace(tzinfo=dt.timezone.utc)
+    return (t1 - t2).total_seconds()
 
 
 def _set_auth_cookies(response: Response, access: str, refresh: str, csrf: str) -> None:
@@ -87,7 +96,8 @@ def register(payload: RegisterRequest, request: Request, response: Response,
     db.commit()
     db.refresh(user)
 
-    credits.grant(db, user.id, settings.signup_credits, idempotency_key=f"signup:{user.id}")
+    credits.grant(db, user.id, settings.signup_credits, reason=CreditReason.SIGNUP_BONUS,
+                  idempotency_key=f"signup:{user.id}", meta={"reason": "SIGNUP_BONUS", "credits": settings.signup_credits})
     token_raw = random_token(24)
     db.add(VerificationToken(user_id=user.id, kind="email_verify",
                              token_hash=sha256_hex(token_raw),
@@ -143,14 +153,89 @@ def login(payload: LoginRequest, request: Request, response: Response,
 
     user.failed_logins = 0
     user.locked_until = None
-    user.last_login_at = utcnow()
-    db.add(AuditLog(actor_id=user.id, action="auth.login", ip=ip))
+    now = utcnow()
+    daily_granted = False
+    if not user.last_daily_claim_at or _diff_seconds(now, user.last_daily_claim_at) >= 86400:
+        # First login or 24 hours elapsed: grant educational daily streak refill (+10 credits)
+        # Avoid double-grant on immediate registration
+        if _diff_seconds(now, user.created_at) > 300 or user.last_daily_claim_at is not None:
+            try:
+                credits.grant(db, user.id, settings.daily_streak_credits, reason=CreditReason.DAILY_STREAK,
+                              idempotency_key=f"daily:{user.id}:{now.strftime('%Y%m%d')}",
+                              meta={"streak_date": now.strftime("%Y-%m-%d")})
+                daily_granted = True
+            except Exception:
+                pass
+            user.last_daily_claim_at = now
+    user.last_login_at = now
+    db.add(AuditLog(actor_id=user.id, action="auth.login", ip=ip,
+                    metadata_json={"daily_streak_awarded": daily_granted}))
     db.commit()
     access, refresh, csrf = _start_session(db, user, request)
     _set_auth_cookies(response, access, refresh, csrf)
     wallet = credits.get_wallet(db, user.id)
     return ok({"user": user_public(user, wallet.balance), "access_token": access,
                "expires_in": settings.access_token_ttl, "csrf_token": csrf})
+
+
+@router.post("/demo")
+def demo_login(request: Request, response: Response, db: Session = Depends(get_db)):
+    """One-Click Instant Demo Student Sandbox access without needing registration."""
+    demo_email = "demo@3dfun.dev"
+    user = db.execute(select(User).where(User.email == demo_email)).scalar_one_or_none()
+    if user is None:
+        user = User(
+            email=demo_email,
+            password_hash=hash_password("DemoPassword123!"),
+            display_name="Demo Student",
+            email_verified=True,
+            role="user",
+            terms_accepted_at=utcnow(),
+            privacy_accepted_at=utcnow(),
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+        credits.grant(db, user.id, 50, reason=CreditReason.SIGNUP_BONUS,
+                      idempotency_key=f"signup:{user.id}", meta={"reason": "SIGNUP_BONUS", "credits": 50})
+
+    wallet = credits.get_wallet(db, user.id)
+    # Ensure sandbox student has sufficient working credits
+    if wallet.balance < 20:
+        credits.grant(db, user.id, 50, reason=CreditReason.ADMIN_ADJUSTMENT,
+                      idempotency_key=f"demo_refill:{user.id}:{utcnow().strftime('%Y%m%d%H%M')}",
+                      meta={"refill": "sandbox_topup"})
+        wallet = credits.get_wallet(db, user.id)
+
+    user.last_login_at = utcnow()
+    db.add(AuditLog(actor_id=user.id, action="auth.demo_login", ip=client_ip(request)))
+    db.commit()
+
+    access, refresh, csrf = _start_session(db, user, request)
+    _set_auth_cookies(response, access, refresh, csrf)
+    return ok({
+        "user": user_public(user, wallet.balance),
+        "access_token": access,
+        "expires_in": settings.access_token_ttl,
+        "csrf_token": csrf,
+        "demo": True,
+    })
+
+
+@router.post("/password-strength")
+def check_password_strength(payload: dict):
+    """Evaluate password strength and return zxcvbn entropy score and feedback."""
+    pwd = str(payload.get("password", ""))
+    problems = password_strength(pwd)
+    eval_info = evaluate_password_zxcvbn(pwd)
+    return ok({
+        "valid": len(problems) == 0,
+        "problems": problems,
+        "score": eval_info["score"],
+        "feedback": eval_info["feedback"],
+        "crack_times": eval_info["crack_times_display"],
+        "guesses_log10": eval_info["guesses_log10"],
+    })
 
 
 @router.post("/refresh")

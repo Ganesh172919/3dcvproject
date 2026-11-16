@@ -1,21 +1,28 @@
+---
+title: 3DFUN AI Project Report
+author: J Ganesh · M Jagadeshwar · B Varshith · Pranav Kashyap · C Sai Aravind
+---
+
 # 3DFUN AI --- Project Report
 
 **An End-to-End Image-to-3D Generation Framework**
 3D Computer Vision course project, Indian Institute of Information Technology Dharwad.
 
-| # | Name | Roll number | Department |
-|---|---|---|---|
-| 1 | J Ganesh | 23BDS024 | Data Science and Artificial Intelligence |
-| 2 | M Jagadeshwar | 23BDS033 | Data Science and Artificial Intelligence |
-| 3 | B Varshith | 23BDS011 | Data Science and Artificial Intelligence |
-| 4 | Pranav Kashyap | 23BCS098 | Computer Science and Engineering |
-| 5 | C Sai Aravind | 23BDS075 | Data Science and Artificial Intelligence |
+**Project team**
+
+| Student | Roll number | Department |
+|---|---|---|
+| J Ganesh | 23BDS024 | Data Science and Artificial Intelligence |
+| M Jagadeshwar | 23BDS033 | Data Science and Artificial Intelligence |
+| B Varshith | 23BDS011 | Data Science and Artificial Intelligence |
+| Pranav Kashyap | 23BCS098 | Computer Science and Engineering |
+| C Sai Aravind | 23BDS075 | Data Science and Artificial Intelligence |
 
 **Guide:** Dr. Shirshendu Layek, Assistant Professor, Department of Data Science and Artificial Intelligence,
 IIIT Dharwad.
 
 *Report generated on 12 November 2026 by
-`scripts/generate_report.py` from `results/`. Every number below comes from an executed run;
+the recorded benchmark files in `results/`. Measurements can be checked against the CSVs;
 regenerate with `make benchmark && make figures && make report`.*
 
 ---
@@ -266,9 +273,8 @@ make models      # ONNX weights (checksums printed, nothing large in git)
 make seed        # demo database + accounts
 make benchmark   # full evaluation -> results/
 make figures     # figures from results/
-make paper       # paper/main.pdf from results/
-make report      # this document
-make verify      # check saved artifacts and run tests
+make report      # four-page IEEE course report
+make test        # run the project test suite
 ```
 
 Environment recorded in `results/environment.json`:
@@ -303,18 +309,12 @@ Environment recorded in `results/environment.json`:
 | `web/` | dependency-free studio SPA + three.js viewer |
 | `benchmarks/` | dataset generator, metrics, two baselines, harness |
 | `results/` | raw runs, logs, summary CSVs, figures, environment record |
-| `scripts/` | model fetcher, figure/paper/slide/report generators, verifier |
+| `scripts/` | model fetcher and benchmark figure utilities |
 | `tests/` | pytest suite covering the API, job lifecycle and reconstruction |
 
-## 9. Team Contributions & 12-Minute Defense Slide Allocation
+## 9. Team contributions
 
-| # | Presenter | Roll Number | Primary Engineering Responsibility | Defense Section & Slides | Slot |
-|---|---|---|---|---|---|
-| 1 | J Ganesh | 23BDS024 | Core Volumetric Engine, Distance Transform, Priors | Part 1: Slides 1–3 (Problem, Ill-Posedness, Constraints) | 0:00 – 2:15 |
-| 2 | M Jagadeshwar | 23BDS033 | Meshing, Marching Cubes, Taubin Smoothing, Atlas | Part 2: Slides 4–6 (Related Work, Architecture, Pipeline) | 2:15 – 4:45 |
-| 3 | B Varshith | 23BDS011 | Benchmark Harness, Multi-Engine Baselines, Metrics | Part 3: Slides 7–9 (Dataset Protocol, Results, Timings) | 4:45 – 7:30 |
-| 4 | Pranav Kashyap | 23BCS098 | FastAPI Service, Credit Ledger, Job State Machine | Part 4: Slides 10–12 (Ablations, Visuals, Web Studio) | 7:30 – 10:15 |
-| 5 | C Sai Aravind | 23BDS075 | Web Studio SPA, Three.js Viewer, AR QuickLook | Part 5: Slides 13–15 (Limitations, Roadmap, Defense Q&A) | 10:15 – 12:00 |
+See the contribution table in `AUTHORS.md` and the author statement in the course report.
 
 ## 10. Acknowledgment
 

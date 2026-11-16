@@ -68,8 +68,8 @@ def test_credits_are_reserved_then_spent(client, auth, source_image):
     reasons = [row["reason"] for row in ledger]
     assert "RESERVATION" in reasons
     for row in ledger:
-        if row["reason"] in ("SPEND", "RESERVATION", "SIGNUP_GRANT"):
-            assert row["amount"] == 0 or row["amount"] <= 0 or row["reason"] == "SIGNUP_GRANT"
+        if row["reason"] in ("SPEND", "RESERVATION", "SIGNUP_GRANT", "SIGNUP_BONUS"):
+            assert row["amount"] == 0 or row["amount"] <= 0 or row["reason"] in ("SIGNUP_GRANT", "SIGNUP_BONUS")
     spend = [r for r in ledger if r["reason"] == "SPEND"][0]
     assert spend["amount"] == -gen["credits_charged"]
 

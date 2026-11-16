@@ -150,6 +150,15 @@ export function setAuthUI(authed) {
   if (admin) admin.classList.toggle('hidden', !isAdmin);
   if (authed && state.user) {
     document.getElementById('wallet-value').textContent = fmt.n(state.user.credits ?? 0);
+    wallet.style.cursor = 'pointer';
+    wallet.title = 'Click to open Credit Wallet & Ledger';
+    wallet.onclick = () => {
+      if (typeof window.openCreditWalletModal === 'function') {
+        window.openCreditWalletModal();
+      } else {
+        navigate('/app/dashboard');
+      }
+    };
   }
 }
 

@@ -17,7 +17,6 @@ import shutil
 import tempfile
 import threading
 import time
-import traceback
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
@@ -27,8 +26,7 @@ from sqlalchemy import select
 
 from . import credits, events, metrics, notifications
 from .config import settings
-from .db import (Asset, Generation, GenerationAttempt, GenerationStatus, Provider,
-                 SessionLocal, Upload, UsageRecord, new_id, utcnow)
+from .db import (Asset, Generation, GenerationAttempt, GenerationStatus, SessionLocal, Upload, UsageRecord, new_id, utcnow)
 from . import providers as provider_registry
 from .providers import GenerationInput
 from .state_machine import TERMINAL, assert_transition, is_retryable, status_for_stage

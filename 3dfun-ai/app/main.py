@@ -9,8 +9,6 @@ from __future__ import annotations
 
 import logging
 import time
-import uuid
-from pathlib import Path
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
@@ -23,8 +21,8 @@ from .db import init_db
 from .events import backend_name as event_backend
 from .jobs import backend as queue_backend
 from .jobs import runner
-from .schemas import ApiError, now_iso, ok, request_id
-from .routers import admin, assets, auth, billing, chat, gallery, generations, system, uploads
+from .schemas import ApiError, request_id
+from .routers import admin, assets, auth, billing, chat, gallery, generations, student_labs, system, uploads
 
 logging.basicConfig(
     level=getattr(logging, settings.log_level.upper(), logging.INFO),
@@ -147,7 +145,7 @@ def create_app() -> FastAPI:
         return JSONResponse(status_code=500, content=body)
 
     api = FastAPI(openapi_url=None)
-    for module in (system, auth, uploads, generations, assets, gallery, billing, admin, chat):
+    for module in (system, auth, uploads, generations, assets, gallery, billing, admin, chat, student_labs):
         app.include_router(module.router, prefix="/api/v1")
     _ = api
 
@@ -155,6 +153,9 @@ def create_app() -> FastAPI:
     if web_dir.exists():
         app.mount("/assets", StaticFiles(directory=web_dir / "assets"), name="assets")
         app.mount("/static", StaticFiles(directory=web_dir / "static"), name="static")
+        if (web_dir / "public" / "examples").exists():
+            app.mount("/examples", StaticFiles(directory=web_dir / "public" / "examples"), name="examples")
+            app.mount("/static/examples", StaticFiles(directory=web_dir / "public" / "examples"), name="static_examples")
 
     results_figures = ROOT / "results" / "figures"
     if results_figures.exists():
@@ -165,21 +166,50 @@ def create_app() -> FastAPI:
 
     paper_dir = ROOT / "paper"
     docs_dir = ROOT / "docs"
+    submitted = ROOT.parent if ROOT.name == "code" and (ROOT / "submission/report.tex").is_file() else None
+    course_outputs = ROOT / "out/course17"
+
+    @app.get("/handbook.html", include_in_schema=False)
+    @app.get("/handbook", include_in_schema=False)
+    @app.get("/project-docs", include_in_schema=False)
+    def project_docs():
+        return FileResponse(web_dir / "public" / "handbook.html")
+
+    @app.get("/project-docs/{filename}", include_in_schema=False)
+    def project_guide(filename: str):
+        guides = {"local-setup.md", "architecture.md", "operations.md", "reproducibility.md"}
+        if filename not in guides:
+            return JSONResponse(status_code=404, content={"error": "Guide not found"})
+        return FileResponse(docs_dir / "handbook" / filename, media_type="text/plain")
 
     @app.get("/paper/main.pdf", include_in_schema=False)
     def paper_pdf():
         pdf_path = paper_dir / "main.pdf"
-        if pdf_path.exists():
+        if pdf_path.is_file():
             return FileResponse(pdf_path, media_type="application/pdf", filename="3DFUN_AI_IEEE_Paper.pdf")
         return JSONResponse(status_code=404, content={"error": "IEEE Paper PDF not found"})
 
     @app.get("/report.pdf", include_in_schema=False)
     @app.get("/docs/report.pdf", include_in_schema=False)
     def report_pdf():
-        pdf_path = docs_dir / "report.pdf"
-        if pdf_path.exists():
-            return FileResponse(pdf_path, media_type="application/pdf", filename="3DFUN_AI_Project_Report.pdf")
+        candidates = [course_outputs / "report.pdf"]
+        if submitted is not None:
+            candidates.insert(0, submitted / "report.pdf")
+        for pdf_path in candidates:
+            if pdf_path.is_file():
+                return FileResponse(pdf_path, media_type="application/pdf", filename="3DFUN_AI_Project_Report.pdf",
+                                    content_disposition_type="inline")
         return JSONResponse(status_code=404, content={"error": "Project Report PDF not found"})
+
+    @app.get("/demo.mp4", include_in_schema=False)
+    def course_demo():
+        candidates = [course_outputs / "demo.mp4"]
+        if submitted is not None:
+            candidates.insert(0, submitted / "demo.mp4")
+        for video_path in candidates:
+            if video_path.is_file():
+                return FileResponse(video_path, media_type="video/mp4")
+        return JSONResponse(status_code=404, content={"error": "Course demo video not found"})
 
     @app.get("/", include_in_schema=False)
     def landing():

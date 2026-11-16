@@ -1,13 +1,4 @@
-"""Synthetic Data Generator for Depth & Normal Estimation.
-
-Renders multi-angle RGB, 16-bit metric depth, surface normals, and silhouette masks
-from 3D OBJ / GLB meshes using Trimesh and vectorised software projection.
-
-Course: 3D Computer Vision Course Project (IIIT Dharwad)
-Authors: J Ganesh (23BDS024), M Jagadeshwar (23BDS033), B Varshith (23BDS011),
-         Pranav Kashyap (23BCS098), C Sai Aravind (23BDS075)
-Supervisor: Dr. Shirshendu Layek (Dept. of DSAI)
-"""
+"""Render RGB, perspective z-depth, masks, normals and camera metadata from meshes."""
 from __future__ import annotations
 
 import argparse
@@ -20,171 +11,126 @@ import numpy as np
 import trimesh
 
 
-def _rotation_matrix(yaw_deg: float, pitch_deg: float) -> np.ndarray:
-    """Computes 3x3 rotation matrix for camera orbital pose."""
-    yaw = math.radians(yaw_deg)
-    pitch = math.radians(pitch_deg)
-    
-    Ry = np.array([
-        [math.cos(yaw), 0, math.sin(yaw)],
-        [0, 1, 0],
-        [-math.sin(yaw), 0, math.cos(yaw)]
-    ], dtype=np.float64)
-    
-    Rx = np.array([
-        [1, 0, 0],
-        [0, math.cos(pitch), -math.sin(pitch)],
-        [0, math.sin(pitch), math.cos(pitch)]
-    ], dtype=np.float64)
-    
-    return Ry @ Rx
+def rotation(yaw, pitch):
+    y, p = map(math.radians, (yaw, pitch))
+    return (np.array([[math.cos(y), 0, math.sin(y)], [0, 1, 0], [-math.sin(y), 0, math.cos(y)]])
+            @ np.array([[1, 0, 0], [0, math.cos(p), -math.sin(p)], [0, math.sin(p), math.cos(p)]]))
 
 
-def render_mesh_views(mesh_path: Path, output_dir: Path, num_views: int = 16,
-                      resolution: int = 512, distance: float = 1.8) -> int:
-    """Renders synthetic views and saves multi-channel ground truth."""
+def render_view(vertices, faces, normals, size, focal):
+    image = vertices[:, :2] * np.array([1, -1]) / vertices[:, 2:] * focal + size / 2
+    depth = np.full((size, size), np.inf)
+    normal = np.zeros((size, size, 3))
+    for face in faces:
+        u, v = image[face].T
+        lo = np.maximum(0, np.ceil([u.min() - .5, v.min() - .5]).astype(int))
+        hi = np.minimum(size - 1, np.floor([u.max() - .5, v.max() - .5]).astype(int))
+        if (lo > hi).any():
+            continue
+        ax, bx = u[1:] - u[0]
+        ay, by = v[1:] - v[0]
+        area = ax * by - ay * bx
+        if abs(area) < 1e-10:
+            continue
+        x = np.arange(lo[0], hi[0] + 1)[None, :] + .5 - u[0]
+        y = np.arange(lo[1], hi[1] + 1)[:, None] + .5 - v[0]
+        b1, b2 = (x * by - y * bx) / area, (ax * y - ay * x) / area
+        b0 = 1 - b1 - b2
+        inside = (b0 >= -1e-8) & (b1 >= -1e-8) & (b2 >= -1e-8)
+        weights = np.stack((b0, b1, b2), axis=-1)[inside] / vertices[face, 2]
+        z = 1 / weights.sum(axis=-1)
+        yy, xx = np.where(inside)
+        yy, xx = yy + lo[1], xx + lo[0]
+        nearer = z < depth[yy, xx]
+        yy, xx = yy[nearer], xx[nearer]
+        depth[yy, xx] = z[nearer]
+        n = weights[nearer] @ normals[face]
+        normal[yy, xx] = n / np.maximum(np.linalg.norm(n, axis=-1, keepdims=True), 1e-9)
+    return depth, normal
+
+
+def render_mesh_views(mesh_path, output_dir, num_views=8, resolution=96, distance=1.8):
     mesh = trimesh.load(str(mesh_path), force="mesh")
-    # Normalize mesh to unit cube centered at origin
-    vertices = mesh.vertices.copy()
-    center = (vertices.max(axis=0) + vertices.min(axis=0)) / 2.0
-    scale = (vertices.max(axis=0) - vertices.min(axis=0)).max()
-    if scale > 0:
-        vertices = (vertices - center) / scale
-    mesh.vertices = vertices
-
-    rgb_dir = output_dir / "rgb"
-    depth_dir = output_dir / "depth"
-    normal_dir = output_dir / "normals"
-    mask_dir = output_dir / "mask"
-    for d in (rgb_dir, depth_dir, normal_dir, mask_dir):
-        d.mkdir(parents=True, exist_ok=True)
-
-    mesh_name = mesh_path.stem
-    views_rendered = 0
-
-    # Ray tracing / z-buffer projection
-    azimuths = np.linspace(0, 360, num_views, endpoint=False)
-    elevations = np.linspace(-15, 30, num_views)
-
-    for i, (azimuth, elevation) in enumerate(zip(azimuths, elevations)):
-        R = _rotation_matrix(float(azimuth), float(elevation))
-        rot_v = vertices @ R.T
-
-        # Perspective camera projection
-        focal = resolution * 1.2
-        cx, cy = resolution / 2.0, resolution / 2.0
-
-        # Project vertices: camera at (0, 0, distance)
-        cam_z = rot_v[:, 2] + distance
-        cam_x = rot_v[:, 0]
-        cam_y = rot_v[:, 1]
-
-        u = np.round((cam_x / cam_z) * focal + cx).astype(np.int32)
-        v = np.round((-cam_y / cam_z) * focal + cy).astype(np.int32)
-
-        # Compute vertex normals
-        mesh_rot = mesh.copy()
-        mesh_rot.vertices = rot_v
-        v_normals = mesh_rot.vertex_normals
-
-        # Rasterize onto image buffer
-        depth_map = np.full((resolution, resolution), np.inf, dtype=np.float32)
-        normal_map = np.zeros((resolution, resolution, 3), dtype=np.float32)
-        mask = np.zeros((resolution, resolution), dtype=np.uint8)
-
-        faces = mesh.faces
-        for f in faces:
-            pts_u = u[f]
-            pts_v = v[f]
-            pts_z = cam_z[f]
-            pts_n = v_normals[f]
-
-            # Bounding box of triangle
-            min_u, max_u = max(0, pts_u.min()), min(resolution - 1, pts_u.max())
-            min_v, max_v = max(0, pts_v.min()), min(resolution - 1, pts_v.max())
-            if min_u >= max_u or min_v >= max_v:
-                continue
-
-            # Rasterize triangle using OpenCV fillPoly for robust polygon fill
-            poly = np.stack([pts_u, pts_v], axis=1)
-            tri_mask = np.zeros((max_v - min_v + 1, max_u - min_u + 1), dtype=np.uint8)
-            poly_shifted = poly - np.array([min_u, min_v])
-            cv2.fillConvexPoly(tri_mask, poly_shifted, 1)
-
-            mean_z = float(pts_z.mean())
-            mean_n = pts_n.mean(axis=0)
-            norm = np.linalg.norm(mean_n)
-            if norm > 0:
-                mean_n /= norm
-
-            sub_depth = depth_map[min_v:max_v+1, min_u:max_u+1]
-            update_mask = (tri_mask == 1) & (mean_z < sub_depth)
-            sub_depth[update_mask] = mean_z
-            depth_map[min_v:max_v+1, min_u:max_u+1] = sub_depth
-
-            sub_norm = normal_map[min_v:max_v+1, min_u:max_u+1]
-            sub_norm[update_mask] = (mean_n + 1.0) / 2.0  # [-1, 1] -> [0, 1]
-            normal_map[min_v:max_v+1, min_u:max_u+1] = sub_norm
-
-            mask[min_v:max_v+1, min_u:max_u+1][tri_mask == 1] = 255
-
-        # Create shaded RGB from normal map and directional lighting
-        valid = depth_map < np.inf
-        depth_finite = np.where(valid, depth_map, 0.0)
-        
-        # Simple Lambertian shading
-        light_dir = np.array([0.4, 0.5, 0.77], dtype=np.float32)
-        light_dir /= np.linalg.norm(light_dir)
-        normals_unpacked = normal_map * 2.0 - 1.0
-        shading = np.clip(np.sum(normals_unpacked * light_dir, axis=2), 0.0, 1.0)
-        shading = 0.25 + 0.75 * shading  # ambient + diffuse
-        
-        rgb = np.zeros((resolution, resolution, 3), dtype=np.uint8)
-        base_color = np.array([180, 190, 210], dtype=np.float32)
-        for c in range(3):
-            rgb[:, :, c] = np.clip(shading * base_color[c] * (mask / 255.0), 0, 255).astype(np.uint8)
-
-        # 16-bit millimeter depth (0 to 65535 mm)
-        depth_16bit = np.clip(depth_finite * 1000.0, 0, 65535).astype(np.uint16)
-        normals_uint8 = np.clip(normal_map * 255.0, 0, 255).astype(np.uint8)
-
-        # Save files
-        view_id = f"{mesh_name}_view_{i:02d}"
-        cv2.imwrite(str(rgb_dir / f"{view_id}.png"), cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR))
-        cv2.imwrite(str(depth_dir / f"{view_id}.png"), depth_16bit)
-        cv2.imwrite(str(normal_dir / f"{view_id}.png"), cv2.cvtColor(normals_uint8, cv2.COLOR_RGB2BGR))
-        cv2.imwrite(str(mask_dir / f"{view_id}.png"), mask)
-
-        views_rendered += 1
-
-    return views_rendered
+    if mesh.is_empty or mesh.extents.max() <= 0 or num_views < 1 or not 32 <= resolution <= 2048 or not 1.2 <= distance <= 64:
+        raise ValueError("Need a valid mesh, >=1 views, resolution 32-2048 and distance 1.2-64.")
+    vertices = (mesh.vertices - mesh.bounds.mean(axis=0)) / mesh.extents.max()
+    for kind in ("rgb", "depth", "mask", "normals", "cameras"):
+        (output_dir / kind).mkdir(parents=True, exist_ok=True)
+    light = np.array([.4, .5, -.77])
+    light /= np.linalg.norm(light)
+    focal = resolution * 1.2
+    cameras = []
+    for i, (az, el) in enumerate(zip(np.linspace(0, 360, num_views, endpoint=False),
+                                     np.linspace(-15, 30, num_views))):
+        rot = rotation(az, el)
+        depth, normal = render_view(vertices @ rot.T + [0, 0, distance], mesh.faces,
+                                    mesh.vertex_normals @ rot.T, resolution, focal)
+        mask = np.isfinite(depth)
+        if not mask.any():
+            raise ValueError(f"No visible pixels for {mesh_path} view {i}")
+        shade = .25 + .75 * np.clip(normal @ light, 0, 1)
+        name = f"{mesh_path.stem}_view_{i:02d}.png"
+        channels = {
+            "rgb": (shade[..., None] * np.array([210, 190, 180]) * mask[..., None]).astype(np.uint8),
+            "depth": np.rint(np.where(mask, depth, 0) * 1000).astype(np.uint16),
+            "mask": mask.astype(np.uint8) * 255,
+            "normals": ((normal[..., ::-1] + 1) * 127.5 * mask[..., None]).astype(np.uint8),
+        }
+        for kind, pixels in channels.items():
+            path = output_dir / kind / name
+            if not cv2.imwrite(str(path), pixels):
+                raise OSError(f"Could not write {path}")
+        cameras.append({"image": name, "mesh": mesh_path.stem, "azimuth_deg": float(az),
+                        "elevation_deg": float(el), "focal_px": focal, "cx": resolution / 2,
+                        "cy": resolution / 2, "world_to_camera_rotation": rot.tolist(),
+                        "translation": [0, 0, distance]})
+    (output_dir / "cameras" / f"{mesh_path.stem}.json").write_text(
+        json.dumps(cameras, indent=2), encoding="utf-8")
+    return num_views
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description="Render synthetic depth training pairs")
-    parser.add_argument("--input_mesh", type=Path, default=Path("benchmarks/data/synthetic/gt/cylinder.obj"))
-    parser.add_argument("--input_dir", type=Path, default=None)
-    parser.add_argument("--output_dir", type=Path, default=Path("training/data/synthetic_renders"))
-    parser.add_argument("--num_views", type=int, default=8)
-    parser.add_argument("--resolution", type=int, default=512)
+def procedural_meshes(folder):
+    folder.mkdir(parents=True, exist_ok=True)
+    ellipsoid = trimesh.creation.icosphere(2)
+    ellipsoid.apply_scale((1, .65, .8))
+    shapes = {
+        "box": trimesh.creation.box((1, .8, .35)),
+        "tall_box": trimesh.creation.box((.58, 1, .54)),
+        "cylinder": trimesh.creation.cylinder(.4, .9, 32),
+        "wide_cylinder": trimesh.creation.cylinder(.48, .35, 32),
+        "cone": trimesh.creation.cone(.47, 1, 32),
+        "sphere": trimesh.creation.icosphere(2),
+        "ellipsoid": ellipsoid,
+        "capsule": trimesh.creation.capsule(height=.74, radius=.29, count=[12, 24]),
+    }
+    paths = []
+    for name, mesh in sorted(shapes.items()):
+        target = folder / f"{name}.obj"
+        mesh.export(target)
+        paths.append(target)
+    return paths
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("--input-mesh", "--input_mesh", type=Path)
+    source.add_argument("--input-dir", "--input_dir", type=Path)
+    source.add_argument("--procedural", action="store_true", help="Generate and render eight reference meshes.")
+    parser.add_argument("--output-dir", "--output_dir", type=Path, default=Path("out/training_renders"))
+    parser.add_argument("--num-views", "--num_views", type=int, default=8)
+    parser.add_argument("--resolution", type=int, default=96)
     args = parser.parse_args()
-
-    total_views = 0
-    if args.input_dir and args.input_dir.exists():
-        meshes = list(args.input_dir.glob("*.obj")) + list(args.input_dir.glob("*.glb"))
-        print(f"Rendering {len(meshes)} meshes from {args.input_dir}...")
-        for m in meshes:
-            n = render_mesh_views(m, args.output_dir, args.num_views, args.resolution)
-            total_views += n
-            print(f"  * {m.stem}: rendered {n} views")
-    elif args.input_mesh and args.input_mesh.exists():
-        print(f"Rendering single mesh {args.input_mesh}...")
-        total_views = render_mesh_views(args.input_mesh, args.output_dir, args.num_views, args.resolution)
-        print(f"Rendered {total_views} views to {args.output_dir}")
+    if args.procedural:
+        meshes = procedural_meshes(args.output_dir / "meshes")
+    elif args.input_dir:
+        meshes = sorted(m for m in args.input_dir.iterdir() if m.suffix.lower() in {".obj", ".glb"}) if args.input_dir.is_dir() else []
     else:
-        print("No valid input mesh found.")
-
-    print(f"Synthetic dataset generation complete: {total_views} total views written.")
+        meshes = [args.input_mesh] if args.input_mesh.is_file() else []
+    if not meshes or len({p.stem for p in meshes}) != len(meshes):
+        parser.error("Provide OBJ or GLB input meshes with unique filename stems.")
+    for mesh in meshes:
+        print(f"{mesh.stem}: {render_mesh_views(mesh, args.output_dir, args.num_views, args.resolution)} views")
 
 
 if __name__ == "__main__":

@@ -38,16 +38,7 @@ Open `http://localhost:8000` — the studio, dashboard, benchmark page and API d
 from the same process. `PORT=9000 ./run.sh` changes the port; `HOST` defaults to `0.0.0.0` so the
 server is reachable from another container or a preview proxy.
 
-Install the development requirements to verify the saved artifacts. Run the benchmark first if you need a new set of measurements.
-
-```bash
-make install-dev
-make benchmark   # overwrites the saved results with a new benchmark
-make all         # rebuild figures, paper, slides and report
-make verify
-```
-
-The 225-run benchmark is the longest step. See §6 for how to resume it.
+For submission checks, see the [packaging guide](how-to/academic-packaging-and-verification.md).
 
 ## 3. Configuration
 
@@ -164,3 +155,6 @@ the origin root, or set the base in the import map.
 The renderer is the single most expensive component (24.56 s of the 27.70 s mean) because it
 rasterises 10 turntable frames plus previews in NumPy on 2 cores. That is a product decision, not a
 reconstruction cost, and both numbers are reported.
+
+
+---

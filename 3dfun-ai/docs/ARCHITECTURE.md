@@ -4,7 +4,7 @@ This document explains what the system is made of, why the boundaries are where 
 which invariants each layer is responsible for. It is written to be read before the code, and it
 tells you which file to open next.
 
-Team and guide are listed in [`AUTHORS.md`](AUTHORS.md); measurements live in
+Team and guide are listed in `AUTHORS.md`. Measurements live in
 [`report.md`](report.md) and the paper.
 
 ---
@@ -50,6 +50,30 @@ How the engine constrains and records the result:
 4. **Self-description.** Every run writes `manifest.json`: config hash, per-stage timings, mesh
    statistics (faces, vertices, boundary/non-manifold edges, Euler characteristic, watertight
    flag), texture size, UV coverage and the limitations that apply to that run.
+
+### `engine/specialized_3d/` — specialized 3D reconstruction subsystem
+
+For geometric domains where single-image slab inflation is sub-optimal, `engine/specialized_3d/` provides 4 self-contained alternative reconstruction algorithms:
+
+| Module | Reconstruction Method | Primary Output | Algorithmic Mechanism |
+|---|---|---|---|
+| `pointcloud_construction.py` | Pinhole RGB-D Backprojection | `.ply` (Dense Point Cloud + Normals) | Direct inverse camera unprojection $(u, v, d) \to (X, Y, Z)$ with spatial gradient normals |
+| `revolution_construction.py` | Axisymmetric 360° Revolution | `.obj` (Watertight Quad/Tri Mesh + UVs) | Center-of-mass vertical axis detection + radial sweep $r(y) \cdot (\cos\theta, y, \sin\theta)$ |
+| `space_carving_construction.py` | Orthogonal Visual Hull Carving | `.obj` (Polygon Mesh) + `.npz` (Voxel Grid) | Multi-view orthogonal ray projection carving $V(\mathbf{x}) = \prod \alpha_k(\pi(\mathbf{R}_y \mathbf{x}))$ |
+| `surface_reconstruction.py` | Depth-Guided SDF Surface Mesh | `.obj` (Watertight Mesh + Taubin Filter) | Dual Euclidean Distance Transform SDF + Marching Cubes + dual-step Taubin smoothing |
+| `visualize_3d.py` | Standalone WebGL Viewer Generator | `.html` (Standalone Three.js Viewer) | Interactive 3D OrbitControls, normal shader, wireframe, clay mode, and 4K screenshot capture |
+| `run_specialized.py` | Master Orchestration Runner | Directory of all 4 reconstructions | Unified CLI execution and benchmarking across all specialized techniques |
+
+### `training/` — reproducible training & 3D cloud evaluation architecture
+
+| Module | Responsibility |
+|---|---|
+| `pipeline.py` | Automated multi-stage runner: synthetic rendering → training → ONNX export → 3D evaluation → ablation |
+| `evaluate_clouds.py` | Evaluates held-out camera-frame 3D point clouds against reference meshes (symmetric Chamfer & $F@0.01$) |
+| `fine_tune_depth/model.py` | TinyDepth architecture: 24,369-parameter model with a full-resolution skip connection |
+| `fine_tune_depth/geometry.py` | Pinhole unprojection with camera intrinsics matrix $\mathbf{K}$ and metric distance scaling |
+| `calibration/optimize_parameters.py` | Automated Nelder-Mead / Powell parameter optimization on reference scene sets |
+| `dataset_gen/synthetic_renderer.py` | Multi-view rasterization generating RGB, 16-bit depth (1000 counts/unit), and masks from CAD meshes |
 
 ### `app/` — the service
 
@@ -129,7 +153,7 @@ results/raw/{runs.csv, runs.jsonl, meshes/}, results/logs/, results/environment.
    ↓
 results/summary/{main_table, per_scene, ablation_table, thickness_sweep, stage_timings, failures}.csv
    ↓
-scripts/{make_figures, generate_paper, generate_slides, generate_report}.py → paper/, presentations/, docs/
+submission/ → report.pdf, demo.mp4, and the course archive
 ```
 
 Two properties make it a benchmark rather than a demo:
@@ -164,3 +188,6 @@ Two properties make it a benchmark rather than a demo:
 * "How do I add a provider?" → `app/providers.py` (three adapters already there).
 * "How do I reproduce a number?" → `docs/BENCHMARK.md` §6 and `paper/` Appendix A.
 * "Why did a run fail?" → `results/summary/failures.csv`, then that run's log in `results/logs/`.
+
+
+---

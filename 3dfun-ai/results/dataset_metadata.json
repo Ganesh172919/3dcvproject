@@ -1,0 +1,10 @@
+{
+  "version": "1.0.0",
+  "checksum": "d76fef12",
+  "scenes": {
+    "synthetic": 13,
+    "real": 12,
+    "total": 25
+  },
+  "seed": 20261108
+}

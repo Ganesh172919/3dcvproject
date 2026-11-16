@@ -1,0 +1,620 @@
+{
+  "protocol": "depth-driven SDF and Marching Cubes before post-processing",
+  "seed": 17,
+  "surface_samples": 3000,
+  "base_config": {
+    "canvas_size": 196,
+    "depth_input_size": 518,
+    "matte_model": "u2netp",
+    "alpha_erode_px": 1,
+    "crop_padding_pct": 0.04,
+    "background": "white",
+    "depth_percentile_low": 2.0,
+    "depth_percentile_high": 98.0,
+    "depth_smooth_sigma": 2.0,
+    "height_symmetrize": true,
+    "voxel_res": 48,
+    "inflation_power": 0.85,
+    "thickness_scale": 0.7,
+    "thickness_floor_ratio": 0.55,
+    "thickness_depth_gain": 0.45,
+    "min_thickness": 0.02,
+    "field_smooth_sigma": 0.8,
+    "quality": "draft",
+    "target_faces": 8000,
+    "taubin_iters": 12,
+    "taubin_lambda": 0.5,
+    "taubin_mu": -0.53,
+    "remove_components_below": 0.02,
+    "bake_texture": true,
+    "texture_size": 512,
+    "back_mirror_texture": true,
+    "generate_pbr_maps": true,
+    "ao_strength": 0.55,
+    "formats": [
+      "glb",
+      "obj",
+      "ply"
+    ],
+    "render_preview": true,
+    "render_turntable": true,
+    "turntable_frames": 10,
+    "render_size": 384,
+    "memory_budget_mb": 1400,
+    "time_budget_seconds": 300,
+    "depth_model": "depth-anything-v2-small-int8",
+    "pipeline_version": "1.1.0"
+  },
+  "fit_scenes": [
+    "synthetic/frustum",
+    "synthetic/tall_box",
+    "synthetic/ring",
+    "synthetic/slab",
+    "synthetic/capsule",
+    "synthetic/box",
+    "synthetic/stairs",
+    "synthetic/cone",
+    "synthetic/lamp",
+    "synthetic/cylinder"
+  ],
+  "held_out_scenes": [
+    "synthetic/thin_plate",
+    "synthetic/prism",
+    "synthetic/sphere"
+  ],
+  "best_overrides": {
+    "thickness_scale": 0.7677497456799152,
+    "thickness_floor_ratio": 0.7464262488165591,
+    "thickness_depth_gain": 0.25357375118344094,
+    "inflation_power": 0.7894766825826638,
+    "field_smooth_sigma": 0.9440229787883856
+  },
+  "trials": [
+    {
+      "overrides": {},
+      "fit": {
+        "chamfer": 0.05947326819644248,
+        "scenes": [
+          {
+            "scene": "synthetic/frustum",
+            "chamfer": 0.0851714915118646,
+            "f_score": 0.026662500000000002
+          },
+          {
+            "scene": "synthetic/tall_box",
+            "chamfer": 0.048438248984074575,
+            "f_score": 0.03109447415329768
+          },
+          {
+            "scene": "synthetic/ring",
+            "chamfer": 0.07622034940142264,
+            "f_score": 0.024
+          },
+          {
+            "scene": "synthetic/slab",
+            "chamfer": 0.03688191353259665,
+            "f_score": 0.046628571428571436
+          },
+          {
+            "scene": "synthetic/capsule",
+            "chamfer": 0.03115117239360674,
+            "f_score": 0.1721535979348177
+          },
+          {
+            "scene": "synthetic/box",
+            "chamfer": 0.026758570085098857,
+            "f_score": 0.08248350168350169
+          },
+          {
+            "scene": "synthetic/stairs",
+            "chamfer": 0.1197678974413604,
+            "f_score": 0.0058285714285714295
+          },
+          {
+            "scene": "synthetic/cone",
+            "chamfer": 0.06166048410596786,
+            "f_score": 0.014666666666666666
+          },
+          {
+            "scene": "synthetic/lamp",
+            "chamfer": 0.027436692798823003,
+            "f_score": 0.07845718329794762
+          },
+          {
+            "scene": "synthetic/cylinder",
+            "chamfer": 0.0812458617096096,
+            "f_score": 0.014477272727272728
+          }
+        ]
+      }
+    },
+    {
+      "overrides": {
+        "thickness_scale": 0.4544288515466431,
+        "thickness_floor_ratio": 0.5916583418255721,
+        "thickness_depth_gain": 0.4083416581744279,
+        "inflation_power": 1.398210944738381,
+        "field_smooth_sigma": 1.074259593375528
+      },
+      "fit": {
+        "chamfer": 0.08125275197821456,
+        "scenes": [
+          {
+            "scene": "synthetic/frustum",
+            "chamfer": 0.11658877373342208,
+            "f_score": 0.019663865546218486
+          },
+          {
+            "scene": "synthetic/tall_box",
+            "chamfer": 0.07321154053768233,
+            "f_score": 0.029757914338919927
+          },
+          {
+            "scene": "synthetic/ring",
+            "chamfer": 0.07136428561916536,
+            "f_score": 0.044135849056603775
+          },
+          {
+            "scene": "synthetic/slab",
+            "chamfer": 0.04620729256822925,
+            "f_score": 0.04293436293436294
+          },
+          {
+            "scene": "synthetic/capsule",
+            "chamfer": 0.056927775542715345,
+            "f_score": 0.08166530612244897
+          },
+          {
+            "scene": "synthetic/box",
+            "chamfer": 0.07007298729625214,
+            "f_score": 0.04881632653061224
+          },
+          {
+            "scene": "synthetic/stairs",
+            "chamfer": 0.12093468525104778,
+            "f_score": 0.010830769230769229
+          },
+          {
+            "scene": "synthetic/cone",
+            "chamfer": 0.07781816481726599,
+            "f_score": 0.01515018315018315
+          },
+          {
+            "scene": "synthetic/lamp",
+            "chamfer": 0.05275035820392125,
+            "f_score": 0.042447058823529414
+          },
+          {
+            "scene": "synthetic/cylinder",
+            "chamfer": 0.12665165621244415,
+            "f_score": 0.005
+          }
+        ]
+      }
+    },
+    {
+      "overrides": {
+        "thickness_scale": 0.768900878546489,
+        "thickness_floor_ratio": 0.3647109430669299,
+        "thickness_depth_gain": 0.63528905693307,
+        "inflation_power": 1.0874721096360827,
+        "field_smooth_sigma": 0.45519493463570115
+      },
+      "fit": {
+        "chamfer": 0.06040486694595511,
+        "scenes": [
+          {
+            "scene": "synthetic/frustum",
+            "chamfer": 0.08985108188514293,
+            "f_score": 0.028499025341130607
+          },
+          {
+            "scene": "synthetic/tall_box",
+            "chamfer": 0.05071424234853936,
+            "f_score": 0.028965517241379312
+          },
+          {
+            "scene": "synthetic/ring",
+            "chamfer": 0.07347182415055696,
+            "f_score": 0.022135338345864657
+          },
+          {
+            "scene": "synthetic/slab",
+            "chamfer": 0.038242611855931544,
+            "f_score": 0.057026239067055395
+          },
+          {
+            "scene": "synthetic/capsule",
+            "chamfer": 0.03200172200608836,
+            "f_score": 0.159975
+          },
+          {
+            "scene": "synthetic/box",
+            "chamfer": 0.03338612307334651,
+            "f_score": 0.05047304730473047
+          },
+          {
+            "scene": "synthetic/stairs",
+            "chamfer": 0.12040251828817605,
+            "f_score": 0.005333333333333333
+          },
+          {
+            "scene": "synthetic/cone",
+            "chamfer": 0.05088293524365396,
+            "f_score": 0.035071090047393366
+          },
+          {
+            "scene": "synthetic/lamp",
+            "chamfer": 0.03503518416949107,
+            "f_score": 0.058666666666666666
+          },
+          {
+            "scene": "synthetic/cylinder",
+            "chamfer": 0.08006042643862427,
+            "f_score": 0.011812206572769952
+          }
+        ]
+      }
+    },
+    {
+      "overrides": {
+        "thickness_scale": 0.5071994387921572,
+        "thickness_floor_ratio": 0.4216335495652938,
+        "thickness_depth_gain": 0.5783664504347061,
+        "inflation_power": 0.9695663276270913,
+        "field_smooth_sigma": 0.8752527121704694
+      },
+      "fit": {
+        "chamfer": 0.07677222340464948,
+        "scenes": [
+          {
+            "scene": "synthetic/frustum",
+            "chamfer": 0.11300553034822944,
+            "f_score": 0.019241379310344826
+          },
+          {
+            "scene": "synthetic/tall_box",
+            "chamfer": 0.07085693737599709,
+            "f_score": 0.025510822510822515
+          },
+          {
+            "scene": "synthetic/ring",
+            "chamfer": 0.0773392911645859,
+            "f_score": 0.0338128078817734
+          },
+          {
+            "scene": "synthetic/slab",
+            "chamfer": 0.041156558727897016,
+            "f_score": 0.04565818181818181
+          },
+          {
+            "scene": "synthetic/capsule",
+            "chamfer": 0.05309370429684762,
+            "f_score": 0.11854698457223002
+          },
+          {
+            "scene": "synthetic/box",
+            "chamfer": 0.060467633764072395,
+            "f_score": 0.054
+          },
+          {
+            "scene": "synthetic/stairs",
+            "chamfer": 0.11865908457431755,
+            "f_score": 0.0058285714285714295
+          },
+          {
+            "scene": "synthetic/cone",
+            "chamfer": 0.07181175686422221,
+            "f_score": 0.023
+          },
+          {
+            "scene": "synthetic/lamp",
+            "chamfer": 0.04244068545621672,
+            "f_score": 0.048138408304498274
+          },
+          {
+            "scene": "synthetic/cylinder",
+            "chamfer": 0.11889105147410893,
+            "f_score": 0.011812206572769952
+          }
+        ]
+      }
+    },
+    {
+      "overrides": {
+        "thickness_scale": 0.9978541920703708,
+        "thickness_floor_ratio": 0.5307636895348606,
+        "thickness_depth_gain": 0.46923631046513936,
+        "inflation_power": 1.2519393654953261,
+        "field_smooth_sigma": 0.7508745408749562
+      },
+      "fit": {
+        "chamfer": 0.05366771399289999,
+        "scenes": [
+          {
+            "scene": "synthetic/frustum",
+            "chamfer": 0.07788447547060473,
+            "f_score": 0.031996527777777777
+          },
+          {
+            "scene": "synthetic/tall_box",
+            "chamfer": 0.030831349813001077,
+            "f_score": 0.05430061349693252
+          },
+          {
+            "scene": "synthetic/ring",
+            "chamfer": 0.07457750594802462,
+            "f_score": 0.02629535864978903
+          },
+          {
+            "scene": "synthetic/slab",
+            "chamfer": 0.056466062802225186,
+            "f_score": 0.029272727272727273
+          },
+          {
+            "scene": "synthetic/capsule",
+            "chamfer": 0.0205610663571079,
+            "f_score": 0.16562814070351758
+          },
+          {
+            "scene": "synthetic/box",
+            "chamfer": 0.049522595337010714,
+            "f_score": 0.04066393442622951
+          },
+          {
+            "scene": "synthetic/stairs",
+            "chamfer": 0.05179810797908708,
+            "f_score": 0.019994444444444447
+          },
+          {
+            "scene": "synthetic/cone",
+            "chamfer": 0.0711917357055444,
+            "f_score": 0.005161290322580645
+          },
+          {
+            "scene": "synthetic/lamp",
+            "chamfer": 0.0569972730689867,
+            "f_score": 0.0208
+          },
+          {
+            "scene": "synthetic/cylinder",
+            "chamfer": 0.046846967447407475,
+            "f_score": 0.04315057915057915
+          }
+        ]
+      }
+    },
+    {
+      "overrides": {
+        "thickness_scale": 0.6329116000349841,
+        "thickness_floor_ratio": 0.4312646225847323,
+        "thickness_depth_gain": 0.5687353774152677,
+        "inflation_power": 1.2896280289898936,
+        "field_smooth_sigma": 0.7116116659371936
+      },
+      "fit": {
+        "chamfer": 0.06667708340356919,
+        "scenes": [
+          {
+            "scene": "synthetic/frustum",
+            "chamfer": 0.1009081509352453,
+            "f_score": 0.023661971830985916
+          },
+          {
+            "scene": "synthetic/tall_box",
+            "chamfer": 0.06129458051931229,
+            "f_score": 0.027134146341463414
+          },
+          {
+            "scene": "synthetic/ring",
+            "chamfer": 0.0791866995612472,
+            "f_score": 0.028499025341130607
+          },
+          {
+            "scene": "synthetic/slab",
+            "chamfer": 0.03389829006436712,
+            "f_score": 0.06894202898550723
+          },
+          {
+            "scene": "synthetic/capsule",
+            "chamfer": 0.04224864391688121,
+            "f_score": 0.1636334012219959
+          },
+          {
+            "scene": "synthetic/box",
+            "chamfer": 0.04119778268188696,
+            "f_score": 0.06175741239892183
+          },
+          {
+            "scene": "synthetic/stairs",
+            "chamfer": 0.11840835633763787,
+            "f_score": 0.01081025641025641
+          },
+          {
+            "scene": "synthetic/cone",
+            "chamfer": 0.0614236914645164,
+            "f_score": 0.020618279569892473
+          },
+          {
+            "scene": "synthetic/lamp",
+            "chamfer": 0.02693901753103443,
+            "f_score": 0.06529081632653062
+          },
+          {
+            "scene": "synthetic/cylinder",
+            "chamfer": 0.10126562102356321,
+            "f_score": 0.011990740740740741
+          }
+        ]
+      }
+    },
+    {
+      "overrides": {
+        "thickness_scale": 0.7677497456799152,
+        "thickness_floor_ratio": 0.7464262488165591,
+        "thickness_depth_gain": 0.25357375118344094,
+        "inflation_power": 0.7894766825826638,
+        "field_smooth_sigma": 0.9440229787883856
+      },
+      "fit": {
+        "chamfer": 0.051083531640543925,
+        "scenes": [
+          {
+            "scene": "synthetic/frustum",
+            "chamfer": 0.07401366013036435,
+            "f_score": 0.03349253731343284
+          },
+          {
+            "scene": "synthetic/tall_box",
+            "chamfer": 0.03666710586704737,
+            "f_score": 0.03165263157894738
+          },
+          {
+            "scene": "synthetic/ring",
+            "chamfer": 0.07703308442978787,
+            "f_score": 0.0189766081871345
+          },
+          {
+            "scene": "synthetic/slab",
+            "chamfer": 0.04616651845646942,
+            "f_score": 0.03549295774647887
+          },
+          {
+            "scene": "synthetic/capsule",
+            "chamfer": 0.024566711648625682,
+            "f_score": 0.14408169556840078
+          },
+          {
+            "scene": "synthetic/box",
+            "chamfer": 0.029589546929517103,
+            "f_score": 0.05166451612903226
+          },
+          {
+            "scene": "synthetic/stairs",
+            "chamfer": 0.04946233567831957,
+            "f_score": 0.016818481848184817
+          },
+          {
+            "scene": "synthetic/cone",
+            "chamfer": 0.0709557273109653,
+            "f_score": 0.012164383561643836
+          },
+          {
+            "scene": "synthetic/lamp",
+            "chamfer": 0.03803702785160583,
+            "f_score": 0.09149241044323012
+          },
+          {
+            "scene": "synthetic/cylinder",
+            "chamfer": 0.0643435981027367,
+            "f_score": 0.029491525423728817
+          }
+        ]
+      }
+    },
+    {
+      "overrides": {
+        "thickness_scale": 0.7344949225889623,
+        "thickness_floor_ratio": 0.6140906043582532,
+        "thickness_depth_gain": 0.38590939564174676,
+        "inflation_power": 0.8232743773273208,
+        "field_smooth_sigma": 0.9224386476258761
+      },
+      "fit": {
+        "chamfer": 0.05862720801044646,
+        "scenes": [
+          {
+            "scene": "synthetic/frustum",
+            "chamfer": 0.08040977599148169,
+            "f_score": 0.031319148936170216
+          },
+          {
+            "scene": "synthetic/tall_box",
+            "chamfer": 0.044550018584301763,
+            "f_score": 0.03157894736842106
+          },
+          {
+            "scene": "synthetic/ring",
+            "chamfer": 0.07530299795939124,
+            "f_score": 0.025293859649122806
+          },
+          {
+            "scene": "synthetic/slab",
+            "chamfer": 0.03998295336492784,
+            "f_score": 0.04116059379217273
+          },
+          {
+            "scene": "synthetic/capsule",
+            "chamfer": 0.02744424330865526,
+            "f_score": 0.1484983164983165
+          },
+          {
+            "scene": "synthetic/box",
+            "chamfer": 0.027074087792142897,
+            "f_score": 0.07482999257609503
+          },
+          {
+            "scene": "synthetic/stairs",
+            "chamfer": 0.12062375735110112,
+            "f_score": 0.006666666666666668
+          },
+          {
+            "scene": "synthetic/cone",
+            "chamfer": 0.0638777609455715,
+            "f_score": 0.013658536585365855
+          },
+          {
+            "scene": "synthetic/lamp",
+            "chamfer": 0.0326605846660228,
+            "f_score": 0.08782542694497153
+          },
+          {
+            "scene": "synthetic/cylinder",
+            "chamfer": 0.07434590014086855,
+            "f_score": 0.010656249999999999
+          }
+        ]
+      }
+    }
+  ],
+  "held_out_baseline": {
+    "chamfer": 0.09511513934898774,
+    "scenes": [
+      {
+        "scene": "synthetic/thin_plate",
+        "chamfer": 0.14033367233061014,
+        "f_score": 0.005494949494949495
+      },
+      {
+        "scene": "synthetic/prism",
+        "chamfer": 0.10059557851839604,
+        "f_score": 0.0076086956521739125
+      },
+      {
+        "scene": "synthetic/sphere",
+        "chamfer": 0.044416167197957046,
+        "f_score": 0.06565143824027073
+      }
+    ]
+  },
+  "held_out_selected": {
+    "chamfer": 0.09315033090614859,
+    "scenes": [
+      {
+        "scene": "synthetic/thin_plate",
+        "chamfer": 0.1605192735321384,
+        "f_score": 0.006461538461538461
+      },
+      {
+        "scene": "synthetic/prism",
+        "chamfer": 0.07835703730988834,
+        "f_score": 0.020311475409836063
+      },
+      {
+        "scene": "synthetic/sphere",
+        "chamfer": 0.040574681876418967,
+        "f_score": 0.04781881533101045
+      }
+    ]
+  }
+}

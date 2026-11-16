@@ -5,28 +5,24 @@ studio, REST API, benchmark suite and IEEE-format paper.
 
 **3D Computer Vision course project** · Indian Institute of Information Technology, Dharwad
 
-| # | Student | Roll |
-|---|---------|------|
-| 1 | J Ganesh | 23BDS024 |
-| 2 | M Jagadeshwar | 23BDS033 |
-| 3 | B Varshith | 23BDS011 |
-| 4 | Pranav Kashyap | 23BCS098 |
-| 5 | C Sai Aravind | 23BDS075 |
+## Project team
+
+| Student | Roll number | Department |
+|---|---|---|
+| J Ganesh | 23BDS024 | Data Science and Artificial Intelligence |
+| M Jagadeshwar | 23BDS033 | Data Science and Artificial Intelligence |
+| B Varshith | 23BDS011 | Data Science and Artificial Intelligence |
+| Pranav Kashyap | 23BCS098 | Computer Science and Engineering |
+| C Sai Aravind | 23BDS075 | Data Science and Artificial Intelligence |
 
 **Guide:** Dr. Shirshendu Layek, Assistant Professor, Dept. of Data Science and Artificial
 Intelligence (DSAI), IIIT Dharwad
 
 See [`AUTHORS.md`](AUTHORS.md) for the per-area contribution table.
 
-## Submission files
+## Course submission
 
-- [IEEE-format paper](paper/main.pdf), [project report](docs/report.pdf), and [presentation deck](presentations/3DFUN-AI-Project.pptx) with [speaker notes](presentations/speaker_notes.md).
-- [Benchmark protocol](docs/BENCHMARK.md), [raw results](results/raw/runs.csv), and [verification results](results/verification.json).
-- [Viva preparation](docs/VIVA_VOCE_DEFENSE_GUIDE.md) and an [unsigned originality form](docs/CERTIFICATE_OF_ORIGINALITY.md).
-
-On Windows, extract the submission and run `powershell -ExecutionPolicy Bypass -File .\run.ps1 -Install -Seed` from the project folder. Open [the local lab](http://127.0.0.1:8010/) and try the teapot photo in Studio. The first installation downloads the checksum-verified model files.
-
----
+The Group 17 archive has the four-page IEEE report, captioned demo, source, sample data and recorded results. Follow the [packaging and verification guide](docs/how-to/academic-packaging-and-verification.md) to build it. The [earlier mesh benchmark paper](paper/main.pdf) and [unsigned originality form](docs/CERTIFICATE_OF_ORIGINALITY.md) are also available.
 
 ## What this repository is
 
@@ -38,10 +34,9 @@ Two things live here, and they share the same reconstruction code:
 2. **A measurement harness** — `benchmarks/` builds a 25-image dataset (13 analytically-defined
    scenes with reference meshes, 12 real CC0 photographs), runs the proposed pipeline and two
    classical baselines on exactly the same inputs, and writes every number the paper and the
-   slide deck use into `results/`.
+   course report uses into `results/`.
 
-Nothing in the paper is typed by hand. `make paper` re-reads `results/`; if a row is missing
-the paper prints `not evaluated` with the reason instead of inventing a figure.
+The Group 17 course report uses the recorded mesh benchmark and a separate TinyDepth experiment. See [the course README](submission/README.md) for the archive layout and [the training guide](training/README.md) for reproducible training.
 
 ### The reconstruction method in one paragraph
 
@@ -132,29 +127,17 @@ ls out/sneaker     # model.glb model.obj model.mtl model.ply basecolor.png norma
 `manifest.json` records the config hash, every stage timing, the mesh metrics and the
 limitations that apply to that run.
 
-### Reproduce the benchmarks and the paper
+### Reproduce the research experiments
 
 ```bash
-make install-dev   # test and verification dependencies
-make models        # download and verify the model files
-make benchmark     # 25 images × 3 methods × 3 repetitions → results/
-make figures       # charts + qualitative grids → results/figures/
-make paper         # paper/main.pdf, every number read from results/
-make slides        # presentations/3DFUN-AI-Project.pptx (16:9, speaker notes)
-make report        # docs/report.md (+ PDF), file inventory, acceptance checklist
-make test          # pytest
-make verify        # check saved artifacts and run tests
-make all           # figures + paper + slides + report in one go
+make install-dev
+make models
+make test
 ```
 
-The paper build needs Tectonic or pdflatex with BibTeX. The report PDF needs Pandoc plus XeLaTeX or Tectonic. These tools are only needed to rebuild the included PDFs. Run quick benchmarks in a separate copy so the full submission results stay available.
+Use [the training guide](training/README.md) to reproduce TinyDepth and its held-out evaluation. The historical full benchmark uses 25 images. In a source checkout with the dataset, run `make benchmark` or run `make benchmark QUICK=1` for a shorter pass. Use a separate working copy to preserve the saved results. The course ZIP includes the recorded tables and two sample images; `python benchmarks/make_dataset.py` regenerates the synthetic reference split and uses any real photos already in the optional photo cache. Photo sources are in [the attribution table](benchmarks/ATTRIBUTION.md).
 
-Expected wall clock on the two-core CPU container used for the paper: `make benchmark`
-≈ 40 min with preview and turntable rendering on (≈ 15 min if you set
-`render_preview: false` in `engine/recon/config.py`), `make figures` ≈ 8 s, `make paper`
-≈ 15 s, `make slides` ≈ 3 s. `make benchmark QUICK=1` runs 4 scenes × 1 repetition in
-≈ 3 min as a smoke test.
-
+To rebuild the Group 17 report with Tectonic, run `make report` after the course figures are available. The archive includes the editable LaTeX and the figures used in the PDF.
 Expected terminal output of a benchmark run looks like (real lines from the run that produced
 the paper):
 
@@ -189,7 +172,7 @@ everything, which is what you want for a fresh timing measurement.
 ├── benchmarks/        dataset builder, metrics, baselines, benchmark driver
 ├── tests/             API, generation-lifecycle and engine tests
 ├── paper/             IEEEtran LaTeX source + figures generated from results/
-├── presentations/     generated 16:9 deck + speaker notes
+├── submission/        course report, demo and archive tools
 ├── tools/             ui_audit.py (headless screenshot + UI/UX audit)
 ├── docs/              architecture, API notes, screenshots, final checklists
 ├── results/           raw runs, summaries, figures, environment.json (generated)
@@ -234,50 +217,13 @@ The submitted paper evaluates the depth-and-silhouette method against two classi
 Full list with measurements: `paper/` §Limitations, `docs/report.md` §7 and
 `results/summary/failures.csv` (one row per run that crossed the stated thresholds).
 
-## Documentation map
+## Documentation
 
-| Document | What it answers |
-|---|---|
-| [`docs/index.md`](docs/index.md) · [`mkdocs.yml`](mkdocs.yml) | the full interactive Diátaxis documentation portal |
-| [`docs/report.md`](docs/report.md) · [`docs/report.pdf`](docs/report.pdf) | the full project report, generated from `results/` |
-| [`docs/STUDENT_LAB_NOTEBOOK.md`](docs/STUDENT_LAB_NOTEBOOK.md) | 14-week chronological engineering notebook written by the 5 student researchers |
-| [`docs/VIVA_VOCE_DEFENSE_GUIDE.md`](docs/VIVA_VOCE_DEFENSE_GUIDE.md) | 12-minute oral defense strategy, exact second-by-second cue cards, and 15 FAQs |
-| [`docs/STUDENT_HARDWARE_BENCHMARK_LOG.md`](docs/STUDENT_HARDWARE_BENCHMARK_LOG.md) | multi-laptop student CPU benchmark log (Ryzen 7, i7, Dell G15, Legion, M2) |
-| [`docs/CERTIFICATE_OF_ORIGINALITY.md`](docs/CERTIFICATE_OF_ORIGINALITY.md) | formal student course project declaration and authenticity certification |
-| [`docs/tutorials/quickstart.md`](docs/tutorials/quickstart.md) | step-by-step onboarding tutorial from clone to 3D WebGL render |
-| [`docs/tutorials/gpu-acceleration.md`](docs/tutorials/gpu-acceleration.md) | DirectML (Windows) and CUDA (Linux) hardware acceleration tutorial |
-| [`docs/how-to/fine-tune-depth.md`](docs/how-to/fine-tune-depth.md) | how-to guide for domain-specific depth fine-tuning and SILog loss |
-| [`docs/how-to/deploy-docker.md`](docs/how-to/deploy-docker.md) | production multi-stage container deployment with Docker Compose |
-| [`docs/how-to/export-3d-printing.md`](docs/how-to/export-3d-printing.md) | exporting watertight meshes and slicing STLs for FDM/SLA 3D printing |
-| [`docs/reference/api-spec.md`](docs/reference/api-spec.md) | REST API endpoints, JWT authentication, and SSE event schema |
-| [`docs/reference/configuration.md`](docs/reference/configuration.md) | environment variables, meshing budgets, and inflation hyperparameters |
-| [`docs/reference/metrics.md`](docs/reference/metrics.md) | mathematical metric definitions (CD, F-Score, IoU, NC, SSIM) |
-| [`docs/explanations/volumetric-inflation.md`](docs/explanations/volumetric-inflation.md) | mathematical theory of constrained occupancy fields vs. TSDF |
-| [`docs/explanations/quantization-strategy.md`](docs/explanations/quantization-strategy.md) | Vision Transformer INT8 post-training quantization and accuracy bounds |
-| [`docs/adr/0001-fastapi-and-vanilla-spa.md`](docs/adr/0001-fastapi-and-vanilla-spa.md) | ADR 0001: FastAPI Backend and Vanilla JS SPA rationale |
-| [`docs/adr/0002-onnx-runtime-int8.md`](docs/adr/0002-onnx-runtime-int8.md) | ADR 0002: ONNX Runtime INT8 CPU Inference rationale |
-| [`docs/adr/0003-sdf-over-pointclouds.md`](docs/adr/0003-sdf-over-pointclouds.md) | ADR 0003: Signed Distance Fields for 2-manifold watertightness |
-| [`docs/adr/0004-analytic-synthetic-benchmark.md`](docs/adr/0004-analytic-synthetic-benchmark.md) | ADR 0004: Procedural Analytic Benchmark rationale |
-| [`docs/adr/0005-taubin-smoothing.md`](docs/adr/0005-taubin-smoothing.md) | ADR 0005: Dual-step Taubin non-shrinking smoothing rationale |
-| [`training/README.md`](training/README.md) | training suite: synthetic renderer, depth fine-tuner, ONNX exporter, Optuna tuner |
-| [`presentations/DEFENSE_FAQ.md`](presentations/DEFENSE_FAQ.md) | 15 academic defense questions and counter-arguments |
-| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | how the engine, service and studio fit together |
-| [`docs/BENCHMARK.md`](docs/BENCHMARK.md) | the measurement protocol, metric definitions and how to read the tables |
-| [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) | running it locally, configuring it from the environment, and serving it behind a process manager and proxy |
-| [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md) | the errors this project actually hit, and the fix |
-| [`docs/VERIFICATION.md`](docs/VERIFICATION.md) | what was executed for this submission, with the command and the output |
-| [`docs/FILE_INVENTORY.md`](docs/FILE_INVENTORY.md) | every tracked file, its kind and its line count |
-| [`docs/ACCEPTANCE_CHECKLIST.md`](docs/ACCEPTANCE_CHECKLIST.md) | the submission checklist, ticked from the files on disk |
-| [`AUTHORS.md`](AUTHORS.md) | team, guide, per-area contributions, citation block |
-| [`paper/main.pdf`](paper/main.pdf) | the IEEEtran paper (8 pages) |
-| [`presentations/3DFUN-AI-Project.pptx`](presentations/3DFUN-AI-Project.pptx) + [`speaker_notes.md`](presentations/speaker_notes.md) | the 15-slide deck |
-
-## Verification
-
-Run `python scripts/verify_submission.py` with the development dependencies installed. The verifier checks the saved benchmark rows, compiled paper diagnostics, presentation layout, and reported measurements before running pytest. See [the verification guide](docs/VERIFICATION.md) for the Windows commands and packaging steps.
+- [Local project handbook](docs/handbook/README.md) and [documentation index](docs/index.md).
+- [Architecture](docs/ARCHITECTURE.md), [REST API](docs/reference/api-spec.md), and [troubleshooting](docs/TROUBLESHOOTING.md).
+- [Recorded benchmark protocol and results](docs/BENCHMARK.md) and [TinyDepth training](training/README.md).
+- [Course report source](submission/report.tex) and [archive build instructions](docs/how-to/academic-packaging-and-verification.md).
 
 ## Licence
 
-Code: MIT (`LICENSE`). Dataset: CC0-1.0 for the procedurally-defined scenes; the photographs are
-CC0-1.0 works whose authors, hosts and source links are listed in
-`benchmarks/data/ATTRIBUTION.md`.
+Code: MIT (`LICENSE`). Dataset: CC0-1.0 for the procedural scenes. The [attribution table](benchmarks/ATTRIBUTION.md) lists photograph sources and licenses.

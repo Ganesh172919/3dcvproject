@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>3DFUN AI · Image to 3D Lab</title>
 <meta name="description" content="A student-built 3D computer vision lab for reconstructing objects from a single photo. Compare three local models and learn how their meshes are made.">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#07090e">
 <link rel="stylesheet" href="/static/css/app.css">
 <link rel="stylesheet" href="/static/css/landing.css">
 <link rel="icon" href="/static/lab-icon.svg">
@@ -17,14 +17,22 @@
 <a class="skip-link" href="#content">Skip to content</a>
 <header class="topbar">
   <a class="brand" href="/"><span class="brand-mark">3D</span> 3DFUN <span class="dim">AI</span></a>
-  <nav class="nav" aria-label="Primary">
+  <button class="btn sm home-menu" id="home-menu" type="button" aria-controls="home-nav" aria-expanded="false">Menu</button>
+  <nav class="nav" id="home-nav" aria-label="Primary">
+    <a href="#prototypes">Prototypes</a>
     <a href="#models">Models</a>
-    <a href="#guide">Lab guide</a>
+    <a href="/app/inspector">Inspector</a>
+    <a href="/app/labs">Student Labs</a>
+    <a href="/app/chat">AI Co-Pilot</a>
+    <a href="#training">Training</a>
+    <a href="/project-docs">Handbook</a>
     <a href="#work">Method</a>
     <a href="#team">Team</a>
     <a href="/app/benchmark">Benchmarks</a>
+    <a class="home-mobile-signin" href="/app/login">Sign in</a>
   </nav>
   <div class="topbar-right">
+    <a class="btn sm" href="/app/register" style="color:var(--accent);font-weight:600;">◆ 50 Free Credits</a>
     <a class="btn sm" href="/app/login">Sign in</a>
     <a class="btn sm primary" href="/app/studio">Open studio</a>
   </div>
@@ -32,49 +40,66 @@
 <main class="lab-shell" id="content">
   <section class="lab-hero" aria-labelledby="lab-title">
     <div>
+      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.3);color:var(--accent);padding:6px 14px;border-radius:100px;font-size:12.5px;font-weight:600;margin-bottom:14px;"><span style="color:#06b6d4;">✦ NEW</span> Free Trial: 50 Free Credits on Sign Up · +10 Daily Streak Refill</div>
       <p class="course-label">3D COMPUTER VISION · IIIT DHARWAD</p>
       <h1 id="lab-title">From one photo<br>to a <span>3D model.</span></h1>
-      <p class="lead">Upload an object photo, compare three local reconstruction options, and inspect the mesh right in your browser.</p>
+      <p class="lead">Reconstruct an object from a single image. Compare three models that run locally, then inspect and download the mesh.</p>
       <button type="button" class="drop landing-drop" id="home-upload">
         <span class="upload-mark" aria-hidden="true">↑</span>
         <span><strong>Upload your image</strong><small>Drop a file here or browse</small></span>
       </button>
       <input id="home-file" type="file" accept="image/png,image/jpeg,image/webp,image/bmp,.bmp" hidden>
       <p id="home-upload-status" class="form-error" role="status"></p>
-      <div class="row wrap gap8 mt8">
-        <a class="btn" href="#models">Compare models</a>
-        <a class="btn" href="#guide">Read the lab guide</a>
-      </div>
-      <ol class="lab-flow" aria-label="Studio workflow">
-        <li>Upload a photo</li><li>Choose a model</li><li>Inspect and export</li>
-      </ol>
+      <p class="lab-upload-formats">PNG, JPEG, WebP or BMP <span id="home-upload-limit"></span></p>
+      <a class="lab-guide-link" href="#guide">How to run a comparison <span aria-hidden="true">↓</span></a>
     </div>
-    <section class="lab-demo" aria-label="Interactive examples">
+    <section class="lab-demo" aria-label="Interactive examples" id="examples">
       <header class="lab-demo-head">
-        <h2>Example reconstruction</h2>
+        <div>
+          <h2>Example reconstruction</h2>
+          <p id="example-name">Chair · TripoSR</p>
+        </div>
         <div class="view-tabs" role="group" aria-label="Example view">
           <button type="button" id="example-photo" aria-pressed="false">Photo</button>
           <button type="button" id="example-mesh" aria-pressed="true">3D model</button>
+          <button type="button" id="example-wire" aria-pressed="false" disabled>Wireframe</button>
         </div>
       </header>
       <div id="example-stage">
         <img src="/site/examples/triposr-chair-preview.png" alt="Rendered mesh of a chair">
       </div>
-      <div class="lab-demo-meta">
-        <strong id="example-name">Chair · TripoSR</strong>
-        <span id="example-status" role="status">Example output</span>
-      </div>
+      <div class="lab-demo-meta" id="example-status" role="status">Example output</div>
+      <p class="lab-demo-observation" id="example-observation" aria-live="polite"></p>
       <div class="sample-strip" id="landing-samples" role="group" aria-label="Example objects"></div>
       <div class="lab-demo-actions">
         <a class="btn sm primary" id="example-run" href="/app/studio?sample=chair&amp;engine=triposr">Use this photo</a>
-        <a class="btn sm" id="example-download" href="/site/examples/chair.glb" download="chair.glb">Download GLB</a>
+        <a class="btn sm" id="example-download" href="/site/examples/chair.glb" download="chair.glb">Download GLB <span aria-hidden="true">↓</span></a>
         <a class="text-link" id="example-source" href="https://github.com/VAST-AI-Research/TripoSR/tree/107cefdc244c39106fa830359024f6a2f1c78871/examples">Image source</a>
       </div>
     </section>
   </section>
+  <section class="lab-methods" id="prototypes" aria-labelledby="prototypes-title">
+    <div class="lab-section-head">
+      <h2 id="prototypes-title">3D prototype library</h2>
+      <p>Open a reconstruction to orbit its mesh, compare it with the source, or load the same image and settings in Studio.</p>
+    </div>
+    <div class="lab-library-tools">
+      <label for="prototype-engine">Show by model</label>
+      <select id="prototype-engine">
+        <option value="all">All models</option>
+        <option value="local">Depth Anything V2</option>
+        <option value="midas">MiDaS Small</option>
+        <option value="triposr">TripoSR</option>
+      </select>
+      <p id="prototype-count" role="status"></p>
+    </div>
+    <div class="lab-prototype-grid" id="prototype-library"></div>
+  </section>
   <section class="lab-methods" id="models">
-    <h2>Models you can compare</h2>
-    <p>All three run locally and support CPU inference. Use the same teapot photo to see how each method handles its handle, spout, and hidden side.</p>
+    <div class="lab-section-head">
+      <h2>Models you can compare</h2>
+      <p>Run the same teapot photo through each model and inspect the handle, spout, and hidden side.</p>
+    </div>
     <div class="lab-method-grid">
       <article class="card">
         <h3>TripoSR INT8</h3>
@@ -100,6 +125,67 @@
           <a class="lab-source-link" href="https://github.com/isl-org/MiDaS">MiDaS on GitHub</a>
         </div>
       </article>
+    </div>
+  </section>
+
+  <section class="lab-methods" id="evaluation" aria-labelledby="evaluation-title">
+    <div class="lab-section-head">
+      <h2 id="evaluation-title">Course benchmark</h2>
+      <p>The saved CPU evaluation compares the proposed course pipeline with TSDF fusion and visual hull. Chamfer distance measures how closely meshes match the calibrated CAD reference surfaces.</p>
+    </div>
+    <div class="lab-benchmark" id="home-benchmark" hidden>
+      <div class="lab-benchmark-info">
+        <h3>Evaluation dataset</h3>
+        <p id="home-benchmark-counts"></p>
+        <a href="/app/benchmark">View all results <span aria-hidden="true">→</span></a>
+      </div>
+      <div>
+        <h3>Mean Chamfer distance</h3>
+        <p class="lab-benchmark-note">Lower is better</p>
+        <ul class="lab-benchmark-values" id="home-benchmark-values"></ul>
+      </div>
+    </div>
+    <a class="btn" id="home-benchmark-link" href="/app/benchmark">View benchmark results</a>
+  </section>
+  <section class="lab-methods" id="training" aria-labelledby="training-title">
+    <div class="lab-section-head">
+      <h2 id="training-title">Custom training lab</h2>
+      <p>TinyDepth learns from synthetic color and depth pairs. The trainer holds out entire mesh instances so their views never appear in training.</p>
+    </div>
+    <div class="lab-training-layout">
+      <div>
+        <ol class="lab-steps">
+          <li><strong>Render reference views.</strong> Turn built-in or custom OBJ and GLB meshes into RGB images, depth labels, masks and camera records.</li>
+          <li><strong>Fit the depth model.</strong> Select the checkpoint by validation MAE. Compare it with a training-set median and optionally rerun with SILog alone.</li>
+          <li><strong>Measure the visible 3D surface.</strong> Export the verified ONNX model, back-project held-out depth, then compare the point clouds using Chamfer distance and F-score.</li>
+        </ol>
+        <p>TinyDepth uses known camera intrinsics and a foreground mask for the point cloud. Studio uses pretrained models to generate full meshes from a single photo.</p>
+      </div>
+      <div class="card lab-training-command">
+        <h3>Configure a local experiment</h3>
+        <p>Copy the command into a terminal in the project’s source folder. It prints the stages. Add <code>--run</code> when you want to execute them.</p>
+        <div class="lab-training-options">
+          <label for="training-device">Device
+            <select id="training-device">
+              <option value="cpu">CPU</option>
+              <option value="cuda">NVIDIA CUDA</option>
+            </select>
+          </label>
+          <label for="training-preset">Preset
+            <select id="training-preset">
+              <option value="reference">Reference experiment</option>
+              <option value="quick">Quick check</option>
+            </select>
+          </label>
+        </div>
+        <label class="lab-training-check"><input id="training-ablation" type="checkbox"> Include SILog-only comparison</label>
+        <pre id="training-command" tabindex="0">python -m training.pipeline --device cpu</pre>
+        <div class="row wrap gap8">
+          <button class="btn sm" id="training-copy" type="button">Copy command</button>
+        <a class="btn sm" href="/project-docs/reproducibility.md">Experiment guide</a>
+        </div>
+        <p class="lab-training-status" id="training-status" role="status"></p>
+      </div>
     </div>
   </section>
   <section class="lab-methods" id="guide">
@@ -128,6 +214,27 @@
         <a href="/app/dashboard">Open the Experiment notebook</a>
       </aside>
     </div>
+  </section>
+
+  <section class="lab-methods" id="inspect" aria-labelledby="inspect-title">
+    <div class="lab-section-head">
+      <h2 id="inspect-title">How to inspect a 3D result</h2>
+      <p>In Studio, open <strong>Compare with photo</strong> and move the slider to see the photo and mesh together.</p>
+    </div>
+    <dl class="lab-inspection">
+      <div>
+        <dt>Check the outline</dt>
+        <dd>Start near the original camera angle. Missing thin parts and filled gaps often start with the foreground mask.</dd>
+      </div>
+      <div>
+        <dt>Separate shape from colour</dt>
+        <dd>Switch to Wireframe or Clay Studio. Texture can make a feature look raised even when the surface underneath is flat.</dd>
+      </div>
+      <div>
+        <dt>Orbit to the back</dt>
+        <dd>Inspect the underside, cavities, and hidden surfaces. A closed mesh can still differ from the object where the photo gives the model little information.</dd>
+      </div>
+    </dl>
   </section>
 
   <section class="lab-methods" id="work">
@@ -163,36 +270,20 @@
   </section>
 
   <section class="lab-methods" id="team">
-    <h2>About the Team &amp; Oral Defense</h2>
-    <p>3DFUN AI is developed by five undergraduate researchers at the Indian Institute of Information Technology (IIIT), Dharwad under the guidance of Dr. Shirshendu Layek.</p>
-    <div class="card tight mb16" style="background:var(--panel-2);border-left:4px solid var(--accent)">
-      <strong>Project Supervisor:</strong> Dr. Shirshendu Layek, Assistant Professor, Dept. of Data Science and AI (DSAI), IIIT Dharwad.
+    <div class="lab-section-head">
+      <h2>Course project and team</h2>
+      <p>Five undergraduate students at IIIT Dharwad built 3DFUN AI under the guidance of Dr. Shirshendu Layek.</p>
     </div>
-    <div class="lab-team-grid">
-      <article class="card">
-        <h3>J Ganesh · 23BDS024</h3>
-        <p><strong>Dept. of DSAI</strong> · Core Volumetric Engine, Distance Transform, Priors &amp; Bas-Relief Ambiguity Mitigation.<br><small class="muted">Part 1: Slides 1–3 (0:00–2:15)</small></p>
-      </article>
-      <article class="card">
-        <h3>M Jagadeshwar · 23BDS033</h3>
-        <p><strong>Dept. of DSAI</strong> · Meshing, Marching Cubes, Taubin Spectral Smoothing &amp; Normal Vector Generation.<br><small class="muted">Part 2: Slides 4–6 (2:15–4:45)</small></p>
-      </article>
-      <article class="card">
-        <h3>B Varshith · 23BDS011</h3>
-        <p><strong>Dept. of DSAI</strong> · Benchmark Suite (25 scenes), Geometric Metrics (Chamfer, F-Score, IoU) &amp; Latency Profiling.<br><small class="muted">Part 3: Slides 7–9 (4:45–7:30)</small></p>
-      </article>
-      <article class="card">
-        <h3>Pranav Kashyap · 23BCS098</h3>
-        <p><strong>Dept. of CSE</strong> · FastAPI Production Service, Authentication, Process Isolation &amp; Component Ablations.<br><small class="muted">Part 4: Slides 10–12 (7:30–10:15)</small></p>
-      </article>
-      <article class="card">
-        <h3>C Sai Aravind · 23BDS075</h3>
-        <p><strong>Dept. of DSAI</strong> · Web Studio SPA, Three.js Custom Shaders, Mobile AR &amp; 30-Gate Verification Suite.<br><small class="muted">Part 5: Slides 13–15 (10:15–12:00)</small></p>
-      </article>
-    </div>
+    <ul class="lab-team-grid">
+      <li><strong>J Ganesh</strong><small>23BDS024</small></li>
+      <li><strong>M Jagadeshwar</strong><small>23BDS033</small></li>
+      <li><strong>B Varshith</strong><small>23BDS011</small></li>
+      <li><strong>Pranav Kashyap</strong><small>23BCS098</small></li>
+      <li><strong>C Sai Aravind</strong><small>23BDS075</small></li>
+    </ul>
     <div class="row wrap gap8 mt16">
-      <a class="btn primary" href="/app/team">View defense schedule &amp; slides</a>
-      <a class="btn" href="/presentations/3DFUN-AI-Project.pptx" download="3DFUN-AI-Project.pptx">Download Deck (.pptx)</a>
+      <a class="btn primary" href="/app/team">View team and defense schedule</a>
+      <a class="btn" href="/demo.mp4" target="_blank" rel="noopener">Watch the course demo</a>
       <a class="btn" href="/paper/main.pdf" target="_blank">Download IEEE Paper (.pdf)</a>
       <a class="btn" href="/report.pdf" target="_blank">Download Project Report (.pdf)</a>
     </div>
@@ -223,22 +314,9 @@
       </details>
     </div>
   </section>
-  <footer class="lab-footer" style="padding:24px 0;border-top:1px solid var(--border-soft);display:flex;flex-direction:column;gap:12px;">
-    <div class="spread wrap gap12">
-      <div>
-        <p class="m0" style="font-weight:700;color:var(--text);">3DFUN AI · 3D Computer Vision Course Project · Indian Institute of Information Technology (IIIT), Dharwad</p>
-        <p class="m0 mt4 text-2" style="font-size:13px;">Team: <strong>J Ganesh</strong> (23BDS024) · <strong>M Jagadeshwar</strong> (23BDS033) · <strong>B Varshith</strong> (23BDS011) · <strong>Pranav Kashyap</strong> (23BCS098) · <strong>C Sai Aravind</strong> (23BDS075)</p>
-        <p class="m0 mt2 muted" style="font-size:12px;">Project Guide: <strong>Dr. Shirshendu Layek</strong>, Assistant Professor, Dept. of Data Science and AI (DSAI), IIIT Dharwad</p>
-      </div>
-      <div class="row wrap gap12" style="align-items:center;">
-        <a class="btn sm" href="/app/team">About the Team &amp; Slides</a>
-        <a class="btn sm" href="/app/work">About the Work</a>
-        <a class="btn sm" href="/paper/main.pdf" target="_blank">IEEE Paper (.pdf)</a>
-        <a class="btn sm" href="/report.pdf" target="_blank">Report (.pdf)</a>
-        <a class="btn sm" href="/presentations/3DFUN-AI-Project.pptx" download="3DFUN-AI-Project.pptx">Deck (.pptx)</a>
-        <a href="/docs">API Reference</a>
-      </div>
-    </div>
+  <footer class="lab-footer">
+    <p><strong>3DFUN AI</strong> · 3D Computer Vision course project, IIIT Dharwad</p>
+    <div class="row wrap gap12"><a href="/app/studio">Studio</a><a href="/app/team">Team</a><a href="/project-docs">Handbook</a><a href="/docs">API reference</a></div>
   </footer>
 </main>
 <script type="module" src="/static/js/landing.js"></script>

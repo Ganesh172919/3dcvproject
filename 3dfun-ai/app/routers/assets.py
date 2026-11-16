@@ -6,7 +6,7 @@ import io
 from html import escape
 from zipfile import ZipFile
 
-from fastapi import APIRouter, Depends, Header, Response
+from fastapi import APIRouter, Depends, Response
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
@@ -178,6 +178,27 @@ def duplicate_asset(asset_id: str, user: User = Depends(get_current_user),
 def _resolve_file(db: Session, asset: Asset, name: str) -> str:
     key = f"{asset.storage_prefix}/{name}"
     if not storage.exists(key):
+        # On-the-fly conversion from source GLB model
+        glb_key = f"{asset.storage_prefix}/model.glb"
+        ext = name.split(".")[-1].lower()
+        if ext in ("stl", "ply", "obj") and storage.exists(glb_key):
+            try:
+                import trimesh
+                glb_path = storage.local_path(glb_key)
+                mesh = trimesh.load(str(glb_path), force="mesh")
+                if isinstance(mesh, trimesh.Scene):
+                    mesh = trimesh.util.concatenate([g for g in mesh.geometry.values() if isinstance(g, trimesh.Trimesh)])
+                out_path = storage.local_path(key)
+                out_path.parent.mkdir(parents=True, exist_ok=True)
+                mesh.export(str(out_path), file_type=ext)
+                files = dict(asset.files or {})
+                files[name] = name
+                files[ext] = name
+                asset.files = files
+                db.commit()
+                return key
+            except Exception as exc:
+                log.warning("On-the-fly conversion to %s failed: %s", ext, exc)
         raise ApiError("FILE_NOT_FOUND", "That file is not part of this asset.", status=404)
     return key
 
@@ -221,6 +242,28 @@ def download_asset(asset_id: str, format: str = "glb", bundle: bool = False,
                     "image/png" if filename.endswith(".png") else
                     "image/gif" if filename.endswith(".gif") else
                     "video/mp4" if filename.endswith(".mp4") else
+                    "application/octet-stream")
+    return Response(content=data, media_type=content_type, headers={
+        "Content-Disposition": _attachment_header(asset.name, filename),
+        "Cache-Control": "private, max-age=300",
+        "X-Content-Type-Options": "nosniff",
+    })
+
+
+@router.get("/{asset_id}/download/{filename}")
+def download_asset_filename(asset_id: str, filename: str,
+                            user: User | None = Depends(get_optional_user), db: Session = Depends(get_db)):
+    asset = _public_asset(db, asset_id, user)
+    if filename in {"glb", "obj", "stl", "ply", "gltf", "manifest", "preview"}:
+        return download_asset(asset_id, format=filename, bundle=False, user=user, db=db)
+    key = _resolve_file(db, asset, filename)
+    data = storage.read_bytes(key)
+    if isinstance(data, str):
+        data = data.encode()
+    content_type = ("model/gltf-binary" if filename.endswith(".glb") else
+                    "application/json" if filename.endswith(".json") else
+                    "text/plain" if filename.endswith((".obj", ".mtl", ".gltf", ".ply", ".stl")) else
+                    "image/png" if filename.endswith(".png") else
                     "application/octet-stream")
     return Response(content=data, media_type=content_type, headers={
         "Content-Disposition": _attachment_header(asset.name, filename),

@@ -10,14 +10,13 @@ Invariants
 """
 from __future__ import annotations
 
-import datetime as dt
 from typing import Any
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from .db import (CreditReason, CreditTransaction, CreditWallet, Generation,
-                 User, utcnow)
+                 utcnow)
 from .schemas import ApiError
 
 PACKS: dict[str, dict[str, int]] = {

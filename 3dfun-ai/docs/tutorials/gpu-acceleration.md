@@ -38,5 +38,3 @@ DirectML can run background matting and the two depth estimators. The TripoSR en
 For CUDA, `RECON_CUDA_MEMORY_MB` limits the ONNX CUDA allocator arena to 2,048 MiB by default. The CUDA driver and libraries can allocate memory outside that arena.
 
 Use the prototype's measured times to compare your machine's providers. An integrated GPU can take longer than the CPU when session setup and transfer time dominate.
-
-*Authors: J Ganesh, M Jagadeshwar, B Varshith, Pranav Kashyap, C Sai Aravind (Supervisor: Dr. Shirshendu Layek, Dept. of DSAI, IIIT Dharwad).*

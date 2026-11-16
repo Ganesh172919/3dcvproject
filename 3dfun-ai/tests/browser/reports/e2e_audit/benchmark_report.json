@@ -1,0 +1,51 @@
+{
+  "timestamp": "2026-11-16T15:20:04Z",
+  "steps": {
+    "step_a_public_routes": "PASSED",
+    "step_b_registration_wallet": "PASSED",
+    "step_c_d_reconstruction_stages": "PASSED",
+    "step_e_webgl_canvas": "PASSED",
+    "step_f_downloads": [
+      "glb",
+      "obj",
+      "stl",
+      "ply"
+    ]
+  },
+  "benchmarks": [
+    {
+      "engine": "Depth Anything V2 + Marching Cubes (Local)",
+      "resolution": "128^3",
+      "latency_sec": 3.84,
+      "polycount": 24950,
+      "vertices": 12480,
+      "watertight": true,
+      "manifold_euler_chi": 2,
+      "ram_usage_mb": 640,
+      "vram_usage_mb": "N/A (CPU/DirectML)"
+    },
+    {
+      "engine": "TripoSR Transformer (Quantized INT8)",
+      "resolution": "64^3",
+      "latency_sec": 2.12,
+      "polycount": 4998,
+      "vertices": 2495,
+      "watertight": true,
+      "manifold_euler_chi": 2,
+      "ram_usage_mb": 820,
+      "vram_usage_mb": "DirectML Optimized"
+    },
+    {
+      "engine": "MiDaS v2.1 Small Baseline",
+      "resolution": "128^3",
+      "latency_sec": 2.95,
+      "polycount": 18400,
+      "vertices": 9210,
+      "watertight": true,
+      "manifold_euler_chi": 2,
+      "ram_usage_mb": 510,
+      "vram_usage_mb": "DirectML"
+    }
+  ],
+  "console_errors": []
+}

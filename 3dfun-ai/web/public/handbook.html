@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Project handbook · 3DFUN AI</title>
+  <meta name="description" content="Local setup, architecture, operations and experiment notes for 3DFUN AI.">
+  <link rel="stylesheet" href="/static/css/app.css">
+  <link rel="stylesheet" href="/static/css/landing.css">
+  <link rel="icon" href="/static/lab-icon.svg">
+</head>
+<body class="landing">
+<a class="skip-link" href="#handbook">Skip to content</a>
+<header class="topbar">
+  <a class="brand" href="/"><span class="brand-mark">3D</span> 3DFUN <span class="dim">AI</span></a>
+  <div class="topbar-right">
+    <a class="btn sm" href="/">Home</a>
+    <a class="btn sm primary" href="/app/studio">Open Studio</a>
+  </div>
+</header>
+<main class="lab-shell lab-handbook" id="handbook">
+  <header>
+    <h1>Project handbook</h1>
+    <p class="lead">Set up the local build, inspect a 3D result, or find the code and evidence behind the course report.</p>
+  </header>
+  <div class="lab-handbook-grid">
+    <section class="card">
+      <h2>Student Curriculum Labs</h2>
+      <p>Interactive PyTorch training labs for monocular depth fine-tuning, implicit occupancy/SDF, 3D Gaussian Splatting (3DGS), and quantitative geometric evaluation.</p>
+      <a class="btn sm primary" href="/app/labs">Launch Student Labs</a>
+    </section>
+    <section class="card">
+      <h2>Generative 3D Studio & Shaders</h2>
+      <p>Explore reconstructed models in the Three.js viewport with 6 professional shading modes: PBR, Wireframe-on-Shaded, White Clay, Surface Normals, Depth Heatmap, and Red Wax.</p>
+      <a class="btn sm" href="/app/studio">Open Generative Studio</a>
+    </section>
+    <section class="card">
+      <h2>Free Trial Credits & Ledger</h2>
+      <p>Get 60 instant signup credits, claim daily +10 educational streak bonuses, and redeem student vouchers (e.g. <code>IIITDHARWAD</code>, <code>STUDENT50</code>, <code>3DCV2026</code>).</p>
+      <a class="btn sm" href="/app/billing">Manage Credits & Billing</a>
+    </section>
+    <section class="card">
+      <h2>Agentic AI 3D Copilot</h2>
+      <p>Engage with dual AI personas ("Professor 3D" with LaTeX derivations and "Studio Director") equipped with live backend tool execution for reconstruction, inspection, and repair.</p>
+      <a class="btn sm" href="/app/studio">Chat with 3D Copilot</a>
+    </section>
+    <section class="card">
+      <h2>Local Setup and Model Weights</h2>
+      <p>Install CPU/DirectML/CUDA dependencies, verify downloaded ONNX models, and run high-fidelity single-image reconstructions.</p>
+      <a href="/project-docs/local-setup.md">Read the setup guide</a>
+    </section>
+    <section class="card">
+      <h2>Architecture & 8-Stage Pipeline</h2>
+      <p>Inspect intermediate reconstruction stages from alpha matting and metric depth to signed distance fields and textured UV atlases.</p>
+      <a href="/project-docs/architecture.md">Read architecture notes</a>
+    </section>
+  </div>
+  <nav class="row wrap gap8" aria-label="Project resources" style="margin-top: 1.5rem;">
+    <a class="btn" href="/app/labs">Student Labs</a>
+    <a class="btn" href="/app/studio">3D Studio</a>
+    <a class="btn" href="/app/benchmark">Benchmark results</a>
+    <a class="btn" href="/docs">API reference</a>
+    <a class="btn" href="/report.pdf">Course report</a>
+  </nav>
+</main>
+</body>
+</html>

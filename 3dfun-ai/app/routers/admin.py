@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, Request
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from .. import credits, metrics, notifications
+from .. import credits, metrics
 from ..auth import require_admin
 from ..config import settings
 from ..db import (Asset, AuditLog, CreditReason, FeatureFlag, Generation, GenerationStatus,
@@ -32,7 +32,6 @@ def _audit(db: Session, actor: User, action: str, target_type: str, target_id: s
 
 @router.get("/overview")
 def overview(admin: User = Depends(require_admin), db: Session = Depends(get_db)):
-    from .. import jobs as jobs_mod
     stats = queue_stats(db)
     users = db.execute(select(func.count()).select_from(User)).scalar_one()
     gens = db.execute(select(func.count()).select_from(Generation)).scalar_one()

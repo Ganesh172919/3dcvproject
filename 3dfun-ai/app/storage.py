@@ -11,7 +11,6 @@ import mimetypes
 import shutil
 from dataclasses import dataclass
 from pathlib import Path
-from typing import BinaryIO
 
 from .config import settings
 

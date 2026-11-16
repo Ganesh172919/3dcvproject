@@ -1,0 +1,2 @@
+# Install PyTorch separately (CPU or CUDA); see training/README.md.
+onnx==1.23.2

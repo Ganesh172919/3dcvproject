@@ -9,6 +9,8 @@ import {
   toast,
 } from './lib.js';
 import { renderChat } from './chat.js';
+import { renderInspector } from './inspector.js';
+import { renderLabs } from './labs.js';
 import { renderStudio } from './studio.js';
 import { renderTeam } from './team.js';
 import { renderWork } from './work.js';
@@ -32,12 +34,36 @@ function scrollTable(label, ...sections) {
 function requireAuth(main) {
   if (!state.token) {
     const next = new URLSearchParams({ next: location.pathname + location.search });
+    const demo = h('button', {
+      id: 'gate-demo-login',
+      class: 'btn block mt12',
+      style: 'background: linear-gradient(135deg, rgba(99, 102, 241, 0.16), rgba(6, 182, 212, 0.16)); border: 1px solid rgba(99, 102, 241, 0.4); font-weight: 600;',
+      type: 'button',
+      onclick: async () => {
+        demo.disabled = true;
+        demo.innerHTML = '<span class="spinner"></span> Launching Demo Sandbox…';
+        try {
+          const data = await api('/auth/demo', { method: 'POST' });
+          localStorage.setItem('3dfun_token', data.access_token);
+          state.token = data.access_token;
+          await refreshUser();
+          toast(`Entered Student Sandbox · ${data.user.credits} credits granted`);
+          renderRoute();
+        } catch (err) {
+          toast('Demo login failed: ' + err.message, 'error');
+          demo.disabled = false;
+          demo.textContent = '⚡ One-Click Instant Demo Sandbox';
+        }
+      }
+    }, '⚡ One-Click Instant Demo Sandbox');
+
     mount(main, h('div', { class: 'card auth-card center' },
       h('h2', {}, 'Sign in to continue'),
-      h('p', { class: 'muted' }, 'You need an account to generate and store 3D models.'),
+      h('p', { class: 'muted' }, 'You need an account to generate, inspect, and train 3D models.'),
       h('div', { class: 'row', style: 'justify-content:center' },
         h('a', { class: 'btn primary', href: `/app/login?${next}`, 'data-link': '' }, 'Sign in'),
-        h('a', { class: 'btn', href: `/app/register?${next}`, 'data-link': '' }, 'Create account'))));
+        h('a', { class: 'btn', href: `/app/register?${next}`, 'data-link': '' }, 'Create account')),
+      demo));
     return false;
   }
   return true;
@@ -59,11 +85,60 @@ function renderAuth(main, initialMode) {
   const nameField = h('label', { class: 'field hidden' }, h('span', {}, 'Display name'), name);
   const mfaField = h('label', { class: 'field hidden' }, h('span', {}, 'Authenticator code'), mfa);
   const switchBtn = h('a', { class: 'btn ghost sm', 'data-link': '' });
-  const demo = h('button', { class: 'btn block mt8', type: 'button', onclick: () => {
-    email.value = 'demo@3dfun.dev';
-    password.value = 'DemoPassword123!';
-    form.requestSubmit();
-  } }, 'Use demo account');
+
+  // Real-time password strength meter
+  const strengthMeter = h('div', { class: 'password-strength hidden', style: 'margin-top: 6px; font-size: 12px;' },
+    h('div', { class: 'strength-track', style: 'height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; margin-bottom: 4px;' },
+      h('div', { id: 'strength-bar', style: 'width: 0%; height: 100%; transition: width 0.25s, background 0.25s;' })),
+    h('div', { id: 'strength-text', class: 'muted', style: 'display: flex; justify-content: space-between;' },
+      h('span', {}, 'Password strength:'),
+      h('span', { id: 'strength-label', style: 'font-weight: 600;' }, 'Enter password')));
+
+  password.addEventListener('input', debounce(async () => {
+    if (mode !== 'register' || !password.value) {
+      strengthMeter.classList.add('hidden');
+      return;
+    }
+    strengthMeter.classList.remove('hidden');
+    try {
+      const res = await api('/auth/password-strength', { method: 'POST', body: { password: password.value } });
+      const bar = document.getElementById('strength-bar');
+      const label = document.getElementById('strength-label');
+      if (!bar || !label) return;
+      const score = res.score ?? 0;
+      const colors = ['#ef4444', '#f97316', '#eab308', '#10b981', '#06b6d4'];
+      const labels = ['Weak', 'Moderate', 'Good', 'Strong', 'Excellent (zxcvbn verified)'];
+      const pct = Math.max((score + 1) * 20, 15);
+      bar.style.width = `${pct}%`;
+      bar.style.background = colors[score] || '#6366f1';
+      label.style.color = colors[score] || '#6366f1';
+      label.textContent = labels[score] || 'Good';
+    } catch (_) {}
+  }, 200));
+
+  const demo = h('button', {
+    id: 'demo-login',
+    class: 'btn block mt8',
+    style: 'background: linear-gradient(135deg, rgba(99, 102, 241, 0.16), rgba(6, 182, 212, 0.16)); border: 1px solid rgba(99, 102, 241, 0.4); font-weight: 600;',
+    type: 'button',
+    onclick: async () => {
+      submit.disabled = demo.disabled = true;
+      demo.innerHTML = '<span class="spinner"></span> Launching Demo Sandbox…';
+      try {
+        const data = await api('/auth/demo', { method: 'POST' });
+        localStorage.setItem('3dfun_token', data.access_token);
+        state.token = data.access_token;
+        await refreshUser();
+        toast(`Entered Student Sandbox · ${data.user.credits} credits granted`);
+        navigate(destination);
+      } catch (err) {
+        errorBox.textContent = 'Demo login failed: ' + err.message;
+      } finally {
+        submit.disabled = demo.disabled = false;
+        demo.textContent = '⚡ One-Click Instant Demo Sandbox';
+      }
+    }
+  }, '⚡ One-Click Instant Demo Sandbox');
 
   const form = h('form', { class: 'card auth-card' },
     h('h1', { style: 'font-size:24px' }, 'Welcome back'),
@@ -71,9 +146,9 @@ function renderAuth(main, initialMode) {
     errorBox,
     h('label', { class: 'field' }, h('span', {}, 'Email'), email),
     nameField,
-    h('label', { class: 'field' }, h('span', {}, 'Password'), password),
+    h('label', { class: 'field' }, h('span', {}, 'Password'), password, strengthMeter),
     mfaField,
-    submit, state.meta?.features?.demo_account ? demo : null,
+    submit, demo,
     h('div', { class: 'row mt16', style: 'justify-content:space-between;align-items:center' },
       switchBtn,
       h('a', { class: 'muted', href: '/app/forgot', 'data-link': '', style: 'font-size:13px' }, 'Forgot password?')));
@@ -83,10 +158,10 @@ function renderAuth(main, initialMode) {
     form.querySelector('h1').textContent = mode === 'login' ? 'Welcome back' : 'Create your studio';
     form.querySelector('p').textContent = mode === 'login'
       ? 'Sign in to generate 3D models from photos.'
-      : 'New accounts start with free generation credits.';
-    submit.textContent = mode === 'login' ? 'Sign in' : 'Create account';
+      : 'New accounts start with 50 free generation credits.';
+    submit.textContent = mode === 'login' ? 'Sign in' : 'Create account & Claim 50 Credits';
     nameField.classList.toggle('hidden', mode === 'login');
-    demo.hidden = mode !== 'login';
+    strengthMeter.classList.toggle('hidden', mode === 'login' || !password.value);
     switchBtn.textContent = mode === 'login' ? 'Create an account' : 'Sign in instead';
     switchBtn.href = `${mode === 'login' ? '/app/register' : '/app/login'}?${new URLSearchParams({ next: destination })}`;
     password.setAttribute('autocomplete', mode === 'login' ? 'current-password' : 'new-password');
@@ -205,6 +280,14 @@ route('/app/studio', async (params, main) => {
   if (requireAuth(main)) await renderStudio(params, main);
 });
 
+route('/app/labs', async (_p, main) => {
+  if (requireAuth(main)) await renderLabs(main);
+});
+
+route('/app/inspector', async (_p, main) => {
+  if (requireAuth(main)) await renderInspector(main);
+});
+
 route('/app/chat', async (params, main) => {
   if (requireAuth(main)) await renderChat(params, main);
 });
@@ -259,6 +342,10 @@ route('/app/dashboard', async (_p, main) => {
       statCard('Avg duration', fmt.ms(avg), 'wall clock, end to end'),
       statCard('Credits used', fmt.n(totalCredits), `${fmt.n(balance.available)} available`)),
     experimentsPanel(items, gens.total, state.meta?.inference, scrollTable),
+    h('section', { class: 'card mt16' },
+      h('h2', {}, 'Custom depth training'),
+      h('p', {}, 'Work through synthetic rendering, held-out depth evaluation, and 3D point-cloud comparison.'),
+      h('a', { class: 'btn', href: '/#training' }, 'Open training lab')),
     h('div', { class: 'grid c2 mt16' },
       h('div', { class: 'card' },
         h('div', { class: 'section-title' }, h('h2', {}, 'Volume · last 14 days'), h('span', { class: 'hint' }, 'generations per day')),

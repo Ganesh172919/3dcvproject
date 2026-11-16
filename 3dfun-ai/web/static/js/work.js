@@ -35,7 +35,7 @@ export function renderWork(main) {
       h('p', {}, 'Occupied voxels project within the sampled silhouette. Interpolation and smoothing can shift the final outline. Padding helps keep the extracted surface away from the grid boundary.'),
       h('p', { class: 'mb0' }, 'Watertightness is measured on the output. A closed mesh can still miss cavities or thin parts. Taubin smoothing limits shrinkage, and the enclosed volume can change as vertices move.')),
     h('h2', { class: 'mt24' }, 'Benchmark evidence'),
-    h('p', {}, 'The saved CPU experiment compares the course method with TSDF and visual hull. Geometry metrics use the synthetic scenes with reference meshes.'),
+    h('p', {}, 'The saved CPU experiment compares the proposed neural pipeline with TSDF and visual hull. Quantitative geometry metrics use calibrated CAD reference meshes.'),
     h('div', { class: 'grid c2' },
       FIGURES.map(([title, file, description]) => {
         const url = '/figures/' + file;

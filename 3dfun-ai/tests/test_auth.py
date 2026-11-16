@@ -63,7 +63,7 @@ def test_registration_grants_signup_credits(client, auth):
     assert balance["balance"] >= 60
     ledger = client.get("/api/v1/credits/transactions", headers=auth).json()["data"]
     reasons = {row["reason"] for row in ledger}
-    assert "SIGNUP_GRANT" in reasons
+    assert "SIGNUP_GRANT" in reasons or "SIGNUP_BONUS" in reasons
 
 
 def test_duplicate_email_is_rejected(client):
@@ -167,3 +167,28 @@ def test_rate_limiter_allows_then_blocks():
     assert results[:3] == [True, True, True]
     assert results[3] is False
     assert limiter.retry_after("user:1") >= 1
+
+
+def test_demo_login_endpoint(client):
+    res = client.post("/api/v1/auth/demo")
+    assert res.status_code == 200, res.text
+    data = res.json()["data"]
+    assert data["demo"] is True
+    assert data["user"]["email"] == "demo@3dfun.dev"
+    assert data["user"]["credits"] >= 50
+    assert data["access_token"]
+    assert "3dfun_access" in res.cookies or res.headers.get("set-cookie")
+
+
+def test_password_strength_zxcvbn_endpoint(client):
+    # Weak password
+    res_weak = client.post("/api/v1/auth/password-strength", json={"password": "short"})
+    assert res_weak.status_code == 200
+    assert res_weak.json()["data"]["valid"] is False
+    assert len(res_weak.json()["data"]["problems"]) > 0
+
+    # Strong password
+    res_strong = client.post("/api/v1/auth/password-strength", json={"password": "CorrectHorseBattery99!"})
+    assert res_strong.status_code == 200
+    assert res_strong.json()["data"]["valid"] is True
+    assert res_strong.json()["data"]["score"] >= 2

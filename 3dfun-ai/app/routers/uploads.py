@@ -1,8 +1,6 @@
 """Image upload endpoints (presigned intent + completion + secure reads)."""
 from __future__ import annotations
 
-import hashlib
-import io
 
 from fastapi import APIRouter, Depends, File, Request, Response, UploadFile
 from sqlalchemy import select

@@ -31,6 +31,8 @@ class MeshResult:
     validation_faces: np.ndarray | None = None
     vertex_colors: np.ndarray | None = None  # (V, 3) sRGB, in [0, 1]
     vertex_normals: np.ndarray | None = None
+    raw_vertices: np.ndarray | None = None          # pre-cleanup marching cubes geometry
+    raw_faces: np.ndarray | None = None
 
 
 # --------------------------------------------------------------------------
@@ -68,8 +70,8 @@ def cleanup_mesh(verts: np.ndarray, faces: np.ndarray, cfg: PipelineConfig):
     mesh.compute_vertex_normals()
 
     # drop small floating shells
-    tri = np.asarray(mesh.triangles)
-    vts = np.asarray(mesh.vertices)
+    np.asarray(mesh.triangles)
+    np.asarray(mesh.vertices)
     clusters = o3d.geometry.TriangleMesh.cluster_connected_triangles(mesh)
     labels = np.asarray(clusters[0])
     counts = np.asarray(clusters[1])
@@ -288,9 +290,9 @@ def mesh_metrics(v: np.ndarray, f: np.ndarray, watertight_probe: bool = True) ->
 def build_mesh(volume: VolumeResult, cfg: PipelineConfig) -> MeshResult:
     import trimesh
 
-    verts, faces, _ = marching_cubes(volume.sdf, volume.spacing, volume.origin)
-    raw_faces = len(faces)
-    verts, faces = cleanup_mesh(verts, faces, cfg)
+    raw_verts, raw_faces_arr, _ = marching_cubes(volume.sdf, volume.spacing, volume.origin)
+    raw_faces = len(raw_faces_arr)
+    verts, faces = cleanup_mesh(raw_verts, raw_faces_arr, cfg)
     verts, faces = _fill_holes_o3d(verts, faces, hole_size=0.02)
     # The grid resolution is calibrated to the face budget, so decimation is
     # only a fallback for very small budgets.
@@ -322,4 +324,5 @@ def build_mesh(volume: VolumeResult, cfg: PipelineConfig) -> MeshResult:
     })
     return MeshResult(vertices=new_v, faces=new_f, vertex_uv=np.zeros((0, 2), np.float32),
                       face_uv=corner_uv, metrics=final_metrics,
-                      validation_vertices=verts, validation_faces=faces)
+                      validation_vertices=verts, validation_faces=faces,
+                      raw_vertices=raw_verts, raw_faces=raw_faces_arr)

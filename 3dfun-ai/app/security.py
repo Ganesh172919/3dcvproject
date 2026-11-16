@@ -15,6 +15,18 @@ import jwt
 from argon2 import PasswordHasher
 from argon2.exceptions import InvalidHashError, VerifyMismatchError
 
+try:
+    import bcrypt
+    HAS_BCRYPT = True
+except ImportError:
+    HAS_BCRYPT = False
+
+try:
+    import zxcvbn
+    HAS_ZXCVBN = True
+except ImportError:
+    HAS_ZXCVBN = False
+
 from .config import settings
 from .db import utcnow
 
@@ -22,13 +34,25 @@ _ph = PasswordHasher(time_cost=3, memory_cost=65536, parallelism=2, hash_len=32,
 
 
 # ---------------------------------------------------------------------------
-# passwords
+# passwords (Argon2id default + bcrypt support + zxcvbn checks)
 # ---------------------------------------------------------------------------
-def hash_password(password: str) -> str:
+def hash_password(password: str, scheme: str = "argon2id") -> str:
+    """Hash password using Argon2id (default) or bcrypt."""
+    if scheme == "bcrypt" and HAS_BCRYPT:
+        salt = bcrypt.gensalt(rounds=12)
+        return bcrypt.hashpw(password.encode("utf-8"), salt).decode("utf-8")
     return _ph.hash(password)
 
 
 def verify_password(password: str, stored: str) -> bool:
+    """Verify password supporting both Argon2id ($argon2) and bcrypt ($2a$, $2b$, $2y$)."""
+    if not stored or not password:
+        return False
+    if stored.startswith(("$2a$", "$2b$", "$2y$")) and HAS_BCRYPT:
+        try:
+            return bcrypt.checkpw(password.encode("utf-8"), stored.encode("utf-8"))
+        except Exception:
+            return False
     try:
         return _ph.verify(stored, password)
     except (VerifyMismatchError, InvalidHashError, Exception):
@@ -43,6 +67,7 @@ def needs_rehash(stored: str) -> bool:
 
 
 def password_strength(password: str) -> list[str]:
+    """Validate password against length, complexity, and zxcvbn entropy checks."""
     problems = []
     if len(password) < 10:
         problems.append("Use at least 10 characters.")
@@ -54,7 +79,39 @@ def password_strength(password: str) -> list[str]:
         problems.append("Add a digit.")
     if password.lower() in {"password12", "qwertyuiop", "letmein123", "3dfun12345"}:
         problems.append("This password is too common.")
+
+    # zxcvbn score check (0 = extremely weak / trivial crack time)
+    if HAS_ZXCVBN and password and not problems:
+        try:
+            res = zxcvbn.zxcvbn(password)
+            if res.get("score", 0) == 0:
+                warning = res.get("feedback", {}).get("warning")
+                problems.append(warning or "This password is too easily guessed.")
+        except Exception:
+            pass
     return problems
+
+
+def evaluate_password_zxcvbn(password: str) -> dict[str, Any]:
+    """Return detailed zxcvbn entropy, score (0-4), crack time, and feedback."""
+    if HAS_ZXCVBN and password:
+        try:
+            res = zxcvbn.zxcvbn(password)
+            return {
+                "score": res.get("score", 0),
+                "feedback": res.get("feedback", {}),
+                "crack_times_display": res.get("crack_times_display", {}),
+                "guesses_log10": round(res.get("guesses_log10", 0), 2),
+            }
+        except Exception:
+            pass
+    score = 3 if len(password) >= 12 else (2 if len(password) >= 10 else 1)
+    return {
+        "score": score,
+        "feedback": {"warning": "", "suggestions": []},
+        "crack_times_display": {"offline_slow_hashing_1e4_per_second": "centuries" if score >= 3 else "seconds"},
+        "guesses_log10": 7.0 if score >= 3 else 3.0,
+    }
 
 
 # ---------------------------------------------------------------------------

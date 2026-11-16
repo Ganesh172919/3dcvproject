@@ -42,10 +42,9 @@ import subprocess
 import sys
 import time
 import traceback
-import zlib
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 import cv2
 import numpy as np
@@ -287,7 +286,7 @@ def _silhouette(img: np.ndarray) -> np.ndarray:
     border = np.concatenate([grey[:5].ravel(), grey[-5:].ravel(),
                              grey[:, :5].ravel(), grey[:, -5:].ravel()])
     background = float(np.median(border))
-    spread = float(np.percentile(border, 90) - np.percentile(border, 10)) + 1.0
+    float(np.percentile(border, 90) - np.percentile(border, 10)) + 1.0
     diff = np.abs(grey - background)
     mask = (diff > max(10.0, 0.45 * diff.max())).astype(np.uint8)
     kernel = np.ones((5, 5), np.uint8)
@@ -625,8 +624,10 @@ def run_thickness_sweep(quality: str, entries: list[dict], quiet: bool = False,
                                                config=override)
                 gt_v, gt_f = _load_obj(DATA / entry["gt_mesh"])
                 scores = M.evaluate_geometry(v, f, gt_v, gt_f, samples=20000, tau=0.01, seed=SEED)
-                cd.append(scores.chamfer); fs.append(scores.f_score)
-                iou.append(scores.iou); secs.append(extra["seconds"])
+                cd.append(scores.chamfer)
+                fs.append(scores.f_score)
+                iou.append(scores.iou)
+                secs.append(extra["seconds"])
             except Exception as exc:                                  # noqa: BLE001
                 if not quiet:
                     print(f"  sweep {scale} {entry['id']} failed: {exc}")

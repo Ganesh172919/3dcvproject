@@ -1,7 +1,7 @@
 # Constrained Volumetric Inflation: Mathematical Foundations & Level Set Theory
 
-**Module**: `engine/recon/volumetrics.py`  
-**Theoretical Author**: J Ganesh (`23BDS024`), Dept. of Data Science & Artificial Intelligence, IIIT Dharwad  
+**Module**: `engine/recon/volumetrics.py`
+**Theoretical Author**: J Ganesh (`23BDS024`), Dept. of Data Science & Artificial Intelligence, IIIT Dharwad
 **Course Context**: 3D Computer Vision Course Project
 
 ---
@@ -12,12 +12,12 @@ When reconstructing a 3D physical object from a single 2D projection, the camera
 
 Classical solutions to this challenge fall into two divergent paradigms:
 
-1. **Shape-from-Silhouette (Visual Hull Extrusion)**:  
+1. **Shape-from-Silhouette (Visual Hull Extrusion)**:
    Back-projects the 2D binary silhouette $\alpha(x, y)$ along the viewing axis $z$ into an infinite cylinder or extruded prism:
    $$\mathcal{V}_{\text{hull}} = \big\{ (x, y, z) \in \mathbb{R}^3 \mid \alpha(\pi(x, y, z)) = 1 \big\}$$
    *Fundamental Flaw*: It cannot represent surface relief or depth variation across the front face. Every point on the visible surface is extruded into a flat slab, resulting in boxy, prism-like reconstructions with an F-score of only 0.098.
 
-2. **Truncated Signed Distance Field (TSDF) Fusion (Curless & Levoy, 1996)**:  
+2. **Truncated Signed Distance Field (TSDF) Fusion (Curless & Levoy, 1996)**:
    Projects predicted monocular depth $D(x, y)$ into a voxelized signed distance volume:
    $$\phi_{\text{TSDF}}(\mathbf{x}) = \operatorname{clip}\big(D(\pi(\mathbf{x})) - \mathbf{x}_z, \; -\delta, \; +\delta\big)$$
    *Fundamental Flaw*: While effective in multi-view stereo where hundreds of intersecting camera rays carve away free space, single-view TSDF suffers from open boundaries. At the silhouette perimeter $\partial \alpha$, the monocular depth estimate has no intersecting opposing rays to close the rear surface. As a result, Marching Cubes clips against the domain boundaries, producing an open shell with **0% watertightness**.
@@ -104,4 +104,132 @@ $$\phi = \phi_{\text{raw}} * G_{3D, \sigma=0.8}$$
 4. By the Intermediate Value Theorem, any continuous zero-crossing $\phi(\mathbf{x}) = 0$ must be strictly interior to $\Omega_{\text{grid}}$.
 5. Marching Cubes extracts closed triangle loops for all internal level-set components that do not intersect domain limits, resulting in a mesh with zero boundary edges ($\partial \mathcal{M} = \emptyset$).
 
-This mathematical guarantee directly explains why 3DFUN AI achieves **96.0% watertightness** in empirical testing, whereas classical unpadded baselines achieve 0.0%.
+Padding keeps the zero surface away from the sampled volume boundary. Check the exported topology separately. In the recorded benchmark, 72 of 75 proposed-method runs produced watertight meshes.
+
+---
+
+## 5. Limitations, Failure Modes, and Mitigation Strategies
+
+### 5.1 Failure Mode: Thin or Transparent Structures
+
+For objects with thin protrusions (bicycle spokes, wire frames, plant stems) or transparent surfaces (glass, water, crystals), the constrained slab model produces suboptimal results:
+
+- **Thin protrusions**: Structures narrower than 2 voxels in the grid are below the Nyquist resolution limit and will be merged or filled in by the SDF.
+- **Transparent objects**: The U²-Net matting model may fail to extract correct silhouettes for transparent or reflective surfaces (glass cups, metallic spheres).
+
+**Mitigation**: For thin structures, increase `target_triangles` to 25,000–50,000 to raise voxel grid resolution. For transparent objects, photograph them against a strongly contrasting matte background.
+
+### 5.2 Failure Mode: Non-Convex Silhouettes with Complex Topology
+
+Objects with genus > 0 topology (a torus, a handle, a ring) cannot be faithfully reconstructed by the constrained slab method because the occupancy field $\mathcal{O}(x,y,z)$ is defined as a simple product of a 2D silhouette and a 1D depth interval — it has no mechanism for creating through-holes in the inflation direction.
+
+For example, a coffee mug handle projects to a silhouette with a hole. The slab inflation fills the handle's interior, producing a solid cylindrical protrusion rather than a hollow ring.
+
+**Mitigation**: This is a fundamental limitation of single-view reconstruction without learned shape priors. For genus > 0 objects, the system still produces the best achievable watertight mesh from the available depth and silhouette information.
+
+### 5.3 Failure Mode: Extreme Viewpoint Foreshortening
+
+For objects photographed at oblique angles (near-grazing incidence), the depth variation along the viewing axis collapses: $d(x,y)$ approaches a constant, eliminating surface relief carving. The slab degenerates toward a flat extruded silhouette.
+
+**Mitigation**: 3DFUN AI performs best with front-facing photographs. The Web Studio displays a recommended pose guide overlay.
+
+---
+
+## 6. Relationship to Published Methods
+
+The constrained volumetric slab inflation method implemented in 3DFUN AI draws from several published computer vision techniques:
+
+| Technique | Source | How Used in 3DFUN AI |
+|---|---|---|
+| **Shape from Silhouette (Visual Hull)** | Laurentini (1994) | Provides the 2D silhouette constraint $\alpha(x,y)$ |
+| **Truncated Signed Distance Fields** | Curless & Levoy (1996) | Inspired the SDF construction approach |
+| **Euclidean Distance Transform** | Meijster et al. (2000) | Used to compute exact EDT-based SDF |
+| **Marching Cubes** | Lorensen & Cline (1987) | Triangle mesh extraction from zero-isosurface |
+| **Taubin λ\|μ Smoothing** | Taubin (1995) | Post-processing staircase removal |
+| **Depth Anything V2** | Yang et al. (2024) | Monocular depth estimation backbone |
+| **U²-Net** | Qin et al. (2020) | Foreground salient object matting |
+
+The key **novel contribution** of 3DFUN AI is the mathematical integration of these components into a unified **constrained inflation framework** with the analytical watertightness guarantee (Section 4), which is not present in any single published method.
+
+---
+
+*See also: [ADR 0003 — SDF Over Point Clouds](../adr/0003-sdf-over-pointclouds.md), [ADR 0005 — Taubin Smoothing](../adr/0005-taubin-smoothing.md), [Configuration Reference](../reference/configuration.md).*
+*Authors: J Ganesh (23BDS024), M Jagadeshwar (23BDS033), B Varshith (23BDS011), Pranav Kashyap (23BCS098), C Sai Aravind (23BDS075) (Supervisor: Dr. Shirshendu Layek, Dept. of DSAI, IIIT Dharwad).*
+
+
+---
+
+## 7. Hyperparameter Sensitivity Analysis
+
+To understand how each inflation parameter affects reconstruction quality, the pipeline
+was run on 5 synthetic scenes while sweeping one parameter at a time (all others held
+at their default values). Results are from `results/summary/ablation_table.csv`.
+
+### 7.1 Effect of Constant Core Fraction (f)
+
+| f value | Chamfer Distance | F@1% | Watertight % | Visual Observation |
+|---:|---:|---:|---:|---|
+| 0.10 | 0.1024 | 0.0932 | 62 % | Severe rim pinching; holes at silhouette boundary |
+| 0.30 | 0.0801 | 0.1241 | 88 % | Slight collapse at thin edges |
+| **0.55** | **0.0639** | **0.1482** | **96 %** | **Default — optimal balance** |
+| 0.70 | 0.0658 | 0.1421 | 100 % | Slight over-inflation; objects look bloated |
+| 0.90 | 0.0834 | 0.1203 | 100 % | Heavy over-inflation; depth carving suppressed |
+
+**Conclusion**: f = 0.55 gives the best Chamfer / F-score tradeoff. Values below 0.30
+cause topological failures (non-watertight meshes). Values above 0.70 suppress depth
+modulation and produce boxy shapes.
+
+### 7.2 Effect of Grid Resolution (target_triangles)
+
+| target_triangles | Grid dim | CD | F@1% | Peak RAM (MB) | Latency (s) |
+|---:|---:|---:|---:|---:|---:|
+| 2,000 | 72^3 | 0.0821 | 0.1124 | 180 | 0.31 |
+| 4,000 | 96^3 | 0.0714 | 0.1298 | 310 | 0.52 |
+| **8,000** | **128^3** | **0.0639** | **0.1482** | **560** | **0.90** |
+| 16,000 | 160^3 | 0.0591 | 0.1601 | 1,100 | 1.74 |
+| 32,000 | 192^3 | 0.0562 | 0.1683 | 2,400 | 3.42 |
+
+**Conclusion**: 8,000 triangles (128^3 grid) is the default sweet spot — it delivers
+near-optimal geometry at under 1 second latency and under 600 MB RAM. For 3D printing
+applications where dimensional accuracy is critical, 16,000–32,000 triangles is
+recommended if system RAM allows.
+
+---
+
+## 8. Visual Failure Gallery
+
+The following failure modes have been documented during development. Each has an
+associated mitigation in the pipeline configuration.
+
+### Failure 1: Rim Pinching (f too low)
+- **Appearance**: The object's silhouette perimeter collapses to sharp knife-edge ridges.
+- **Cause**: The minimum inflation at the silhouette boundary is t_min + f * (t_max - t_min).
+  When f is very small, rim pixels get almost zero thickness.
+- **Fix**: Increase `constant_core` (f) to at least 0.40, or increase `thickness_min`.
+
+### Failure 2: Boxy Extrusion (depth signal lost)
+- **Appearance**: The mesh looks like a cookie-cutter extrusion with flat front and back.
+- **Cause**: The depth map `d(x,y)` has near-zero dynamic range (uniform depth scene,
+  overexposed photograph, or depth model failure).
+- **Fix**: Check the intermediate depth map (`--debug-intermediates`). If uniform, re-shoot
+  with better lighting contrast. Increase `depth_scale` (g) is not a substitute.
+
+### Failure 3: Floating Islands
+- **Appearance**: Small disconnected mesh patches floating near the main object.
+- **Cause**: Stray foreground pixels in the U2-Net alpha mask (reflections, cast shadows).
+- **Fix**: Post-process by keeping only the largest connected component:
+  ```python
+  components = mesh.split(only_watertight=False)
+  mesh = max(components, key=lambda m: m.volume)
+  ```
+
+### Failure 4: Open Mesh (non-watertight)
+- **Appearance**: `mesh.is_watertight = False`, typically with 2-12 boundary edges.
+- **Cause**: Insufficient canvas padding; the SDF zero-crossing touches the grid boundary.
+- **Fix**: Increase `RECON_PADDING` from 0.04 to 0.06 in `.env`.
+
+---
+
+*Authors: J Ganesh (23BDS024), M Jagadeshwar (23BDS033), B Varshith (23BDS011),*
+*Pranav Kashyap (23BCS098), C Sai Aravind (23BDS075).*
+*Supervisor: Dr. Shirshendu Layek, Dept. of DSAI, IIIT Dharwad.*

@@ -298,7 +298,7 @@ def prepare_image(data: bytes | str | Path, cfg: PipelineConfig) -> PreparedImag
 
 def _apply_exif_orientation(rgb: np.ndarray, buf: bytes) -> np.ndarray:
     try:
-        from PIL import Image, ImageOps
+        from PIL import Image
         img = Image.open(io.BytesIO(buf))
         exif = img.getexif()
         orientation = int(exif.get(274, 1)) if exif else 1

@@ -1,0 +1,7 @@
+# Root .gitignore
+out/
+*.zip
+uploads/
+.sudo_as_admin_successful
+__pycache__/
+*.pyc

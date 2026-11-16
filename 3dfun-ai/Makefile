@@ -3,8 +3,9 @@
 PYTHON ?= python3
 QUICK  ?= 0
 PORT   ?= 8000
+TECTONIC ?= tectonic
 
-.PHONY: help install install-dev models serve seed demo test lint benchmark figures paper slides report all verify clean
+.PHONY: help install install-dev models serve seed demo test lint benchmark figures report package verify clean
 
 help:            ## show this list
 	@grep -E '^[a-z-]+:.*?## ' $(MAKEFILE_LIST) | sed 's/:.*## /\t— /'
@@ -31,7 +32,7 @@ test:            ## run the test suite
 	$(PYTHON) -m pytest -q
 
 lint:            ## static checks
-	$(PYTHON) -m ruff check app engine benchmarks tools tests || true
+	$(PYTHON) -m ruff check app engine benchmarks scripts submission tests tools training
 
 benchmark:       ## full benchmark: 25 images x 3 methods x 3 repetitions
 	@if [ "$(QUICK)" = "1" ]; then \
@@ -40,22 +41,19 @@ benchmark:       ## full benchmark: 25 images x 3 methods x 3 repetitions
 	  $(PYTHON) benchmarks/run_benchmarks.py --force; \
 	fi
 
-figures:         ## build every chart and qualitative grid from results/
-	$(PYTHON) scripts/make_figures.py
+figures:         ## build legacy benchmark plots from locally recorded results
+	$(PYTHON) scripts/main.py
 
-paper:           ## compile the IEEEtran paper (numbers read from results/)
-	$(PYTHON) scripts/generate_paper.py --pdf
+report:          ## rebuild the four-page course report with Tectonic
+	mkdir -p out/course17
+	cd submission && $(TECTONIC) -o ../out/course17 report.tex
 
-slides:          ## build the 16:9 deck with speaker notes
-	$(PYTHON) scripts/generate_slides.py
+package: report  ## rebuild the demo and assemble the course ZIP
+	$(PYTHON) -m submission.demo
+	$(PYTHON) -m submission.package
 
-report:          ## build docs/report.md (+ PDF with Pandoc and XeLaTeX or Tectonic)
-	$(PYTHON) scripts/generate_report.py
-
-all: figures paper slides report ## rebuild every artefact from results/
-
-verify:          ## verify the saved submission artifacts and run the test suite
-	$(PYTHON) scripts/verify_submission.py
+verify: test lint ## check the course ZIP, report and video
+	$(PYTHON) -m submission.verify out/course17/Group17_3dcv_project.zip
 
 clean:           ## remove generated artefacts (keeps results/)
 	rm -rf out .pytest_cache paper/*.aux paper/*.log paper/*.bbl paper/*.blg

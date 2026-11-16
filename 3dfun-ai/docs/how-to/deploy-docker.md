@@ -1,6 +1,6 @@
 # Production Container Deployment & Orchestration Guide (Docker & Docker Compose)
 
-**Target System**: Linux (Ubuntu 22.04+ / Debian 12 / RHEL 9), Windows WSL2, Cloud VMs  
+**Target System**: Linux (Ubuntu 22.04+ / Debian 12 / RHEL 9), Windows WSL2, Cloud VMs
 **Components**: 3DFUN AI Microservice, Nginx Reverse Proxy, SQLite WAL Storage
 
 ---
@@ -118,7 +118,7 @@ USER appuser
 
 # Health check verifies API responsiveness
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
-  CMD curl -f http://127.0.0.1:8000/api/v1/system/health || exit 1
+  CMD curl -f http://127.0.0.1:8000/api/v1/health || exit 1
 
 EXPOSE 8000
 
@@ -261,7 +261,7 @@ docker compose logs -f app
 
 ### Verification Health Check
 ```bash
-curl -I http://127.0.0.1/api/v1/system/health
+curl -I http://127.0.0.1/api/v1/health
 ```
 Expected output:
 ```http

@@ -1,7 +1,6 @@
 """Generation endpoints: estimate, create, list, detail, cancel, retry, events."""
 from __future__ import annotations
 
-import datetime as dt
 
 from fastapi import APIRouter, Depends, Header, Request
 from sqlalchemy import func, select
@@ -12,13 +11,12 @@ from ..auth import get_current_user, owned_generation
 from ..config import settings
 from ..db import (AuditLog, Generation, GenerationEvent, GenerationStatus, Provider,
                   Upload, User, get_db, utcnow)
-from .. import jobs, providers
+from .. import providers
 from ..jobs import runner
-from ..providers import get_provider
 from ..ratelimit import enforce, generation_limiter
 from ..schemas import (ApiError, CreateGenerationRequest, EstimateRequest, ok)
 from ..serializers import generation_public
-from ..state_machine import assert_transition, is_retryable
+from ..state_machine import assert_transition
 
 router = APIRouter(prefix="/generations", tags=["generations"])
 
@@ -225,3 +223,138 @@ def list_attempts(generation_id: str, user: User = Depends(get_current_user),
         "started_at": a.started_at, "finished_at": a.finished_at,
         "duration_ms": a.duration_ms,
     } for a in gen.attempts])
+
+
+@router.get("/{generation_id}/stages")
+def get_generation_stages(generation_id: str, user: User = Depends(get_current_user),
+                          db: Session = Depends(get_db)):
+    """Fetch structured intermediate representations for student inspection across all 8 pipeline stages."""
+    gen = owned_generation(db, generation_id, user)
+    asset = gen.asset
+    manifest = asset.manifest if asset else {}
+    files = asset.files if asset else {}
+
+    def get_url(filename: str) -> str | None:
+        if filename in files:
+            return f"/api/v1/assets/{asset.id}/download/{filename}"
+        for k, v in files.items():
+            if k.endswith(filename):
+                return f"/api/v1/assets/{asset.id}/download/{filename}"
+        return None
+
+    stages = [
+        {
+            "stage_index": 1,
+            "id": "preprocessing",
+            "name": "1. Preprocessing & Alpha Matting",
+            "description": "Raw 2D input -> Saliency Boundary Probability Map -> Trimap -> Alpha Cutoff Segmentation",
+            "math_formula": r"\mathcal{L}_{\text{BCE}} = -\sum_{i} [y_i \log \hat{y}_i + (1 - y_i) \log (1 - \hat{y}_i)]",
+            "primary_asset": get_url("source_canvas.png") or get_url("mask.png"),
+            "assets": {
+                "source": get_url("source_canvas.png"),
+                "mask": get_url("mask.png"),
+                "prob_map": get_url("prob_map.png"),
+                "trimap": get_url("trimap.png"),
+            },
+            "parameters": {"alpha_cutoff": 0.5, "feather_radius": 2, "padding": "12%"},
+            "telemetry": manifest.get("input", {}),
+        },
+        {
+            "stage_index": 2,
+            "id": "depth",
+            "name": "2. Monocular Relative Depth Estimation",
+            "description": "Depth Anything V2 / MiDaS relative inverse depth field & 2D Sobel spatial gradients",
+            "math_formula": r"Z(u, v) = \frac{1}{\alpha \cdot d(u, v) + \beta}, \quad \nabla d = \left( \frac{\partial d}{\partial x}, \frac{\partial d}{\partial y} \right)",
+            "primary_asset": get_url("depth.png") or get_url("depth_gray.png"),
+            "assets": {
+                "color_map": get_url("depth.png"),
+                "grayscale": get_url("depth_gray.png"),
+                "depth_16bit": get_url("depth_16bit.png"),
+                "normals": get_url("normals.png"),
+                "sobel_normals": get_url("sobel_gradients.png"),
+            },
+            "parameters": {"model": gen.model, "depth_range": "[0, 1]", "sobel_ksize": 3},
+            "telemetry": manifest.get("engine", {}),
+        },
+        {
+            "stage_index": 3,
+            "id": "unprojection",
+            "name": "3. Camera Ray Unprojection & Point Cloud",
+            "description": "Back-projecting 2D (u, v) pixels into 3D camera coordinate space (X, Y, Z) via intrinsic matrix K",
+            "math_formula": r"X = \frac{(u - c_x) Z}{f_x}, \quad Y = \frac{(v - c_y) Z}{f_y}, \quad Z = \text{depth}(u, v)",
+            "primary_asset": get_url("pointcloud.ply"),
+            "assets": {"pointcloud_ply": get_url("pointcloud.ply")},
+            "parameters": {"fov_deg": 45.0, "focal_length": 180.0, "density": "100%"},
+            "telemetry": {"point_count": 20000, "coordinate_system": "Right-handed (+X right, +Y up, +Z out)"},
+        },
+        {
+            "stage_index": 4,
+            "id": "volume",
+            "name": "4. Volumetric Inflation & Signed Distance Fields (SDF)",
+            "description": "Silhouette-constrained 3D voxel density matrix Phi(x, y, z) with Euclidean distance transform",
+            "math_formula": r"\Phi(\mathbf{x}) = \min_{\mathbf{y} \in \partial \Omega} \|\mathbf{x} - \mathbf{y}\| \cdot \text{sgn}(\mathbf{x})",
+            "primary_asset": get_url("sdf_axial.png"),
+            "assets": {
+                "voxels_slice": get_url("voxels_slice.png"),
+                "axial_slice": get_url("sdf_axial.png"),
+                "coronal_slice": get_url("sdf_coronal.png"),
+                "sagittal_slice": get_url("sdf_sagittal.png"),
+            },
+            "parameters": {"voxel_resolution": "128³", "closeness_power": 1.4},
+            "telemetry": manifest.get("volume", {}),
+        },
+        {
+            "stage_index": 5,
+            "id": "geometry",
+            "name": "5. Isosurface Extraction via Marching Cubes",
+            "description": "Lorensen & Cline lookup table triangle polygonization with Euler topology verification",
+            "math_formula": r"\mathcal{S} = \{ \mathbf{x} \in \mathbb{R}^3 \mid \Phi(\mathbf{x}) = 0.0 \}, \quad \chi = V - E + F",
+            "primary_asset": get_url("raw_mesh.obj") or get_url("model.glb"),
+            "assets": {"raw_mesh_obj": get_url("raw_mesh.obj"), "mesh_glb": get_url("model.glb"), "mesh_obj": get_url("model.obj")},
+            "parameters": {"isovalue": 0.0, "lookup_tables": "256 configurations (15 canonical)"},
+            "telemetry": manifest.get("mesh", {}),
+        },
+        {
+            "stage_index": 6,
+            "id": "smoothing",
+            "name": "6. Mesh Post-Processing & Smoothing",
+            "description": "Taubin dual-pass non-shrinking smoothing vs Laplacian smoothing with Quadric Error Metric (QEM)",
+            "math_formula": r"\mathbf{v}' = (\mathbf{I} + \mu \mathbf{L})(\mathbf{I} + \lambda \mathbf{L}) \mathbf{v}, \quad \lambda > 0, \mu < -\lambda",
+            "primary_asset": get_url("smoothed.obj") or get_url("model.glb"),
+            "assets": {"smoothed_obj": get_url("smoothed.obj"), "model_glb": get_url("model.glb")},
+            "parameters": {"taubin_lambda": 0.5, "taubin_mu": -0.53, "iterations": 4},
+            "telemetry": {"smoothing_algorithm": "Taubin filter", "faces": asset.polygons if asset else 0},
+        },
+        {
+            "stage_index": 7,
+            "id": "uv",
+            "name": "7. UV Parameterization & Seam Packing",
+            "description": "Planar/conformal unwrap of 3D triangular surface onto 2D texture coordinate atlas (u, v)",
+            "math_formula": r"(u, v) \in [0, 1]^2, \quad \iint \left( \left\|\frac{\partial \mathbf{x}}{\partial u}\right\|^2 + \left\|\frac{\partial \mathbf{x}}{\partial v}\right\|^2 \right) du\,dv",
+            "primary_asset": get_url("uv_layout.png") or get_url("uv_atlas.png"),
+            "assets": {"uv_layout_png": get_url("uv_layout.png"), "uv_atlas_png": get_url("uv_atlas.png")},
+            "parameters": {"atlas_resolution": "1024x1024", "padding_pixels": 4},
+            "telemetry": {"atlas_type": manifest.get("mesh", {}).get("uv_atlas", "planar-view-projection")},
+        },
+        {
+            "stage_index": 8,
+            "id": "texture",
+            "name": "8. PBR Texture Back-Projection & Baking",
+            "description": "Color back-projection with Lambertian de-lighting, AO hemisphere integration, and normal perturbation",
+            "math_formula": r"L_o(\mathbf{x}, \omega_o) = \int_{\Omega} f_r(\mathbf{x}, \omega_i, \omega_o) L_i(\mathbf{x}, \omega_i) (\mathbf{n} \cdot \omega_i) d\omega_i",
+            "primary_asset": get_url("albedo.png") or get_url("basecolor.png") or get_url("preview.png"),
+            "assets": {
+                "albedo": get_url("albedo.png") or get_url("basecolor.png"),
+                "basecolor": get_url("basecolor.png"),
+                "normal": get_url("normal.png"),
+                "orm": get_url("orm.png"),
+                "ao": get_url("ao.png"),
+                "roughness": get_url("roughness.png"),
+                "metallic": get_url("metallic.png"),
+            },
+            "parameters": {"pbr_workflow": "Metallic-Roughness", "delighting": True},
+            "telemetry": manifest.get("texture", {}),
+        },
+    ]
+
+    return ok({"generation_id": gen.id, "stages": stages})

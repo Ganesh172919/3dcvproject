@@ -81,11 +81,13 @@ class Settings:
     job_concurrency: int = field(default_factory=lambda: _env_int("JOB_CONCURRENCY", 1))
 
     # ---- credits -----------------------------------------------------
-    signup_credits: int = field(default_factory=lambda: _env_int("SIGNUP_CREDITS", 60))
+    signup_credits: int = field(default_factory=lambda: _env_int("CREDITS_SIGNUP_GRANT", _env_int("SIGNUP_CREDITS", 60)))
+    daily_streak_credits: int = field(default_factory=lambda: _env_int("DAILY_STREAK_CREDITS", 10))
+    lab_run_credits: int = field(default_factory=lambda: _env_int("LAB_RUN_CREDITS", 10))
     credit_costs: dict[str, int] = field(default_factory=lambda: {
-        "draft": _env_int("CREDITS_DRAFT", 4),
-        "standard": _env_int("CREDITS_STANDARD", 8),
-        "high": _env_int("CREDITS_HIGH", 16),
+        "draft": _env_int("CREDIT_COST_DRAFT", _env_int("CREDITS_DRAFT", 4)),
+        "standard": _env_int("CREDIT_COST_STANDARD", _env_int("CREDITS_STANDARD", 8)),
+        "high": _env_int("CREDIT_COST_HIGH", _env_int("CREDITS_HIGH", 12)),
     })
 
     # ---- providers ---------------------------------------------------

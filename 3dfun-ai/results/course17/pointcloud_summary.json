@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "coordinate_frame": "camera",
+  "distance_units": "normalized world units",
+  "fscore_threshold": 0.01,
+  "max_points_per_view": 4096,
+  "views": 8,
+  "example_view": "cylinder_view_00.png",
+  "per_mesh": {
+    "cylinder": {
+      "tinydepth_chamfer": 0.0980193529221878,
+      "tinydepth_f_score": 0.045562744140625,
+      "constant_chamfer": 0.13580025888711605,
+      "constant_f_score": 0.0211181640625
+    }
+  },
+  "mean_by_mesh": {
+    "tinydepth_chamfer": 0.0980193529221878,
+    "tinydepth_f_score": 0.045562744140625,
+    "constant_chamfer": 0.13580025888711605,
+    "constant_f_score": 0.0211181640625
+  }
+}

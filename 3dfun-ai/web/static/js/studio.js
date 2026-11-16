@@ -8,6 +8,8 @@ import { api, clear, fmt, h, mount, refreshUser, state, statusBadge, toast } fro
 import { EXAMPLES } from './examples.js';
 import { ENGINE_NAMES, inferenceLabel, PROVIDER_NAMES } from './experiments.js';
 import { discardReference, pendingReference, validateReferenceFile } from './pending-upload.js';
+import { PipelineInspector } from './inspector.js';
+import { renderChat } from './chat.js';
 
 const DEPTH_STAGES = ['Matte', 'Depth', 'Volume', 'Mesh', 'Texture', 'Export'];
 const ENGINES = {
@@ -30,6 +32,7 @@ export async function renderStudio(_params, main) {
   const available = key => key === 'local' || Boolean(state.meta?.features?.[key]);
   const params = new URLSearchParams(location.search);
   const requestedEngine = params.get('engine');
+  const initialSample = EXAMPLES.find(example => example.id === params.get('sample'));
   const maxMB = state.meta?.limits?.max_upload_mb ?? 20;
   let upload;
   let current;
@@ -50,9 +53,11 @@ export async function renderStudio(_params, main) {
     h('small', {}, `Drop it here or browse · up to ${maxMB} MB`));
   const reference = h('div', { class: 'reference' });
   const error = h('p', { class: 'form-error mb0', role: 'alert' });
-  const samples = EXAMPLES.map(example => h('button', { class: 'sample-button', type: 'button',
+  const sampleInputs = EXAMPLES.filter((example, index) =>
+    EXAMPLES.findIndex(item => item.input === example.input) === index);
+  const samples = sampleInputs.map(example => h('button', { class: 'sample-button', type: 'button',
     onclick: () => selectExample(example), 'aria-pressed': 'false', dataset: { filename: example.input.split('/').pop() },
-  }, h('img', { src: example.input, alt: '' }), example.label));
+  }, h('img', { src: example.input, alt: '', loading: 'lazy' }), example.label));
 
   function selectExample(example) {
     return selectFile(async () => {
@@ -72,16 +77,16 @@ export async function renderStudio(_params, main) {
   if (['draft', 'standard', 'high'].includes(params.get('quality'))) quality.value = params.get('quality');
   const engineHint = h('p', { class: 'hint mb0' });
   const texture = h('select', {}, ['512', '1024', '2048'].map(value =>
-    h('option', { value, selected: value === '1024' }, `${value} × ${value}`)));
+    h('option', { value, selected: value === (initialSample?.prototype ? '512' : '1024') }, `${value} × ${value}`)));
   const textureField = h('label', { class: 'field' }, h('span', {}, 'Texture atlas size'), texture);
   const symmetry = h('input', { type: 'checkbox', checked: true });
   const symmetryField = h('label', { class: 'checkline' }, symmetry, 'Use a symmetry prior');
   const turntable = h('input', { type: 'checkbox', onchange: () => updateEstimate() });
   const formats = ['obj', 'ply', 'stl', 'gltf'].map(format => h('input', {
-    type: 'checkbox', value: format, checked: ['obj', 'ply'].includes(format),
+    type: 'checkbox', value: format, checked: !initialSample?.prototype && ['obj', 'ply'].includes(format),
   }));
-  const cost = h('p', { class: 'hint mb0', role: 'status' });
-  const submit = h('button', { class: 'btn primary block', type: 'button', disabled: true, onclick: start }, 'Generate model');
+  const cost = h('p', { id: 'estimate-cost', class: 'hint mb0', role: 'status' });
+  const submit = h('button', { id: 'btn-generate', class: 'btn primary block', type: 'button', disabled: true, onclick: start }, 'Generate model');
   const output = h('section', { class: 'card studio-output', 'aria-label': 'Reconstruction output' });
   const exampleImage = h('img');
   const exampleCaption = h('figcaption');
@@ -140,7 +145,9 @@ export async function renderStudio(_params, main) {
   function saveReferenceUrl(id) {
     const url = new URL(location.href);
     url.searchParams.delete('draft');
-    url.searchParams.delete('sample');
+    if (!id || !initialSample?.prototype || upload?.filename !== initialSample.input.split('/').pop()) {
+      url.searchParams.delete('sample');
+    }
     if (id) url.searchParams.set('upload', id);
     else url.searchParams.delete('upload');
     history.replaceState(null, '', url);
@@ -177,7 +184,9 @@ export async function renderStudio(_params, main) {
     const version = ++estimateVersion;
     const learned = engine.value === 'triposr';
     const info = ENGINES[engine.value];
-    const example = EXAMPLES.find(item => item.id === info.example);
+    const example = initialSample?.prototype && initialSample.engine === engine.value
+      && (!upload || upload.filename === initialSample.input.split('/').pop())
+      ? initialSample : EXAMPLES.find(item => item.id === info.example);
     exampleImage.src = example.preview;
     exampleImage.alt = `${example.label} reconstructed with ${example.method}`;
     exampleCaption.textContent = `${example.label} · ${example.method}`;
@@ -233,59 +242,62 @@ export async function renderStudio(_params, main) {
     const [asset, { ModelViewer }] = await Promise.all([api(`/assets/${id}`), import('./viewer.js')]);
     if (!active || current?.asset_id !== id) return;
 
-    let isSplitView = false;
-    const viewTabs = h('div', { class: 'view-tabs mt12' });
-    const btnStandard = h('button', { class: 'btn sm primary', type: 'button' }, 'Interactive 3D Viewer');
-    const btnSplit = h('button', { class: 'btn sm', type: 'button' }, 'Split-Screen 2D vs 3D');
+    const sourceImgSrc = current.source_image_url || upload?.image_url;
+    const viewTabs = h('div', { class: 'view-tabs mt12', role: 'group', 'aria-label': 'Result view', hidden: !sourceImgSrc });
+    const btnStandard = h('button', { class: 'btn sm primary', type: 'button', 'aria-pressed': 'true' }, '3D model');
+    const btnSplit = h('button', { class: 'btn sm', type: 'button', 'aria-pressed': 'false' }, 'Compare with photo');
     mount(viewTabs, btnStandard, btnSplit);
 
     const viewerContainer = h('div', { class: 'mt8' });
-    const standardHost = h('div', {});
-    const splitHost = h('div', { class: 'split-view-container hidden' });
+    const standardHost = h('div');
+    const splitHost = h('div', { class: 'split-view-container' });
 
-    const sourceImgSrc = upload?.image_url || asset.manifest?.source_preview || asset.preview_url;
     const splitLeft = h('div', { class: 'split-side split-left' },
       h('img', { src: sourceImgSrc, class: 'split-source-img', alt: 'Source photo' }),
-      h('div', { class: 'split-silhouette-overlay' }),
-      h('div', { class: 'split-label left' }, '2D Source & Silhouette Boundary'));
+      h('div', { class: 'split-label left' }, 'Source photo'));
     const splitRightHost = h('div', { style: 'width:100%;height:100%;position:relative;' });
     const splitRight = h('div', { class: 'split-side split-right', style: 'clip-path: inset(0 0 0 50%)' },
       splitRightHost,
-      h('div', { class: 'split-label right' }, 'Reconstructed 3D Geometry'));
-    const divider = h('div', { class: 'split-divider-line', style: 'left: 50%' },
+      h('div', { class: 'split-label right' }, '3D model'));
+    const divider = h('div', { class: 'split-divider-line', style: 'left: 50%', 'aria-hidden': 'true' },
       h('div', { class: 'split-handle' }, '⮂ ⮃'));
+    const amount = h('input', { type: 'range', min: 0, max: 100, value: 50, 'aria-label': 'Photo visible in comparison' });
+    const comparison = h('div', { hidden: true }, splitHost,
+      h('label', { class: 'split-slider' }, h('span', {}, '3D model'), amount, h('span', {}, 'Photo')));
 
     mount(splitHost, splitLeft, splitRight, divider);
-    mount(viewerContainer, standardHost, splitHost);
+    mount(viewerContainer, standardHost, comparison);
 
-    let dragging = false;
-    const updateDivider = clientX => {
-      const rect = splitHost.getBoundingClientRect();
-      const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
-      const pct = (x / rect.width) * 100;
+    const setAmount = pct => {
+      amount.value = pct;
+      amount.setAttribute('aria-valuetext', `${pct}% photo`);
       divider.style.left = `${pct}%`;
       splitRight.style.clipPath = `inset(0 0 0 ${pct}%)`;
     };
-
-    divider.addEventListener('mousedown', () => { dragging = true; });
-    window.addEventListener('mousemove', e => { if (dragging) updateDivider(e.clientX); });
-    window.addEventListener('mouseup', () => { dragging = false; });
-    divider.addEventListener('touchstart', () => { dragging = true; });
-    window.addEventListener('touchmove', e => { if (dragging && e.touches[0]) updateDivider(e.touches[0].clientX); });
-    window.addEventListener('touchend', () => { dragging = false; });
+    amount.addEventListener('input', () => setAmount(Number(amount.value)));
+    setAmount(50);
+    divider.addEventListener('pointerdown', event => divider.setPointerCapture(event.pointerId));
+    divider.addEventListener('pointermove', event => {
+      if (!divider.hasPointerCapture(event.pointerId)) return;
+      const rect = splitHost.getBoundingClientRect();
+      const fraction = (event.clientX - rect.left) / rect.width;
+      setAmount(Math.round(Math.max(0, Math.min(fraction, 1)) * 100));
+    });
 
     const setView = split => {
-      isSplitView = split;
+      if (viewer && comparison.hidden === !split) return;
       btnStandard.classList.toggle('primary', !split);
       btnSplit.classList.toggle('primary', split);
-      standardHost.classList.toggle('hidden', split);
-      splitHost.classList.toggle('hidden', !split);
+      btnStandard.setAttribute('aria-pressed', String(!split));
+      btnSplit.setAttribute('aria-pressed', String(split));
+      standardHost.hidden = split;
+      comparison.hidden = !split;
 
       viewer?.dispose();
       const targetHost = split ? splitRightHost : standardHost;
       viewer = new ModelViewer(targetHost, {
         modelUrl: asset.model_url, previewUrl: asset.preview_url, altText: asset.name,
-        height: split ? 460 : 420, autoRotate: !split,
+        height: split ? splitHost.clientHeight : 540, autoRotate: false, compact: split,
       });
     };
 
@@ -312,7 +324,12 @@ export async function renderStudio(_params, main) {
       h('a', { class: `btn sm ${file.format === 'glb' ? 'primary' : ''}`, href: file.url }, `Download ${file.label}`))));
 
     viewer = new ModelViewer(standardHost, { modelUrl: asset.model_url, previewUrl: asset.preview_url, altText: asset.name,
-      height: 420, autoRotate: false });
+      height: 540, autoRotate: false });
+
+    state.currentAssetId = id;
+    if (current?.id) inspector.loadStages(current.id);
+    const statusTop = document.getElementById('status-topology');
+    if (statusTop) statusTop.textContent = `${fmt.n(asset.polygons)} faces · ${asset.watertight ? 'Watertight' : 'Manifold'}`;
   }
 
   async function watch(id, failures = 0) {
@@ -401,28 +418,99 @@ export async function renderStudio(_params, main) {
     if (event.dataTransfer.files[0]) selectFile(() => event.dataTransfer.files[0]);
   });
 
-  mount(output, h('div', { class: 'spread output-heading' }, h('h2', { class: 'mb0' }, 'Reconstruction preview'),
-    h('a', { class: 'btn sm', href: '/#example-stage' }, 'Interactive examples')),
+  const viewSizeBadge = h('span', { class: 'telemetry-badge', id: 'viewport-render-size' }, '📐 Render View: 640 × 540 px');
+  mount(output, h('div', { class: 'spread output-heading' },
+    h('div', { class: 'row gap8', style: 'align-items:center;' },
+      h('h2', { class: 'mb0' }, 'Reconstruction Viewport'),
+      viewSizeBadge
+    ),
+    h('a', { class: 'btn sm', href: '/#example-stage' }, 'Explore Examples')),
     h('figure', { class: 'studio-demo' }, exampleImage, exampleCaption),
-    h('p', { class: 'hint mb0' }, 'Your model and download links will appear here after generation.'));
-  mount(main, h('header', { class: 'studio-title' }, h('p', { class: 'course-label' }, '3D COMPUTER VISION · IIIT DHARWAD'),
-    h('h1', {}, 'Image to 3D Studio'), h('p', { class: 'mb0' }, 'Turn one object photo into a mesh you can rotate and download.')),
-  h('div', { class: 'studio' }, h('div', { class: 'col' },
-    h('section', { class: 'card col' }, h('h2', { class: 'mb0' }, 'Reference image'), drop, fileInput, reference,
-      h('div', {}, h('small', { class: 'sample-label' }, 'Try an example'),
-        h('div', { class: 'sample-strip' }, ...samples))),
-    h('section', { class: 'card' }, h('div', { class: 'spread wrap' }, h('h2', {}, 'Reconstruction settings'),
-      h('span', { class: 'runtime-chip' }, `Preferred · ${PROVIDER_NAMES[state.meta?.inference?.preferred] || 'CPU'}`)),
-      h('div', { class: 'studio-fields' }, h('label', { class: 'field' }, h('span', { id: 'studio-engine-label' }, 'Engine'), engine),
-        h('label', { class: 'field' }, h('span', { id: 'studio-quality-label' }, 'Quality'), quality)), engineHint,
-      h('details', { class: 'studio-options' }, h('summary', {}, 'Export and advanced options'),
-        h('div', { class: 'mt8' }, textureField, symmetryField,
-          h('label', { class: 'checkline' }, turntable, 'Render a turntable'),
-          h('p', { class: 'hint mb0' }, 'GLB is included for the browser viewer.'),
-          h('div', { class: 'row wrap gap12 mt8' }, formats.map(box =>
-            h('label', { class: 'checkline' }, box, box.value.toUpperCase()))))),
-      h('div', { class: 'col mt16' }, cost, error, submit))),
-    h('div', { class: 'col studio-right' }, output, h('section', { class: 'card' }, h('h3', {}, 'Pipeline'), pipeline))));
+    h('p', { class: 'hint mb0' }, 'Upload an image and hit Generate Model to watch real-time 3D geometry synthesis.'));
+
+  // Right Dock Setup: Tab A (Inspector) + Tab B (Agentic AI Co-Pilot)
+  const tabSeg = h('div', { class: 'seg mb8', role: 'group', 'aria-label': 'Right Dock Tabs' });
+  const btnInspectorTab = h('button', { class: 'active', type: 'button' }, '🔬 Inspector');
+  const btnChatTab = h('button', { type: 'button' }, '🤖 AI Co-Pilot');
+  mount(tabSeg, btnInspectorTab, btnChatTab);
+
+  const inspectorHost = h('div', { class: 'right-dock-tab' });
+  const chatHost = h('div', { class: 'right-dock-tab', hidden: true });
+
+  btnInspectorTab.onclick = () => {
+    btnInspectorTab.classList.add('active');
+    btnChatTab.classList.remove('active');
+    inspectorHost.hidden = false;
+    chatHost.hidden = true;
+  };
+
+  btnChatTab.onclick = () => {
+    btnChatTab.classList.add('active');
+    btnInspectorTab.classList.remove('active');
+    inspectorHost.hidden = true;
+    chatHost.hidden = false;
+  };
+
+  const inspector = new PipelineInspector(inspectorHost, { generationId: null });
+
+  renderChat(params, chatHost, {
+    embedded: true,
+    activeMeshId: null,
+    onToolExecuted: (toolResult) => {
+      if (current?.asset_id) {
+        renderResult(current.asset_id);
+      }
+    },
+  });
+
+  const rightDock = h('aside', { class: 'studio-right-dock' }, tabSeg, inspectorHost, chatHost);
+
+  // Left Dock Setup
+  const leftDock = h('aside', { class: 'studio-left-dock col gap12' },
+    h('div', { class: 'spread' }, h('h2', { class: 'mb0', style: 'font-size:18px;' }, '🎨 3D Creative Studio'),
+      h('span', { class: 'runtime-chip' }, PROVIDER_NAMES[state.meta?.inference?.preferred] || 'DirectML / CPU')),
+    drop, fileInput, reference,
+    h('div', {}, h('small', { class: 'sample-label', style: 'color:var(--text-2);font-weight:600;' }, 'Instant Presets & Samples:'),
+      h('div', { class: 'sample-strip' }, ...samples)),
+    h('div', { class: 'studio-fields' },
+      h('label', { class: 'field' }, h('span', { id: 'studio-engine-label' }, 'Reconstruction Engine'), engine),
+      h('label', { class: 'field' }, h('span', { id: 'studio-quality-label' }, 'Quality Preset'), quality)),
+    engineHint,
+    h('details', { class: 'studio-options' }, h('summary', {}, 'PBR Baking & Advanced Controls'),
+      h('div', { class: 'mt8' }, textureField, symmetryField,
+        h('label', { class: 'checkline' }, turntable, 'Render 360° MP4/GIF Turntable'),
+        h('div', { class: 'row wrap gap12 mt8' }, formats.map(box =>
+          h('label', { class: 'checkline' }, box, box.value.toUpperCase()))))),
+    h('div', { class: 'col mt8' }, cost, error, submit));
+
+  // Center Canvas
+  const centerCanvas = h('section', { class: 'studio-center-canvas' }, output);
+
+  // Bottom Telemetry Dock
+  const bottomDock = h('footer', { class: 'studio-bottom-dock mt16' },
+    h('div', { class: 'spread gap12' },
+      h('span', { class: 'telemetry-badge' }, '⚡ Engine: ', h('strong', { id: 'status-engine' }, ENGINES[engine.value]?.name || 'Local CPU')),
+      h('span', { class: 'telemetry-badge' }, '🖥 Hardware: ', h('strong', {}, PROVIDER_NAMES[state.meta?.inference?.preferred] || 'CPU / DirectML')),
+      h('span', { class: 'telemetry-badge' }, '⏱ Status: ', h('strong', { id: 'status-timer' }, 'Active Session'))),
+    h('div', { class: 'spread gap12' },
+      h('span', { class: 'telemetry-badge' }, '📦 Mesh Topology: ', h('strong', { id: 'status-topology' }, '2-Manifold Certified')),
+      h('span', {
+        class: 'telemetry-badge',
+        style: 'cursor: pointer; transition: border-color 0.15s;',
+        title: 'Click to open Credit Wallet & Transaction History',
+        onclick: () => openCreditWalletModal()
+      }, '◆ Wallet: ', h('strong', { id: 'status-wallet', style: 'color: var(--accent);' }, `${state.user?.credits ?? 50} Credits`))));
+
+  window.openCreditWalletModal = openCreditWalletModal;
+
+  // Mount 3-Dock Architecture
+  mount(main,
+    h('header', { class: 'studio-title' },
+      h('p', { class: 'course-label' }, '3D COMPUTER VISION · IIIT DHARWAD'),
+      h('h1', {}, 'Image-to-3D Studio & Educational Laboratory'),
+      h('p', { class: 'muted mb0' }, 'Transform 2D photographs into watertight PBR 3D models with interactive tensor inspection.')),
+    h('div', { class: 'studio-layout' }, leftDock, centerCanvas, rightDock),
+    bottomDock);
 
   updateEstimate();
   const id = params.get('generation');
@@ -438,8 +526,164 @@ export async function renderStudio(_params, main) {
       return file;
     });
     if (savedOnServer) await discardReference(draft).catch(() => {});
-  } else if (!id) {
-    const sample = EXAMPLES.find(item => item.id === params.get('sample'));
-    if (sample) selectExample(sample);
+  } else if (!id && initialSample) {
+    selectExample(initialSample);
   }
+}
+
+export async function openCreditWalletModal() {
+  const existing = document.getElementById('wallet-modal-back');
+  if (existing) existing.remove();
+
+  const backdrop = h('div', { id: 'wallet-modal-back', class: 'modal-back' });
+  const modal = h('div', { class: 'modal', style: 'max-width: 680px; width: 100%;' });
+  backdrop.appendChild(modal);
+
+  modal.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <h3 style="margin:0;font-size:20px;display:flex;align-items:center;gap:8px;">
+        <span style="color:var(--accent);">◆</span> Credit Wallet & Free Trial Ledger
+      </h3>
+      <button class="btn sm ghost" id="modal-close" style="font-size:16px;line-height:1;padding:4px 8px;">✕</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:12px;margin-bottom:20px;">
+      <div class="card tight center" style="background:var(--panel-2);border:1px solid var(--border);">
+        <div class="k muted" style="font-size:12px;">Current Balance</div>
+        <div class="v" id="modal-bal" style="font-size:24px;font-weight:700;color:var(--accent);">${state.user?.credits ?? 50}</div>
+        <div class="d muted" style="font-size:11px;">Credits ready to spend</div>
+      </div>
+      <div class="card tight center" style="background:var(--panel-2);border:1px solid var(--border);">
+        <div class="k muted" style="font-size:12px;">Daily Refill</div>
+        <div class="v" style="font-size:24px;font-weight:700;color:var(--cyan);">+10</div>
+        <div class="d muted" style="font-size:11px;">Every 24 hours</div>
+      </div>
+      <div class="card tight center" style="background:var(--panel-2);border:1px solid var(--border);">
+        <div class="k muted" style="font-size:12px;">Account Tier</div>
+        <div class="v" style="font-size:16px;font-weight:700;color:var(--success);padding-top:6px;">Educational</div>
+        <div class="d muted" style="font-size:11px;">IIIT Dharwad 3DCV</div>
+      </div>
+    </div>
+
+    <!-- Daily Streak & Coupon Section -->
+    <div style="background:rgba(99,102,241,0.06);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:20px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+        <div>
+          <div style="font-weight:600;font-size:14px;">🔥 Daily Educational Streak Refill</div>
+          <div class="muted" style="font-size:12px;">Refill +10 free generation credits to your wallet every 24 hours.</div>
+        </div>
+        <button class="btn sm primary" id="btn-claim-streak">Claim +10 Streak</button>
+      </div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:12px 0;">
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <input type="text" id="coupon-code" placeholder="Enter coupon (e.g. IIITDHARWAD)" style="flex:1;min-width:180px;text-transform:uppercase;" />
+        <button class="btn sm" id="btn-redeem-coupon">Redeem Voucher</button>
+      </div>
+      <div id="coupon-status" style="font-size:12px;margin-top:6px;"></div>
+    </div>
+
+    <!-- Transaction History Table -->
+    <h4 style="margin:16px 0 8px 0;font-size:15px;">Transaction History & ACID Ledger</h4>
+    <div id="tx-table-container" style="max-height:260px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;">
+      <div style="padding:16px;text-align:center;color:var(--muted);"><span class="spinner"></span> Loading transactions…</div>
+    </div>
+  `;
+
+  document.body.appendChild(backdrop);
+  const close = () => backdrop.remove();
+  modal.querySelector('#modal-close').onclick = close;
+  backdrop.onclick = (e) => { if (e.target === backdrop) close(); };
+
+  // Claim streak
+  const streakBtn = modal.querySelector('#btn-claim-streak');
+  streakBtn.onclick = async () => {
+    streakBtn.disabled = true;
+    streakBtn.innerHTML = '<span class="spinner"></span> Claiming…';
+    try {
+      const res = await api('/billing/daily-claim', { method: 'POST' });
+      toast(`Streak claimed! +${res.credits_added} credits added.`);
+      await refreshUser();
+      modal.querySelector('#modal-bal').textContent = state.user?.credits ?? res.new_balance;
+      const statWallet = document.getElementById('status-wallet');
+      if (statWallet) statWallet.textContent = `${state.user?.credits ?? res.new_balance} Credits`;
+      loadTransactions();
+    } catch (err) {
+      toast(err.message, 'warn');
+    } finally {
+      streakBtn.disabled = false;
+      streakBtn.textContent = 'Claim +10 Streak';
+    }
+  };
+
+  // Redeem coupon
+  const couponBtn = modal.querySelector('#btn-redeem-coupon');
+  const couponInput = modal.querySelector('#coupon-code');
+  const couponStatus = modal.querySelector('#coupon-status');
+  couponBtn.onclick = async () => {
+    const code = couponInput.value.trim();
+    if (!code) return;
+    couponBtn.disabled = true;
+    couponStatus.textContent = 'Verifying coupon…';
+    couponStatus.style.color = 'var(--muted)';
+    try {
+      const res = await api('/billing/redeem-coupon', { method: 'POST', body: { code } });
+      couponStatus.textContent = `Success! Added ${res.credits_added} credits.`;
+      couponStatus.style.color = 'var(--success)';
+      toast(`Coupon redeemed! +${res.credits_added} credits`);
+      await refreshUser();
+      modal.querySelector('#modal-bal').textContent = state.user?.credits ?? res.new_balance;
+      const statWallet = document.getElementById('status-wallet');
+      if (statWallet) statWallet.textContent = `${state.user?.credits ?? res.new_balance} Credits`;
+      couponInput.value = '';
+      loadTransactions();
+    } catch (err) {
+      couponStatus.textContent = err.message;
+      couponStatus.style.color = 'var(--danger)';
+    } finally {
+      couponBtn.disabled = false;
+    }
+  };
+
+  // Load transactions
+  async function loadTransactions() {
+    const container = modal.querySelector('#tx-table-container');
+    try {
+      const txs = await api('/credits/transactions?limit=25');
+      if (!txs || txs.length === 0) {
+        container.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted);">No transactions recorded yet.</div>';
+        return;
+      }
+      let html = `
+        <table class="tbl" style="width:100%;font-size:12px;">
+          <thead>
+            <tr>
+              <th>Date / Time</th>
+              <th>Reason</th>
+              <th>Change</th>
+              <th>Balance</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+      for (const tx of txs) {
+        const isPos = tx.amount > 0;
+        const color = isPos ? 'var(--success)' : (tx.amount < 0 ? 'var(--danger)' : 'var(--muted)');
+        const sign = isPos ? '+' : '';
+        const date = new Date(tx.created_at).toLocaleString();
+        html += `
+          <tr>
+            <td>${date}</td>
+            <td><code>${tx.reason}</code></td>
+            <td style="color:${color};font-weight:700;">${sign}${tx.amount}</td>
+            <td><b>${tx.balance_after}</b></td>
+          </tr>
+        `;
+      }
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    } catch (err) {
+      container.innerHTML = `<div style="padding:16px;color:var(--danger);">Failed to load transactions: ${err.message}</div>`;
+    }
+  }
+
+  loadTransactions();
 }

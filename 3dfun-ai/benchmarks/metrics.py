@@ -159,7 +159,8 @@ def voxel_iou(pred_pts: np.ndarray, gt_pts: np.ndarray, resolution: int = 64) ->
     scale = np.maximum(hi - lo, 1e-9)
     a = np.floor((pred_pts - lo) / scale * (resolution - 1)).astype(int)
     b = np.floor((gt_pts - lo) / scale * (resolution - 1)).astype(int)
-    key = lambda arr: arr[:, 0] * resolution * resolution + arr[:, 1] * resolution + arr[:, 2]
+    def key(arr):
+        return arr[:, 0] * resolution * resolution + arr[:, 1] * resolution + arr[:, 2]
     sa, sb = set(key(a).tolist()), set(key(b).tolist())
     inter = len(sa & sb)
     union = len(sa | sb)

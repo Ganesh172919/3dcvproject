@@ -13,7 +13,7 @@ from sqlalchemy.orm import Session
 from .. import credits, notifications
 from ..auth import get_current_user
 from ..config import settings
-from ..db import (AuditLog, CreditReason, Invoice, User, WebhookEvent, get_db)
+from ..db import (AuditLog, CreditReason, CreditTransaction, Invoice, User, WebhookEvent, get_db, utcnow)
 from ..schemas import ApiError, CheckoutRequest, ok
 from ..serializers import transaction_public
 
@@ -21,6 +21,7 @@ router = APIRouter(tags=["credits"])
 
 
 @router.get("/credits/balance")
+@router.get("/billing/wallet")
 def balance(user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     wallet = credits.get_wallet(db, user.id)
     return ok({
@@ -30,14 +31,79 @@ def balance(user: User = Depends(get_current_user), db: Session = Depends(get_db
         "lifetime_granted": wallet.lifetime_granted,
         "lifetime_spent": wallet.lifetime_spent,
         "costs": settings.credit_costs,
+        "tier": "educational",
+        "daily_streak_credits": settings.daily_streak_credits,
+        "last_daily_claim_at": user.last_daily_claim_at,
     })
 
 
 @router.get("/credits/transactions")
+@router.get("/billing/transactions")
 def transactions(user: User = Depends(get_current_user), db: Session = Depends(get_db),
                  limit: int = 50, offset: int = 0):
     rows = credits.transactions(db, user.id, limit=min(limit, 200), offset=offset)
     return ok([transaction_public(t) for t in rows])
+
+
+COUPONS: dict[str, int] = {
+    "STUDENT3D": 20,
+    "IIITDHARWAD": 50,
+    "TRIPO3D": 15,
+    "MESHYAI": 15,
+    "OPENCV": 25,
+    "FREE50": 50,
+}
+
+
+@router.post("/billing/redeem-coupon")
+def redeem_coupon(payload: dict, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    code = (payload.get("code") or "").strip().upper()
+    if code not in COUPONS:
+        raise ApiError("INVALID_COUPON", "Invalid or expired promo coupon code.", status=400)
+    amount = COUPONS[code]
+    idempotency_key = f"coupon:{user.id}:{code}"
+    existing = db.execute(
+        select(CreditTransaction).where(CreditTransaction.idempotency_key == idempotency_key)
+    ).scalar_one_or_none()
+    if existing:
+        raise ApiError("ALREADY_REDEEMED", f"Coupon '{code}' has already been redeemed on this account.", status=409)
+    wallet = credits.grant(db, user.id, amount, reason=CreditReason.ADMIN_ADJUSTMENT,
+                           idempotency_key=idempotency_key, meta={"coupon": code})
+    db.add(AuditLog(actor_id=user.id, action="billing.redeem_coupon", target_type="user",
+                    target_id=user.id, metadata_json={"coupon": code, "amount": amount}))
+    db.commit()
+    return ok({"code": code, "credits_added": amount, "new_balance": wallet.balance})
+
+
+def _diff_seconds(t1: dt.datetime | None, t2: dt.datetime | None) -> float:
+    if not t1 or not t2:
+        return 0.0
+    if t1.tzinfo is None:
+        t1 = t1.replace(tzinfo=dt.timezone.utc)
+    if t2.tzinfo is None:
+        t2 = t2.replace(tzinfo=dt.timezone.utc)
+    return (t1 - t2).total_seconds()
+
+
+@router.post("/billing/daily-claim")
+def daily_claim(user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    now = utcnow()
+    diff = _diff_seconds(now, user.last_daily_claim_at) if user.last_daily_claim_at else 999999
+    if user.last_daily_claim_at and diff < 86400:
+        remaining_secs = 86400 - int(diff)
+        hrs = remaining_secs // 3600
+        mins = (remaining_secs % 3600) // 60
+        raise ApiError("DAILY_ALREADY_CLAIMED", f"Daily streak already claimed today. Next refill in {hrs}h {mins}m.", status=400)
+    
+    amount = settings.daily_streak_credits
+    wallet = credits.grant(db, user.id, amount, reason=CreditReason.DAILY_STREAK,
+                           idempotency_key=f"daily:{user.id}:{now.strftime('%Y%m%d')}",
+                           meta={"streak_date": now.strftime("%Y-%m-%d")})
+    user.last_daily_claim_at = now
+    db.add(AuditLog(actor_id=user.id, action="billing.daily_claim", target_type="user",
+                    target_id=user.id, metadata_json={"amount": amount}))
+    db.commit()
+    return ok({"credits_added": amount, "balance": wallet.balance, "message": f"+{amount} daily student refill added!"})
 
 
 @router.get("/credits/packs")

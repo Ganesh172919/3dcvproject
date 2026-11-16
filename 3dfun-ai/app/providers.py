@@ -86,10 +86,10 @@ class LocalReconstructionProvider:
         self._jobs: dict[str, dict[str, Any]] = {}
 
     def estimate_cost(self, quality: str, options: dict[str, Any]) -> CostEstimate:
-        base = {"draft": 90, "standard": 150, "high": 240}.get(quality, 150)
+        base = {"draft": 60, "standard": 120, "high": 180}.get(quality, 120)
         if not options.get("turntable", True):
             base -= 15
-        return CostEstimate(credits=settings.credit_costs.get(quality, 8),
+        return CostEstimate(credits=settings.credit_costs.get(quality, 3),
                             estimated_seconds=base, provider=self.slug)
 
     def create_generation(self, payload: GenerationInput) -> ProviderJob:
@@ -193,6 +193,7 @@ class TripoSRProvider(LocalReconstructionProvider):
         if not available():
             raise ApiError("MODEL_NOT_INSTALLED", "Install the TripoSR weights with scripts/fetch_models.py --triposr.", status=503)
         estimate = super().estimate_cost(quality, options)
+        estimate.credits = 5
         estimate.estimated_seconds = {"draft": 75, "standard": 100, "high": 150}[quality]
         return estimate
 
@@ -292,7 +293,7 @@ class MockProvider:
         self.delay = delay
 
     def estimate_cost(self, quality: str, options: dict[str, Any]) -> CostEstimate:
-        return CostEstimate(credits=settings.credit_costs.get(quality, 8),
+        return CostEstimate(credits=settings.credit_costs.get(quality, 1),
                             estimated_seconds=5, provider=self.slug)
 
     def create_generation(self, payload: GenerationInput) -> ProviderJob:

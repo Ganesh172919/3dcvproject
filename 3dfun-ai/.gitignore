@@ -34,6 +34,7 @@ paper/*.blg
 paper/*.out
 paper/*.toc
 presentations/*.pptx
+!presentations/3DFUN-AI-Project.pptx
 docs/*.pdf
 
 # OS noise

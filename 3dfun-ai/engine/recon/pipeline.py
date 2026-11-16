@@ -90,6 +90,13 @@ def reconstruct(image: bytes | str | Path, out_dir: str | Path,
     cv2.imwrite(str(out / "source_canvas.png"),
                 cv2.cvtColor(prepared.rgb, cv2.COLOR_RGB2BGR))
     cv2.imwrite(str(out / "mask.png"), (prepared.mask.astype(np.uint8) * 255))
+    # Educational: Save soft probability map and trimap
+    prob_u8 = np.clip(prepared.alpha * 255.0, 0, 255).astype(np.uint8)
+    cv2.imwrite(str(out / "prob_map.png"), prob_u8)
+    trimap = np.zeros_like(prob_u8)
+    trimap[prob_u8 > 200] = 255
+    trimap[(prob_u8 >= 30) & (prob_u8 <= 200)] = 128
+    cv2.imwrite(str(out / "trimap.png"), trimap)
     if prepared.meta["object_pixel_fraction"] < 0.02:
         warnings.append("Object occupies under 2% of the frame; reconstruction may be coarse.")
 
@@ -99,6 +106,48 @@ def reconstruct(image: bytes | str | Path, out_dir: str | Path,
     timings["depth"] = time.perf_counter() - t
     heat = cv2.applyColorMap((depth.closeness * 255).astype(np.uint8), cv2.COLORMAP_TURBO)
     cv2.imwrite(str(out / "depth.png"), heat)
+    cv2.imwrite(str(out / "depth_gray.png"), (depth.closeness * 255).astype(np.uint8))
+    depth_16bit = (np.clip(depth.closeness, 0, 1) * 65535.0).astype(np.uint16)
+    cv2.imwrite(str(out / "depth_16bit.png"), depth_16bit)
+
+    # Educational: Sobel spatial depth gradients -> 2D Surface Normal Orientation field
+    dx = cv2.Sobel(depth.closeness, cv2.CV_32F, 1, 0, ksize=3)
+    dy = cv2.Sobel(depth.closeness, cv2.CV_32F, 0, 1, ksize=3)
+    norm = np.sqrt(dx**2 + dy**2 + 0.1**2)
+    nx = (-dx / norm + 1.0) * 0.5
+    ny = (-dy / norm + 1.0) * 0.5
+    nz = (0.1 / norm + 1.0) * 0.5
+    normals_rgb = (np.stack([nx, ny, nz], axis=-1) * 255).astype(np.uint8)
+    cv2.imwrite(str(out / "sobel_gradients.png"), cv2.cvtColor(normals_rgb, cv2.COLOR_RGB2BGR))
+    cv2.imwrite(str(out / "normals.png"), cv2.cvtColor(normals_rgb, cv2.COLOR_RGB2BGR))
+
+    # Educational: Camera Ray Unprojection -> 3D Point Cloud (.ply)
+    try:
+        H, W = prepared.mask.shape
+        fx = fy = 0.5 * W / np.tan(0.5 * np.radians(45.0))
+        cx, cy = W / 2.0, H / 2.0
+        u_coords, v_coords = np.meshgrid(np.arange(W), np.arange(H))
+        val_m = prepared.mask & (depth.closeness > 0.05)
+        if np.count_nonzero(val_m) == 0:
+            val_m = prepared.mask
+        u_pts, v_pts = u_coords[val_m], v_coords[val_m]
+        z_pts = 2.8 - depth.closeness[val_m] * 1.6
+        x_pts = (u_pts - cx) * z_pts / fx
+        y_pts = -(v_pts - cy) * z_pts / fy
+        c_pts = prepared.rgb[val_m]
+        N_pts = len(x_pts)
+        if N_pts > 20000:
+            sub = N_pts // 20000
+            x_pts, y_pts, z_pts, c_pts = x_pts[::sub], y_pts[::sub], z_pts[::sub], c_pts[::sub]
+            N_pts = len(x_pts)
+        ply_lines = ["ply", "format ascii 1.0", f"element vertex {N_pts}",
+                     "property float x", "property float y", "property float z",
+                     "property uchar red", "property uchar green", "property uchar blue", "end_header"]
+        for pi in range(N_pts):
+            ply_lines.append(f"{x_pts[pi]:.4f} {y_pts[pi]:.4f} {z_pts[pi]:.4f} {int(c_pts[pi,0])} {int(c_pts[pi,1])} {int(c_pts[pi,2])}")
+        (out / "pointcloud.ply").write_text("\n".join(ply_lines) + "\n", encoding="ascii")
+    except Exception as e:
+        log.warning("Pointcloud export skipped: %s", e)
     done_weight = 1 + 6
 
     t = time.perf_counter()
@@ -107,15 +156,62 @@ def reconstruct(image: bytes | str | Path, out_dir: str | Path,
     cfg = cfg.with_overrides(voxel_res=calibration["chosen_res"])
     volume = build_volume(prepared.mask, depth.closeness, cfg)
     timings["volume"] = time.perf_counter() - t
+
+    # Educational: Save Orthogonal SDF Cross-Section Slices
+    try:
+        sdf = volume.sdf
+        D, H, W = sdf.shape
+        axial = sdf[D // 2, :, :]
+        coronal = sdf[:, H // 2, :]
+        sagittal = sdf[:, :, W // 2]
+        for sname, sarr in [("sdf_axial.png", axial), ("sdf_coronal.png", coronal), ("sdf_sagittal.png", sagittal), ("voxels_slice.png", axial)]:
+            s_u8 = np.clip((sarr / 0.3) * 127 + 128, 0, 255).astype(np.uint8)
+            cv2.imwrite(str(out / sname), cv2.applyColorMap(s_u8, cv2.COLORMAP_TWILIGHT_SHIFTED))
+    except Exception as e:
+        log.warning("SDF slices export skipped: %s", e)
     done_weight = 1 + 6 + 14
 
     t = time.perf_counter()
     step("GEOMETRY", "Extracting isosurface and cleaning mesh")
     mesh = build_mesh(volume, cfg)
     timings["geometry"] = time.perf_counter() - t
+
+    def _write_obj(filepath: Path, v: np.ndarray, f: np.ndarray):
+        lines = [f"v {pt[0]:.4f} {pt[1]:.4f} {pt[2]:.4f}" for pt in v]
+        lines.extend([f"f {face[0]+1} {face[1]+1} {face[2]+1}" for face in f])
+        filepath.write_text("\n".join(lines) + "\n", encoding="ascii")
+
+    # Stage 5: Raw Marching Cubes un-smoothed geometry
+    if mesh.raw_vertices is not None and mesh.raw_faces is not None:
+        try:
+            _write_obj(out / "raw_mesh.obj", mesh.raw_vertices, mesh.raw_faces)
+        except Exception as e:
+            log.warning("Raw mesh obj export skipped: %s", e)
+
+    # Stage 6: Taubin-smoothed and cleaned manifold mesh
+    if mesh.validation_vertices is not None and mesh.validation_faces is not None:
+        try:
+            _write_obj(out / "smoothed.obj", mesh.validation_vertices, mesh.validation_faces)
+        except Exception as e:
+            log.warning("Smoothed mesh obj export skipped: %s", e)
     done_weight = 1 + 6 + 14 + 12
 
     progress("UV", int(done_weight), "UV atlas unwrapped")
+    # Educational: UV Atlas & Checkerboard visualization
+    try:
+        uv_size = 512
+        uv_canvas = np.zeros((uv_size, uv_size, 3), dtype=np.uint8)
+        tile = 32
+        for i in range(0, uv_size, tile):
+            for j in range(0, uv_size, tile):
+                uv_canvas[i:i+tile, j:j+tile] = [215, 220, 230] if ((i // tile + j // tile) % 2 == 0) else [170, 175, 185]
+        uvs = (mesh.face_uv * (uv_size - 1)).astype(np.int32)
+        for fi in range(0, min(len(uvs) - 2, 3000), 3):
+            cv2.polylines(uv_canvas, [uvs[fi:fi+3]], isClosed=True, color=(60, 60, 220), thickness=1)
+        cv2.imwrite(str(out / "uv_atlas.png"), uv_canvas)
+        cv2.imwrite(str(out / "uv_layout.png"), uv_canvas)
+    except Exception as e:
+        log.warning("UV atlas render skipped: %s", e)
     done_weight += 8
 
     t = time.perf_counter()
@@ -163,7 +259,6 @@ def reconstruct(image: bytes | str | Path, out_dir: str | Path,
     timings["total"] = time.perf_counter() - t0
 
     # ---- mesh quality metrics -----------------------------------------
-    from .meshing import mesh_metrics
     metrics = dict(mesh.metrics)
     metrics.update({
         "texture": tex.stats if tex else None,

@@ -1,7 +1,6 @@
 """Health, readiness, metrics and OpenAPI endpoints."""
 from __future__ import annotations
 
-import datetime as dt
 
 from fastapi import APIRouter, Depends, Response
 from sqlalchemy import select, text
@@ -20,6 +19,7 @@ START = utcnow()
 
 
 @router.get("/health")
+@router.get("/system/health")
 def health(db: Session = Depends(get_db)):
     checks: dict = {}
     status = "ok"
@@ -139,6 +139,8 @@ def results_summary():
     if env_file.exists():
         payload["environment"] = json.loads(env_file.read_text(encoding="utf-8"))
     dataset = root.parent / "benchmarks" / "data" / "dataset.json"
+    if not dataset.is_file():
+        dataset = root / "dataset_metadata.json"
     if dataset.exists():
         data = json.loads(dataset.read_text(encoding="utf-8"))
         payload["dataset"] = {"version": data["version"], "scenes": data["scenes"],
