@@ -36,7 +36,7 @@
 .lab-demo .sample-button { min-width: 0; justify-content: center; }
 .lab-demo .sample-button img { flex: 0 0 25px; }
 .lab-methods { padding-block: clamp(28px, 4vw, 51px); border-top: 1px solid var(--border); }
-#models, #guide, #work, #team, #course, #examples, #example-stage, #prototypes, #inspect, #training { scroll-margin-top: 80px; }
+#models, #guide, #work, #team, #course, #examples, #example-stage, #prototypes, #inspect, #training, #workflows, #comparison, #theory, #pricing { scroll-margin-top: 80px; }
 .lab-methods h2, .lab-about h2 { font-size: clamp(25px, 3vw, 34px); letter-spacing: -.035em; }
 .lab-section-head { display: grid; grid-template-columns: 1fr 1fr; align-items: start; gap: 14px 26px; margin-bottom: 21px; }
 .lab-section-head h2, .lab-section-head p { margin: 0; }
@@ -113,6 +113,47 @@
 .lab-handbook-grid .card { display: flex; flex-direction: column; align-items: flex-start; }
 .lab-handbook-grid h2 { font-size: 21px; margin: 0 0 8px; }
 .lab-handbook-grid a { margin-top: auto; font-weight: 650; }
+
+/* Startup-Grade Comparison, Workflow & Pricing Grid */
+.startup-comparison-wrap { overflow-x: auto; margin-block: 24px; border: 1px solid var(--border); border-radius: 14px; background: var(--panel); }
+.startup-table { width: 100%; border-collapse: collapse; font-size: 13.5px; text-align: left; }
+.startup-table th, .startup-table td { padding: 14px 18px; border-bottom: 1px solid var(--border); }
+.startup-table th { background: var(--panel-2); font-weight: 700; color: var(--text); }
+.startup-table tr:last-child td { border-bottom: none; }
+.startup-table tr:hover td { background: rgba(99, 102, 241, 0.04); }
+.startup-badge-highlight { background: rgba(99, 102, 241, 0.16); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3); padding: 3px 8px; border-radius: 6px; font-weight: 600; font-size: 11.5px; }
+
+.workflow-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-block: 24px; }
+.workflow-card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 20px; display: flex; flex-direction: column; transition: transform 0.2s, border-color 0.2s; }
+.workflow-card:hover { transform: translateY(-3px); border-color: var(--accent); }
+.workflow-icon { font-size: 26px; margin-bottom: 12px; }
+.workflow-card h3 { font-size: 16px; margin: 0 0 8px; color: var(--text); }
+.workflow-card p { font-size: 13px; color: var(--text-2); margin: 0 0 14px; line-height: 1.5; }
+.workflow-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; }
+.workflow-tag { font-size: 11px; font-family: var(--mono); background: var(--panel-2); color: var(--muted); padding: 2px 7px; border-radius: 4px; border: 1px solid var(--border); }
+
+.pricing-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-block: 28px; }
+.pricing-card { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 26px; display: flex; flex-direction: column; position: relative; }
+.pricing-card.featured { border-color: var(--accent); box-shadow: 0 0 24px rgba(99, 102, 241, 0.18); background: linear-gradient(180deg, rgba(99, 102, 241, 0.08) 0%, var(--panel) 100%); }
+.pricing-badge { position: absolute; top: -11px; right: 20px; background: var(--accent); color: white; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 100px; text-transform: uppercase; letter-spacing: 0.05em; }
+.pricing-card h3 { font-size: 19px; margin: 0 0 4px; }
+.pricing-card .price { font-size: 32px; font-weight: 800; color: var(--text); margin-block: 14px; display: flex; align-items: baseline; gap: 4px; }
+.pricing-card .price small { font-size: 14px; font-weight: 500; color: var(--muted); }
+.pricing-features { list-style: none; padding: 0; margin: 16px 0 24px; display: grid; gap: 10px; font-size: 13.5px; color: var(--text-2); }
+.pricing-features li { display: flex; align-items: center; gap: 8px; }
+.pricing-features li span.check { color: #10b981; font-weight: 700; }
+
+.math-explainer-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-block: 20px; }
+.math-card { background: #07090e; border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+.math-card h4 { margin: 0 0 8px; font-size: 14px; color: var(--cyan); }
+.math-card pre { margin: 0 0 10px; padding: 10px; background: rgba(255, 255, 255, 0.03); border-radius: 6px; font-family: var(--mono); font-size: 12.5px; color: #a5b4fc; overflow-x: auto; }
+.math-card p { font-size: 12.5px; color: var(--text-2); margin: 0; }
+
+@media (max-width: 950px) {
+  .workflow-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pricing-grid { grid-template-columns: minmax(0, 1fr); }
+  .math-explainer-grid { grid-template-columns: minmax(0, 1fr); }
+}
 @media (max-width: 950px) {
   .lab-prototype-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .lab-demo #landing-samples { grid-template-columns: repeat(2, minmax(0, 1fr)); }

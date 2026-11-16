@@ -19,14 +19,16 @@
   <a class="brand" href="/"><span class="brand-mark">3D</span> 3DFUN <span class="dim">AI</span></a>
   <button class="btn sm home-menu" id="home-menu" type="button" aria-controls="home-nav" aria-expanded="false">Menu</button>
   <nav class="nav" id="home-nav" aria-label="Primary">
+    <a href="#workflows">Workflows</a>
     <a href="#prototypes">Prototypes</a>
     <a href="#models">Models</a>
+    <a href="#comparison">Startups vs 3DFUN</a>
+    <a href="#theory">Math Foundations</a>
     <a href="/app/inspector">Inspector</a>
     <a href="/app/labs">Student Labs</a>
     <a href="/app/chat">AI Co-Pilot</a>
-    <a href="#training">Training</a>
+    <a href="#pricing">Free Credits</a>
     <a href="/project-docs">Handbook</a>
-    <a href="#work">Method</a>
     <a href="#team">Team</a>
     <a href="/app/benchmark">Benchmarks</a>
     <a class="home-mobile-signin" href="/app/login">Sign in</a>
@@ -78,6 +80,56 @@
       </div>
     </section>
   </section>
+
+  <section class="lab-methods" id="workflows" aria-labelledby="workflows-title">
+    <div class="lab-section-head">
+      <h2 id="workflows-title">Real-World Industry Pipelines</h2>
+      <p>Inspired by state-of-the-art 3D generative startups (Tripo3D, Meshy, Luma Genie, Spline), 3DFUN AI bridges single-view neural synthesis with practical production workflows.</p>
+    </div>
+    <div class="workflow-grid">
+      <div class="workflow-card">
+        <div class="workflow-icon">🎮</div>
+        <h3>Game Development &amp; XR</h3>
+        <p>Convert concept sketches and photos into game-ready 3D assets with clean manifold topology, quadric decimation, and embedded PBR textures.</p>
+        <div class="workflow-tags">
+          <span class="workflow-tag">GLB / OBJ</span>
+          <span class="workflow-tag">Unity / Unreal</span>
+          <span class="workflow-tag">Decimated LODs</span>
+        </div>
+      </div>
+      <div class="workflow-card">
+        <div class="workflow-icon">🖨️</div>
+        <h3>3D Printing &amp; Prototyping</h3>
+        <p>Automated watertight manifold verification (Euler χ = 2), non-manifold edge zeroing, wall thickness validation, and calibrated STL/OBJ slicing.</p>
+        <div class="workflow-tags">
+          <span class="workflow-tag">Binary STL</span>
+          <span class="workflow-tag">100% Watertight</span>
+          <span class="workflow-tag">mm Calibration</span>
+        </div>
+      </div>
+      <div class="workflow-card">
+        <div class="workflow-icon">🛍️</div>
+        <h3>E-Commerce &amp; AR Quick Look</h3>
+        <p>Generate interactive 360° product showcases, WebGL embed widgets, and mobile AR Quick Look assets for retail and catalog digitization.</p>
+        <div class="workflow-tags">
+          <span class="workflow-tag">USDZ (iOS AR)</span>
+          <span class="workflow-tag">Turntable 360°</span>
+          <span class="workflow-tag">WebGL Embed</span>
+        </div>
+      </div>
+      <div class="workflow-card">
+        <div class="workflow-icon">🔬</div>
+        <h3>Academic CV &amp; Student Labs</h3>
+        <p>Demystify black-box neural networks. Scrub through 8 transparent reconstruction stages, slice 3D distance fields, and train custom PyTorch labs.</p>
+        <div class="workflow-tags">
+          <span class="workflow-tag">8 Tensors</span>
+          <span class="workflow-tag">PyTorch Labs</span>
+          <span class="workflow-tag">ONNX INT8</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="lab-methods" id="prototypes" aria-labelledby="prototypes-title">
     <div class="lab-section-head">
       <h2 id="prototypes-title">3D prototype library</h2>
@@ -146,6 +198,69 @@
       </div>
     </div>
     <a class="btn" id="home-benchmark-link" href="/app/benchmark">View benchmark results</a>
+  </section>
+
+  <section class="lab-methods" id="comparison" aria-labelledby="comparison-title">
+    <div class="lab-section-head">
+      <h2 id="comparison-title">Architecture &amp; Startup Comparison</h2>
+      <p>How 3DFUN AI compares against leading commercial generative 3D platforms (Tripo3D, Meshy.ai, Luma Genie, Kaedim) in architecture, speed, cost, and educational transparency.</p>
+    </div>
+    <div class="startup-comparison-wrap">
+      <table class="startup-table">
+        <thead>
+          <tr>
+            <th>Platform</th>
+            <th>Primary Architecture</th>
+            <th>Inference Runtime</th>
+            <th>Speed (Draft)</th>
+            <th>Free Credits &amp; Access</th>
+            <th>Educational Transparency</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>3DFUN AI (This Platform)</strong></td>
+            <td><span class="startup-badge-highlight">Hybrid DINOv2 + TSDF + TripoSR</span></td>
+            <td>Local ONNX (CPU / DirectML / CUDA)</td>
+            <td><strong>12 – 45 s</strong></td>
+            <td><strong>50 Free Trial Credits</strong> + 10 Daily Streak</td>
+            <td><strong>100% Open 8-Stage Tensors + PyTorch Labs</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Tripo3D</strong></td>
+            <td>Large Reconstruction Model (LRM) Transformer</td>
+            <td>Cloud GPU Farm (H100/A100)</td>
+            <td>8 – 15 s</td>
+            <td>Limited daily trial tokens, subscription</td>
+            <td>Proprietary Cloud API (Black Box)</td>
+          </tr>
+          <tr>
+            <td><strong>Meshy.ai</strong></td>
+            <td>Multi-view Diffusion + Marching Tetrahedra</td>
+            <td>Cloud GPU Clusters</td>
+            <td>45 – 90 s</td>
+            <td>200 credits on signup, paid credit packs</td>
+            <td>Proprietary Cloud API (Black Box)</td>
+          </tr>
+          <tr>
+            <td><strong>Luma AI Genie</strong></td>
+            <td>3D Diffusion + Gaussian Splatting</td>
+            <td>Cloud Compute Clusters</td>
+            <td>20 – 60 s</td>
+            <td>Free sandbox with account quota</td>
+            <td>Closed NeRF / 3DGS pipeline</td>
+          </tr>
+          <tr>
+            <td><strong>Kaedim 3D</strong></td>
+            <td>Machine Learning + Human-in-the-Loop Remesh</td>
+            <td>Cloud Production Pipeline</td>
+            <td>15 – 30 min</td>
+            <td>Enterprise credit subscription</td>
+            <td>Commercial B2B Game Dev Service</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </section>
   <section class="lab-methods" id="training" aria-labelledby="training-title">
     <div class="lab-section-head">
@@ -266,6 +381,85 @@
     <div class="row wrap gap8 mt16">
       <a class="btn" href="/app/work">Read the technical notes</a>
       <a class="btn" href="/app/benchmark">Explore the benchmark results</a>
+    </div>
+  </section>
+
+  <section class="lab-methods" id="theory" aria-labelledby="theory-title">
+    <div class="lab-section-head">
+      <h2 id="theory-title">Mathematical &amp; Algorithmic Foundations</h2>
+      <p>Every reconstruction stage in 3DFUN AI is grounded in peer-reviewed 3D computer vision and differential geometry principles.</p>
+    </div>
+    <div class="math-explainer-grid">
+      <div class="math-card">
+        <h4>1. Scale-Invariant Logarithmic (SILog) Loss</h4>
+        <pre>L_SILog = sqrt( (1/N) * sum(d_i^2) - (lambda / N^2) * (sum(d_i))^2 )</pre>
+        <p>Penalizes relative geometric errors independent of global scale factor, preserving fine silhouette relief and depth ordering.</p>
+      </div>
+      <div class="math-card">
+        <h4>2. Camera Ray Unprojection Matrix K</h4>
+        <pre>X = (u - c_x)*Z / f_x,  Y = (v - c_y)*Z / f_y,  Z = depth(u, v)</pre>
+        <p>Inverts the perspective projection of pinhole cameras to backproject 2D pixels into metric 3D camera coordinate space.</p>
+      </div>
+      <div class="math-card">
+        <h4>3. Volumetric Signed Distance Field (SDF)</h4>
+        <pre>Phi(x) = min_{y in dOmega} ||x - y|| * sgn(x)</pre>
+        <p>Encodes the 3D surface as the zero-level set of a continuous volumetric distance grid, enabling topological manifold extraction.</p>
+      </div>
+      <div class="math-card">
+        <h4>4. Taubin Dual-Pass Non-Shrinking Smoothing</h4>
+        <pre>x' = x + lambda * L(x),  x'' = x' + mu * L(x'),  (1/lambda + 1/mu &lt; 0)</pre>
+        <p>Attenuates high-frequency surface noise and marching cubes discretization artifacts without shrinking the volume of the 3D model.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="lab-methods" id="pricing" aria-labelledby="pricing-title">
+    <div class="lab-section-head">
+      <h2 id="pricing-title">Transparent Credit System &amp; Plans</h2>
+      <p>No credit card required. Every new user receives 50 free credits instantly, with daily refills and educational promo codes.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="pricing-card featured">
+        <div class="pricing-badge">Free Trial</div>
+        <h3>Student Sandbox</h3>
+        <p class="muted">For students and researchers exploring 3D computer vision.</p>
+        <div class="price">50 Credits <small>/ free on signup</small></div>
+        <ul class="pricing-features">
+          <li><span class="check">✓</span> 50 Free Trial Credits immediately upon registration</li>
+          <li><span class="check">✓</span> +10 Daily Streak Refill every 24 hours</li>
+          <li><span class="check">✓</span> 8-Stage Interactive Pipeline Inspector access</li>
+          <li><span class="check">✓</span> 4 PyTorch Student Training Labs</li>
+          <li><span class="check">✓</span> Multi-format export (.GLB, .OBJ, .STL, .PLY)</li>
+          <li><span class="check">✓</span> Voucher support (IIITDHARWAD gives +50 credits)</li>
+        </ul>
+        <a class="btn primary" href="/app/register">Create Free Account (50 Credits)</a>
+      </div>
+      <div class="pricing-card">
+        <h3>Lab Researcher</h3>
+        <p class="muted">For thesis work, synthetic dataset generation, and benchmarks.</p>
+        <div class="price">Unlimited <small>/ local offline</small></div>
+        <ul class="pricing-features">
+          <li><span class="check">✓</span> 100% Local ONNX Runtime (CPU / DirectML)</li>
+          <li><span class="check">✓</span> Zero cloud lock-in or privacy leakage</li>
+          <li><span class="check">✓</span> Batch quantitative benchmark execution</li>
+          <li><span class="check">✓</span> Custom fine-tuning with train_student_depth.py</li>
+          <li><span class="check">✓</span> CAD reference Chamfer Distance evaluation</li>
+        </ul>
+        <a class="btn" href="/app/benchmark">View Benchmarks</a>
+      </div>
+      <div class="pricing-card">
+        <h3>Studio Pro &amp; API</h3>
+        <p class="muted">For automated generation pipelines and high-res asset pipelines.</p>
+        <div class="price">API Access <small>/ self-hosted</small></div>
+        <ul class="pricing-features">
+          <li><span class="check">✓</span> Complete REST API (50+ documented endpoints)</li>
+          <li><span class="check">✓</span> Agentic AI Copilot tool calling integration</li>
+          <li><span class="check">✓</span> Server-Sent Events (SSE) live telemetry stream</li>
+          <li><span class="check">✓</span> Docker containerized deployment scripts</li>
+          <li><span class="check">✓</span> Direct 3D print slicing prep &amp; manifold repair</li>
+        </ul>
+        <a class="btn" href="/docs">Inspect OpenAPI Specs</a>
+      </div>
     </div>
   </section>
 
