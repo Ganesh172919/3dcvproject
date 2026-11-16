@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: 3dfun-ai:latest
+    container_name: 3dfun_ai_studio
+    restart: unless-stopped
+    ports:
+      - "8010:8010"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8010
+      - RECON_DEVICE=cpu
+      - CREDITS_SIGNUP_GRANT=50
+      - DATABASE_URL=sqlite:///./out/3dfun.db
+    volumes:
+      - ./out:/app/out
+      - ./data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8010/api/v1/system/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s

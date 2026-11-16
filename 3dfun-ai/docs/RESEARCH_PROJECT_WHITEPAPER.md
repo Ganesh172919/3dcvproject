@@ -261,7 +261,23 @@ To provide students and computer vision researchers with real-world industry con
 - **Focus:** Enterprise game development pipelines requiring strict sub-d quad geometry and strict vertex budgets.
 - **Latency & Cost:** High latency (15 – 30 minutes) and high enterprise subscription costs ($150 – $500/month).
 
-### 5.6 Comprehensive Industry Comparison Matrix
+### 5.6 CSM.ai (Common Sense Machines)
+- **Core Architecture:** Multi-view Video-to-3D diffusion + Neural Inverse CAD representation.
+- **Mathematical Representation:** Continuous boundary representation (B-Rep) and volumetric occupancy networks conditioned on casual monocular video scans or multi-turn single images.
+- **Inference Mechanism:** Ingests a short rotating video or orthographic snapshots, computes camera pose trajectories via learned Structure-from-Motion (SfM), and optimizes an implicit field with surface normal regularizers to generate CAD-compatible geometric surfaces.
+- **Strengths:** High geometric accuracy on industrial objects, sharp edges suitable for manufacturing, native CAD export format support.
+- **Limitations:** Higher latency (60 – 180 seconds); sensitive to motion blur in casual smartphone video captures.
+
+### 5.7 Tencent Hunyuan3D 1.0 & 2.0
+- **Core Architecture:** Two-Stage Foundation Model: Multi-view Diffusion Transformer (Hunyuan-DiT) + Feed-Forward Sparse Voxel Reconstruction.
+- **Mathematical Representation:** High-resolution multi-view color & normal maps followed by feed-forward Marching Cubes extraction with progressive upsampling.
+- **Inference Mechanism:** 
+  1. *View Generation:* Conditioned on text or image prompts, a diffusion transformer synthesizes multi-view normal and RGB projections.
+  2. *Volume Reconstruction:* A sparse-voxel triplane backbone decodes occupancy without slow Score Distillation Sampling (SDS).
+- **Strengths:** High geometric consistency across views, open foundation model weights, sharp texture baking with specular decoupling.
+- **Limitations:** Requires high GPU memory (minimum 16 GB VRAM) for local deployment.
+
+### 5.8 Comprehensive Industry Comparison Matrix
 
 | Startup / Platform | Core Mathematical Representation | Inference Backbone | Average Latency | Watertight Solid? | Educational Transparency | Offline Capable? | Free Trial Credits |
 |---|---|---|---|---|---|---|---|
@@ -269,9 +285,11 @@ To provide students and computer vision researchers with real-world industry con
 | **Tripo3D (TripoSR)** | Orthogonal Triplane NeRF ($T_{xy}, T_{xz}, T_{yz}$) | Large Reconstruction Transformer | 8 – 15 s | Yes | Partial (TripoSR weights open) | No (Cloud API) | Limited daily quota |
 | **Meshy.ai** | Tetrahedral SDF (DMTet) | Multi-View Diffusion + SDS | 45 – 90 s | Yes | No (Proprietary Black Box) | No (Cloud API) | Paid credit packs |
 | **Luma Genie** | Explicit 3D Gaussians $(\mu, \Sigma, \alpha, c)$ | 3D Latent Diffusion | 20 – 60 s | No (Radiance Field) | No (Proprietary) | No (Cloud API) | Sandbox quota |
+| **CSM.ai** | Neural Inverse CAD / B-Rep | Multi-view Video Diffusion + SfM | 60 – 180 s | Yes | No (Proprietary Cloud API) | No (Cloud API) | Free trial tokens |
+| **Tencent Hunyuan3D 2.0** | Multi-View DiT + Sparse Voxels | Diffusion Transformer + Triplane | 25 – 50 s | Yes | Open Model Weights | Yes (16GB+ VRAM GPU) | Open Model License |
 | **Kaedim 3D** | Subdivision Quad Mesh | ML + Human Retopology Loop | 15 – 30 min | Yes | No (Enterprise B2B) | No (Cloud SaaS) | Paid subscription ($150+) |
 | **Spline 3D** | Parametric WebGL / Mesh | Web Canvas + Cloud AI | Interactive / 20 s | Yes | Partial (Editor UI open) | No (Web Cloud) | Free tier w/ watermark |
-| **Rodin (Deemos)** | Micro-Geometry Voxel Diffusion | Cloud Supercomputing Farm | 60 – 180 s | Yes | No (Proprietary) | No (Cloud API) | Paid credit packs |
+| **Rodin Gen-2 (Deemos)** | Micro-Geometry Voxel Diffusion | Cloud Supercomputing Farm | 60 – 180 s | Yes | No (Proprietary) | No (Cloud API) | Paid credit packs |
 | **Stable Fast 3D** | Triplane Transformer + Material MLP | Feedforward ViT (Stability AI) | 0.5 – 2 s | Yes | Open weights | Yes (High VRAM GPU) | Open model release |
 
 ---

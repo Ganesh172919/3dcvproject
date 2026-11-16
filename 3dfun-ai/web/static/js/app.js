@@ -14,6 +14,7 @@ import { renderLabs } from './labs.js';
 import { renderStudio } from './studio.js';
 import { renderTeam } from './team.js';
 import { renderWork } from './work.js';
+import { renderShowcase } from './showcase.js';
 import { experimentsPanel, inferenceLabel } from './experiments.js';
 
 // ---------------------------------------------------------------------------
@@ -1035,6 +1036,8 @@ route('/app/benchmark', async (_p, main) => {
 
 route('/app/team', async (_p, main) => { renderTeam(main); });
 route('/app/work', async (_p, main) => { renderWork(main); });
+route('/app/showcase', async (_p, main) => { renderShowcase(main); });
+route('/app/research-hub', async (_p, main) => { renderShowcase(main); });
 
 route('/app/', async () => { navigate('/app/studio'); });
 route('/app', async () => { navigate('/app/studio'); });
