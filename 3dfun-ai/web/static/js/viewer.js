@@ -174,8 +174,10 @@ export class ModelViewer {
 
     // Camera Presets
     mk('Front', 'Camera Front View', () => this.setCameraPreset('front'));
+    mk('Back', 'Camera Back View', () => this.setCameraPreset('back'));
     mk('Side', 'Camera Side View', () => this.setCameraPreset('side'));
     mk('Top', 'Camera Top View', () => this.setCameraPreset('top'));
+    mk('Iso', 'Camera Isometric View', () => this.setCameraPreset('iso'));
     mk('360°', 'Turntable 360° Spin', () => this.setCameraPreset('turntable'));
     mk('🖨 Check', '3D Print Readiness & Manifold Check', () => this.checkPrintReadiness());
 
@@ -319,9 +321,10 @@ export class ModelViewer {
       ['pbr', 'PBR Texturized'],
       ['wire', 'Wireframe-on-Shaded'],
       ['clay', 'White Clay Matcap'],
+      ['wax', 'Red Wax Sculptor'],
+      ['chrome', 'Chrome Mirror Matcap'],
       ['normals', 'Surface Normals'],
       ['depthcloud', 'Depth Heatmap'],
-      ['wax', 'Red Wax Sculptor'],
       ['albedo', 'Albedo Color'],
     ];
     this.modeButtons = modes.map(([key, label]) => {
@@ -368,6 +371,8 @@ export class ModelViewer {
         obj.material = this.clayMaterial;
       } else if (this.mode === 'wax') {
         obj.material = this.waxMaterial;
+      } else if (this.mode === 'chrome') {
+        obj.material = this.chromeMaterial;
       } else {
         obj.material = obj.userData.originalMaterial;
         if (this.mode === 'albedo') {
@@ -456,7 +461,10 @@ export class ModelViewer {
     this.waxMaterial = new THREE.MeshStandardMaterial({
       color: 0x992222, roughness: 0.35, metalness: 0.1, flatShading: false,
     });
-    this.disposables.push(this.wireMaterial, this.clayMaterial, this.waxMaterial, this.normalMaterial);
+    this.chromeMaterial = new THREE.MeshStandardMaterial({
+      color: 0xf1f5f9, roughness: 0.05, metalness: 0.98, flatShading: false,
+    });
+    this.disposables.push(this.wireMaterial, this.clayMaterial, this.waxMaterial, this.chromeMaterial, this.normalMaterial);
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.addEventListener('change', () => { this.needsRender = true; });
