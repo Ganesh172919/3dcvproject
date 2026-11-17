@@ -85,6 +85,8 @@ def create_app() -> FastAPI:
         if request.url.path.startswith(("/static/", "/assets/", "/figures/", "/presentations/", "/paper-files/")) or request.url.path in {"/paper/main.pdf", "/report.pdf", "/docs/report.pdf"}:
             response.headers.setdefault("Access-Control-Allow-Origin", "*")
             response.headers.setdefault("Cross-Origin-Resource-Policy", "cross-origin")
+        if request.url.path.startswith(("/static/", "/assets/")):
+            response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
         policy = CSP
         if request.url.path.startswith("/embed/"):
             response.headers.pop("X-Frame-Options", None)
