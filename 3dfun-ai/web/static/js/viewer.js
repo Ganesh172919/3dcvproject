@@ -231,18 +231,18 @@ export class ModelViewer {
     const modal = document.createElement('div');
     modal.className = 'viewer-print-modal';
     modal.innerHTML = `
-      <div class="card tight" style="background:#0d111a;border:1px solid #06b6d4;box-shadow:0 12px 32px rgba(0,0,0,0.6);min-width:320px;padding:16px;color:#f8fafc;">
+      <div class="card tight" style="background:#ffffff;border:1px solid #4f46e5;box-shadow:0 12px 32px rgba(0,0,0,0.12);min-width:320px;padding:16px;color:#0f172a;">
         <div class="spread mb8">
-          <strong style="color:#06b6d4;font-size:14px;">🖨 3D Print Readiness Check</strong>
+          <strong style="color:#4f46e5;font-size:14px;">🖨 3D Print Readiness Check</strong>
           <button class="btn sm ghost" onclick="this.closest('.viewer-print-modal').remove()">✕</button>
         </div>
-        <div class="col gap4" style="font-size:12.5px;color:#94a3b8;">
-          <div class="spread"><span>Watertight Shell:</span> <strong style="color:#10b981;">✓ Manifold Surface Topology (100% Watertight)</strong></div>
-          <div class="spread"><span>Non-manifold Edges:</span> <strong style="color:#10b981;">0 edges</strong></div>
-          <div class="spread"><span>Degenerate Faces:</span> <strong style="color:#10b981;">0</strong></div>
-          <div class="spread"><span>Dimensions:</span> <span class="mono" style="color:#f8fafc;">${widthMm} × ${heightMm} × ${depthMm} mm</span></div>
-          <div class="spread"><span>Est. Filament Volume:</span> <span class="mono" style="color:#f8fafc;">~${estVol} cm³</span></div>
-          <div class="spread"><span>Recommended Slicer:</span> <span style="color:#f8fafc;">PrusaSlicer / Bambu Studio / Cura</span></div>
+        <div class="col gap4" style="font-size:12.5px;color:#334155;">
+          <div class="spread"><span>Watertight Shell:</span> <strong style="color:#16a34a;">✓ Manifold Surface Topology (100% Watertight)</strong></div>
+          <div class="spread"><span>Non-manifold Edges:</span> <strong style="color:#16a34a;">0 edges</strong></div>
+          <div class="spread"><span>Degenerate Faces:</span> <strong style="color:#16a34a;">0</strong></div>
+          <div class="spread"><span>Dimensions:</span> <span class="mono" style="color:#0f172a;">${widthMm} × ${heightMm} × ${depthMm} mm</span></div>
+          <div class="spread"><span>Est. Filament Volume:</span> <span class="mono" style="color:#0f172a;">~${estVol} cm³</span></div>
+          <div class="spread"><span>Recommended Slicer:</span> <span style="color:#0f172a;">PrusaSlicer / Bambu Studio / Cura</span></div>
         </div>
         <button class="btn sm primary block mt12" onclick="this.closest('.viewer-print-modal').remove()">Close</button>
       </div>
@@ -437,18 +437,18 @@ export class ModelViewer {
 
     // Soft Ground Shadow Receiver Plane
     const shadowPlaneGeo = new THREE.PlaneGeometry(8, 8);
-    const shadowPlaneMat = new THREE.ShadowMaterial({ opacity: 0.28 });
+    const shadowPlaneMat = new THREE.ShadowMaterial({ opacity: 0.14 });
     this.shadowPlane = new THREE.Mesh(shadowPlaneGeo, shadowPlaneMat);
     this.shadowPlane.rotation.x = -Math.PI / 2;
     this.shadowPlane.position.y = -0.52;
     this.shadowPlane.receiveShadow = true;
     this.scene.add(this.shadowPlane);
 
-    this.boxHelper = new THREE.Box3Helper(new THREE.Box3(), 0x6366f1);
+    this.boxHelper = new THREE.Box3Helper(new THREE.Box3(), 0x4f46e5);
     this.boxHelper.visible = false;
     this.scene.add(this.boxHelper);
 
-    this.grid = new THREE.GridHelper(4, 20, 0x6366f1, 0x1e293b);
+    this.grid = new THREE.GridHelper(4, 20, 0x4f46e5, 0xcfd4dc);
     this.grid.position.y = -0.52;
     this.grid.visible = this.showGrid;
     this.scene.add(this.grid);

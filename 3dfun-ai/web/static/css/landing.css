@@ -1,5 +1,5 @@
 .landing { background: var(--bg); color: var(--text); }
-.landing .topbar { padding-inline: max(22px, calc((100% - 1220px) / 2)); background: rgba(13, 17, 26, 0.88); border-bottom: 1px solid var(--border); backdrop-filter: blur(20px); }
+.landing .topbar { padding-inline: max(22px, calc((100% - 1220px) / 2)); background: rgba(255, 255, 255, 0.94); border-bottom: 1px solid var(--border); backdrop-filter: blur(20px); box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05); }
 .home-menu, .home-mobile-signin { display: none; }
 .lab-shell { width: min(1220px, calc(100% - 44px)); margin-inline: auto; }
 .lab-hero { display: grid; grid-template-columns: minmax(0, .86fr) minmax(0, 1.14fr); gap: clamp(24px, 5vw, 78px); align-items: center; padding-block: clamp(30px, 5vw, 75px); }
@@ -26,7 +26,7 @@
 .lab-demo .view-tabs button:disabled { opacity: .5; cursor: default; }
 .lab-demo .view-tabs button[aria-pressed="true"] { color: var(--accent); background: var(--accent-soft); }
 #example-stage { height: clamp(310px, 31vw, 400px); }
-#example-stage > img, #example-stage .viewer-wrap { display: block; width: 100%; height: 100% !important; border: 1px solid var(--border); border-radius: 12px; background: radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px) center / 20px 20px, #07090e; }
+#example-stage > img, #example-stage .viewer-wrap { display: block; width: 100%; height: 100% !important; border: 1px solid var(--border); border-radius: 12px; background: radial-gradient(rgba(0,0,0,0.06) 1px, transparent 1px) center / 20px 20px, #ffffff; }
 #example-stage > img { object-fit: contain; }
 #example-stage .viewer-hud span:nth-child(n + 2) { display: none; }
 .lab-demo-meta { margin-top: 8px; min-height: 1.5em; font-size: 12px; color: var(--muted); }
@@ -144,9 +144,9 @@
 .pricing-features li span.check { color: #10b981; font-weight: 700; }
 
 .math-explainer-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-block: 20px; }
-.math-card { background: #07090e; border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
-.math-card h4 { margin: 0 0 8px; font-size: 14px; color: var(--cyan); }
-.math-card pre { margin: 0 0 10px; padding: 10px; background: rgba(255, 255, 255, 0.03); border-radius: 6px; font-family: var(--mono); font-size: 12.5px; color: #a5b4fc; overflow-x: auto; }
+.math-card { background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 18px; box-shadow: var(--shadow); }
+.math-card h4 { margin: 0 0 8px; font-size: 14px; color: var(--accent); }
+.math-card pre { margin: 0 0 10px; padding: 10px; background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; font-family: var(--mono); font-size: 12.5px; color: #3730a3; overflow-x: auto; }
 .math-card p { font-size: 12.5px; color: var(--text-2); margin: 0; }
 
 @media (max-width: 950px) {
