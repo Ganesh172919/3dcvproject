@@ -16,8 +16,6 @@ from __future__ import annotations
 import argparse
 import json
 import logging
-import math
-import os
 import random
 from pathlib import Path
 from typing import Any
@@ -33,7 +31,7 @@ log = logging.getLogger("lab1.tinydepth")
 
 
 # ---------------------------------------------------------------------------
-# Architecture: Lightweight Conv/Transformer TinyDepth
+# Architecture: Convolutional encoder-decoder
 # ---------------------------------------------------------------------------
 class ConvBlock(nn.Module):
     def __init__(self, in_c: int, out_c: int, stride: int = 1):
@@ -61,7 +59,7 @@ class TinyDepth(nn.Module):
         self.enc3 = ConvBlock(base_channels * 2, base_channels * 4, stride=2) # S/4
         self.enc4 = ConvBlock(base_channels * 4, base_channels * 8, stride=2) # S/8
 
-        # Latent bottleneck with axial self-attention
+        # Convolutional bottleneck
         self.bottleneck = nn.Sequential(
             nn.Conv2d(base_channels * 8, base_channels * 8, 3, padding=1),
             nn.GELU(),
@@ -79,7 +77,7 @@ class TinyDepth(nn.Module):
         self.up1 = nn.ConvTranspose2d(base_channels * 2, base_channels, 2, stride=2)
         self.dec1 = ConvBlock(base_channels * 2, base_channels)
 
-        # Depth projection head (outputs metric depth > 0 via Softplus)
+        # Positive depth in the units used by the synthetic dataset
         self.head = nn.Sequential(
             nn.Conv2d(base_channels, base_channels // 2, 3, padding=1),
             nn.GELU(),

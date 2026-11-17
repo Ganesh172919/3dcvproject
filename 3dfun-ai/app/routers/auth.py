@@ -180,7 +180,9 @@ def login(payload: LoginRequest, request: Request, response: Response,
 
 @router.post("/demo")
 def demo_login(request: Request, response: Response, db: Session = Depends(get_db)):
-    """One-Click Instant Demo Student Sandbox access without needing registration."""
+    """Sign in with the shared account in local development."""
+    if not settings.demo_login_enabled:
+        raise ApiError("DEMO_DISABLED", "Demo sign-in is available in the local course setup.", status=404)
     demo_email = "demo@3dfun.dev"
     user = db.execute(select(User).where(User.email == demo_email)).scalar_one_or_none()
     if user is None:

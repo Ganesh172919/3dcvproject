@@ -2,7 +2,7 @@
 
 A local 3D computer vision project for IIIT Dharwad. Upload a single object image in the Studio to reconstruct and inspect a textured 3D mesh. The separate TinyDepth program trains on known synthetic geometry and exports a visible-surface point cloud.
 
-**Group 17 project contributors:** J Ganesh (23BDS024), M Jagadeshwar (23BDS033), B Varshith (23BDS011), Pranav Kashyap (23BCS098), and C Sai Aravind (23BDS075). See [project attribution](code/AUTHORS.md) for their roles. Project contact: 23bds024@iiitdwd.ac.in. Confirm the official submission roster and required emails before uploading.
+**Group 17.** J Ganesh (23BDS024), M Jagadeshwar (23BDS033), B Varshith (23BDS011), Pranav Kashyap (23BCS098), and C Sai Aravind (23BDS075). See [project attribution](code/AUTHORS.md) for the contributors' roles. J Ganesh is the corresponding author at `23bds024@iiitdwd.ac.in`.
 
 ## Install and reconstruct one image
 
@@ -33,23 +33,24 @@ The one-box run validates the geometry code path. A manifest with at least three
 
 ## Start the website
 
-Keep the terminal in `code/`:
+Keep the terminal in `code/` and start the site with the launcher for your system:
 
-```sh
-python -m uvicorn app.main:app --host 127.0.0.1 --port 8010
+```powershell
+.\run.ps1
 ```
 
-Open [the local Studio](http://127.0.0.1:8010/), register a local account, choose the Depth model and Draft, and upload an input. The prototype library includes saved results. Install optional providers with `python scripts/fetch_models.py --all` and restart the server. The CPU path was verified. For GPU and optional Gemini setup, see the [local setup guide](code/docs/handbook/local-setup.md). A 4 GB CUDA card was unavailable for testing.
+On macOS or Linux, use `bash run.sh` with the environment activated.
+Open [the local Studio](http://127.0.0.1:8010/app/studio), use the demo sign-in or register a local account, and upload one of the two samples with Depth Anything V2 and Draft selected. The home page also has saved results you can inspect without signing in. Install optional providers with `python scripts/fetch_models.py --all` and restart the server. See the [local setup guide](code/docs/handbook/local-setup.md) for optional GPU and Gemini setup.
 
 The [course report](report.pdf) and [captioned demo](demo.mp4) accompany this README. The [benchmark slides](code/presentations/3DFUN-AI-Project.pptx) cover the earlier mesh evaluation.
 
 ## Selected documentation
 
-The [project handbook](code/docs/handbook/README.md) links the local setup guide, architecture notes, operations runbook, and research reproducibility guide. Once the server is running, open the [handbook page](http://127.0.0.1:8010/project-docs) to browse them.
+The [project handbook](code/docs/handbook/README.md) links the local setup guide, architecture notes, operations runbook, and research reproducibility guide. Once the server is running, open [course results](http://127.0.0.1:8010/app/showcase) for the report, demo, and held-out TinyDepth scores.
 
 ## Train and evaluate
 
-From `code/`, use `python -m training.pipeline --device cpu` to print the training plan. It executes only when you pass `--run`. The [training guide](code/training/README.md) covers optional PyTorch dependencies, custom meshes, ablation, and held-out point-cloud metrics. The archive includes the measured eight-view point-cloud results for TinyDepth, the SILog-only ablation, and constant depth in [recorded evidence](code/results/course17/pointcloud_summary.json). TinyDepth is a separate learning experiment. The Studio's single-photo mesh still uses pretrained relative depth and a volumetric prior. The `code/submission/` folder includes the IEEE manuscript source and archive builder.
+From `code/`, use `python -m training.pipeline --device cpu --ablation` to print the plan. Add `--run` to execute it when ready. The [training guide](code/training/README.md) covers optional PyTorch dependencies, custom meshes, reusable rendered data, fixed mesh splits and the paired loss comparison. The [recorded results](code/results/course17/pointcloud_summary.json) cover eight views of the held-out cylinder. TinyDepth is a separate learning experiment. Studio's default mesh uses pretrained relative depth and a volumetric prior. The `code/submission/` folder includes the IEEE manuscript source and archive builder.
 
 ## Upstream credit and weight downloads
 

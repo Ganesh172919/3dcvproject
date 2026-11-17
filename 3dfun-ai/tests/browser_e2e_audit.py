@@ -12,13 +12,10 @@ Verifies:
 """
 from __future__ import annotations
 
-import io
 import json
 import os
-import sys
 import time
 import urllib.request
-from pathlib import Path
 from playwright.sync_api import sync_playwright
 
 BASE_URL = "http://127.0.0.1:8010"

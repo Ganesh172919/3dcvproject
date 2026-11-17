@@ -1,4 +1,4 @@
-# 3DFUN AI - Production Multi-Stage Container Dockerfile
+# 3DFUN AI local container
 # Course: 3D Computer Vision · IIIT Dharwad
 
 FROM python:3.12-slim AS builder
@@ -40,11 +40,11 @@ ENV PYTHONUNBUFFERED=1 \
     HOST=0.0.0.0 \
     RECON_DEVICE=cpu \
     CREDITS_SIGNUP_GRANT=50 \
-    DATABASE_URL=sqlite:///./out/3dfun.db
+    DATABASE_URL=sqlite:///./data/3dfun.db
 
 EXPOSE 8010
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
-  CMD curl -f http://localhost:8010/api/v1/system/health || exit 1
+  CMD curl -f http://localhost:8010/api/v1/health/ready || exit 1
 
-CMD ["sh", "-c", "python -m app.seed && python -m uvicorn app.main:app --host 0.0.0.0 --port 8010"]
+CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8010"]

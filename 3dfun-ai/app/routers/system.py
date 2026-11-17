@@ -3,12 +3,12 @@ from __future__ import annotations
 
 
 from fastapi import APIRouter, Depends, Response
-from sqlalchemy import select, text
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from .. import events, metrics as metrics_mod
-from ..config import settings
-from ..db import User, get_db, utcnow
+from ..config import ROOT, settings
+from ..db import get_db, utcnow
 from ..jobs import backend as queue_backend
 from ..jobs import runner
 from ..recon_bridge import engine_available
@@ -68,7 +68,7 @@ def metrics_json():
 
 
 @router.get("/meta")
-def meta(db: Session = Depends(get_db)):
+def meta():
     from recon.depth import midas_available
     from recon.runtime import runtime_status
     from recon.triposr import available as triposr_available
@@ -87,9 +87,7 @@ def meta(db: Session = Depends(get_db)):
             "provider": settings.generation_provider,
             "triposr": triposr_available(),
             "midas": midas_available(),
-            "demo_account": settings.environment == "development" and db.scalar(
-                select(User.id).where(User.email == "demo@3dfun.dev", User.is_active.is_(True))
-            ) is not None,
+            "demo_account": settings.demo_login_enabled,
         },
         "limits": {
             "max_upload_mb": settings.max_upload_mb,
@@ -146,3 +144,23 @@ def results_summary():
         payload["dataset"] = {"version": data["version"], "scenes": data["scenes"],
                               "checksum": data["checksum"], "seed": data["seed"]}
     return ok(payload)
+
+
+@router.get("/results/tinydepth")
+def tinydepth_results():
+    """Serve the saved holdout scores used in the course report."""
+    import json
+
+    folder = ROOT / "results" / "course17"
+    try:
+        full = json.loads((folder / "pointcloud_summary.json").read_text(encoding="utf-8"))["mean_by_mesh"]
+        ablation = json.loads((folder / "pointcloud_no_grad_summary.json").read_text(encoding="utf-8"))["mean_by_mesh"]
+    except FileNotFoundError:
+        return ok({"methods": []})
+    methods = [
+        ("SILog + gradients", full, "tinydepth"),
+        ("SILog only", ablation, "tinydepth"),
+        ("Constant depth", full, "constant"),
+    ]
+    return ok({"methods": [{"method": name, "chamfer": scores[f"{key}_chamfer"],
+                            "f_score": scores[f"{key}_f_score"]} for name, scores, key in methods]})

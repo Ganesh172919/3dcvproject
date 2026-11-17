@@ -299,6 +299,13 @@ textarea { resize: vertical; min-height: 76px; }
 
 /* ---------- table ---------- */
 .table-scroll { overflow-x: auto; max-width: 100%; }
+.course-results { max-width: 960px; margin-inline: auto; }
+.course-results .lead { max-width: 68ch; }
+.course-results #demo { scroll-margin-top: 80px; }
+.course-video { display: block; width: 100%; aspect-ratio: 16 / 9; background: #101321; border-radius: 8px; }
+.course-report-preview { width: min(880px, calc(100% - 32px)); margin: 32px auto; }
+.course-report-preview figure { margin: 24px 0; }
+.course-report-preview img { display: block; width: 100%; height: auto; border: 1px solid var(--border); }
 table.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
 table.tbl th {
   text-align: left; font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em;

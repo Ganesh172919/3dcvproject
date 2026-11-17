@@ -53,7 +53,6 @@ class MiniGaussianSplatter(nn.Module):
     def render(self, img_size: int = 128, focal_length: float = 180.0) -> torch.Tensor:
         """Differentiable 2D projection and accumulation rasterizer."""
         device = self.means.device
-        N = self.num_points
         H, W = img_size, img_size
 
         # Unpack parameters
@@ -64,7 +63,7 @@ class MiniGaussianSplatter(nn.Module):
 
         # Perspective projection onto image plane:
         # X' = (X / Z) * fx + W/2, Y' = (Y / Z) * fy + H/2
-        z = mu[:, 2] + 2.5  # camera at distance 2.5
+        z = (mu[:, 2] + 2.5).clamp_min(0.1)
         u = (mu[:, 0] / z) * focal_length + (W / 2.0)
         v = (mu[:, 1] / z) * focal_length + (H / 2.0)
 
@@ -115,14 +114,15 @@ def train_gaussian_splat(
     out_dir: str | Path = "out/student_labs/lab3",
     device_name: str = "cpu"
 ) -> dict[str, Any]:
-    out_path = Path(out_dir)
-    out_path.mkdir(parents=True, exist_ok=True)
-    device = torch.device(device_name if torch.cuda.is_available() and device_name == "cuda" else "cpu")
-
+    if num_points < 1 or iterations < 1 or not math.isfinite(lr) or lr <= 0:
+        raise ValueError("Use positive point and iteration counts and a finite learning rate.")
     img_size = 64
-    if target_image_path and Path(target_image_path).exists():
+    if target_image_path is not None:
         img_bgr = cv2.imread(str(target_image_path))
-        img_rgb = cv2.cvtColor(cv2.resize(img_bgr, (img_size, img_size)), cv2.COLOR_BGR2RGB)
+        if img_bgr is None:
+            raise ValueError(f"Could not read the target image: {target_image_path}")
+        resized = cv2.resize(img_bgr, (img_size, img_size), interpolation=cv2.INTER_AREA)
+        img_rgb = cv2.cvtColor(resized, cv2.COLOR_BGR2RGB).astype(np.float32) / 255.0
     else:
         # Create a synthetic target (multi-colored concentric geometric icon)
         y, x = np.mgrid[-1:1:complex(0, img_size), -1:1:complex(0, img_size)]
@@ -132,7 +132,10 @@ def train_gaussian_splat(
         img_rgb[r < 0.35] = [0.2, 0.75, 0.85]  # cyan core
         img_rgb[np.abs(x) < 0.08] = [0.95, 0.85, 0.15] # gold stripe
 
-    target_t = torch.from_numpy(img_rgb.transpose(2, 0, 1).astype(np.float32)).to(device)
+    out_path = Path(out_dir)
+    out_path.mkdir(parents=True, exist_ok=True)
+    device = torch.device(device_name if torch.cuda.is_available() and device_name == "cuda" else "cpu")
+    target_t = torch.from_numpy(img_rgb.transpose(2, 0, 1)).to(device)
 
     model = MiniGaussianSplatter(num_points=num_points).to(device)
     optimizer = torch.optim.Adam([
@@ -149,9 +152,7 @@ def train_gaussian_splat(
         optimizer.zero_grad()
         rendered = model.render(img_size=img_size)
 
-        # L1 + D-SSIM loss
-        l1 = F.l1_loss(rendered, target_t)
-        loss = l1
+        loss = F.l1_loss(rendered, target_t)
         loss.backward()
         optimizer.step()
 
@@ -168,9 +169,13 @@ def train_gaussian_splat(
 
     # Save rendered output
     with torch.no_grad():
-        final_render = model.render(img_size=img_size).cpu().numpy().transpose(1, 2, 0)
+        rendered = model.render(img_size=img_size)
+        final_loss = F.l1_loss(rendered, target_t).item()
+        final_mse = F.mse_loss(rendered, target_t).item()
+        final_render = rendered.cpu().numpy().transpose(1, 2, 0)
         final_render_u8 = (np.clip(final_render, 0, 1) * 255).astype(np.uint8)
-        cv2.imwrite(str(out_path / "splat_render.png"), cv2.cvtColor(final_render_u8, cv2.COLOR_RGB2BGR))
+        if not cv2.imwrite(str(out_path / "splat_render.png"), cv2.cvtColor(final_render_u8, cv2.COLOR_RGB2BGR)):
+            raise OSError("Could not save the splat render.")
 
     # Export Gaussian Point Cloud to PLY
     ply_path = out_path / "gaussian_splats.ply"
@@ -193,8 +198,8 @@ def train_gaussian_splat(
     results = {
         "status": "completed",
         "num_gaussians": num_points,
-        "final_loss": history["loss"][-1],
-        "final_psnr": history["psnr"][-1],
+        "final_loss": round(final_loss, 4),
+        "final_psnr": round(10 * math.log10(1.0 / max(final_mse, 1e-8)), 2),
         "history": history,
         "render_path": str(out_path / "splat_render.png"),
         "ply_path": str(ply_path),
@@ -207,6 +212,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Lab 3: 3D Gaussian Splatting Fundamentals")
     parser.add_argument("--num-points", type=int, default=800)
     parser.add_argument("--iterations", type=int, default=30)
+    parser.add_argument("--image", type=Path, help="Use a photo in place of the generated target")
+    parser.add_argument("--lr", type=float, default=0.02)
     parser.add_argument("--out-dir", type=str, default="out/student_labs/lab3")
     args = parser.parse_args()
-    train_gaussian_splat(num_points=args.num_points, iterations=args.iterations, out_dir=args.out_dir)
+    try:
+        train_gaussian_splat(target_image_path=args.image, num_points=args.num_points,
+                             iterations=args.iterations, lr=args.lr, out_dir=args.out_dir)
+    except (OSError, ValueError) as exc:
+        parser.error(str(exc))

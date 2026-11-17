@@ -6,22 +6,22 @@ Run these commands from the project source directory. In an extracted course arc
 python -m pip install -r requirements-dev.txt
 python -m pytest -q
 python -m ruff check app engine benchmarks scripts submission tests tools training
-python -m mkdocs build --strict
 ```
 
 ## Build the report and demo
 
-Compile `submission/report.tex` with a local Tectonic installation. The figures already exist in `results/course17/`.
+Compile `submission/report.tex` with Tectonic. The figures already exist in `results/course17/`. Use Poppler's `pdftoppm` to rebuild the browser preview.
 
 ```sh
 python -c "from pathlib import Path; Path('out/course17').mkdir(parents=True, exist_ok=True)"
 cd submission
 tectonic -o ../out/course17 report.tex
 cd ..
+python -m submission.report_preview
 python -m submission.demo
 ```
 
-The result is a four-page report and an 84-second captioned MP4. To rerender the depth figure from a new CPU experiment, run the `training/README.md` with `--run --ablation`, then use `python -m submission.figures --experiment PATH`. Review newly generated figures and measurements together before replacing the saved evidence.
+The result is a four-page report and an 84-second captioned MP4. To rebuild the depth figure after a new CPU experiment, follow `training/README.md`, then use `python -m submission.figures --experiment PATH`. Review the new figure and measurements together before replacing the saved evidence.
 
 ## Build and verify the ZIP
 

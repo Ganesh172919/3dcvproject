@@ -1,6 +1,7 @@
 """Tests for student curriculum labs, billing wallet, and coupons."""
 from __future__ import annotations
 
+import time
 import uuid
 
 
@@ -49,12 +50,14 @@ def test_billing_wallet_and_coupon(client):
 
 def test_student_lab_execution(client):
     auth, _ = _register(client)
-    # Launch lab4_evaluator (fast synthetic evaluation)
-    res = client.post("/api/v1/student-labs/lab4_evaluator/run", headers=auth, json={"config": {}})
+    before = client.get("/api/v1/billing/wallet", headers=auth).json()["data"]["available"]
+    res = client.post("/api/v1/student-labs/lab4_evaluator/run", headers=auth,
+                      json={"config": {"num_points": 128, "seed": 17}})
     assert res.status_code == 200
     body = res.json()["data"]
     run_id = body["run_id"]
     assert run_id.startswith("lbr_")
+    assert body["balance"] == before - body["credits_charged"]
 
     # List runs
     runs_res = client.get("/api/v1/student-labs/runs", headers=auth)
@@ -62,7 +65,28 @@ def test_student_lab_execution(client):
     runs = runs_res.json()["data"]
     assert any(r["id"] == run_id for r in runs)
 
-    # Get single run
-    run_res = client.get(f"/api/v1/student-labs/runs/{run_id}", headers=auth)
-    assert run_res.status_code == 200
-    assert run_res.json()["data"]["id"] == run_id
+    for _ in range(100):
+        run_res = client.get(f"/api/v1/student-labs/runs/{run_id}", headers=auth)
+        run = run_res.json()["data"]
+        if run["status"] in {"completed", "failed"}:
+            break
+        time.sleep(0.05)
+    assert run["id"] == run_id and run["status"] == "completed", run
+    assert run["config"]["num_points"] == 128
+    assert run["artifacts"] == {"results_json": "lab4_results.json"}
+    artifact_url = f"/api/v1/student-labs/runs/{run_id}/artifacts/lab4_results.json"
+    report = client.get(artifact_url, headers=auth)
+    assert report.status_code == 200
+    assert report.json()["point_counts"] == {"prediction": 128, "reference": 128}
+    other, _ = _register(client)
+    assert client.get(artifact_url, headers=other).status_code == 404
+
+
+def test_invalid_lab_config_keeps_balance(client):
+    auth, _ = _register(client)
+    wallet = "/api/v1/billing/wallet"
+    before = client.get(wallet, headers=auth).json()["data"]["available"]
+    response = client.post("/api/v1/student-labs/lab3_3dgs/run", headers=auth,
+                           json={"config": {"num_points": 3001}})
+    assert response.status_code == 422
+    assert client.get(wallet, headers=auth).json()["data"]["available"] == before

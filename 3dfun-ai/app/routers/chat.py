@@ -18,7 +18,6 @@ import json
 import logging
 import re
 from typing import Annotated, Any, Literal
-from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 from fastapi import APIRouter, Depends
@@ -32,7 +31,7 @@ from ..auth import get_current_user
 from ..config import gemini_settings
 from ..db import User, get_db
 from ..ratelimit import RateLimiter, enforce
-from ..schemas import ApiError, ok
+from ..schemas import ok
 
 log = logging.getLogger("3dfun.chat")
 router = APIRouter(prefix="/chat", tags=["chat"])

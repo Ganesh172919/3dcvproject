@@ -22,9 +22,9 @@ $$\mathcal{L}_{\text{normal}} = \frac{1}{N} \sum_i (1 - \cos(\mathbf{n}_{\text{p
 ---
 
 ## 2. Model Architecture: TinyDepth
-TinyDepth is a lightweight 4-stage convolutional encoder-decoder with skip connections and axial self-attention bottleneck:
+This lab uses a four-stage convolutional encoder-decoder with skip connections. The toy train and validation sets share primitive families. The mesh-disjoint experiment in the course report uses the separate [TinyDepth pipeline](../../README.md).
 - **Input:** Normalized RGB image $(B, 3, H, W)$
-- **Encoder:** 4 residual blocks downsampling spatial resolution ($S, S/2, S/4, S/8$)
+- **Encoder:** Four convolution blocks downsampling spatial resolution ($S, S/2, S/4, S/8$)
 - **Decoder:** Transposed convolution upsampling blocks with concatenation skip connections
 - **Head:** Softplus activation ensuring strictly positive metric depth $Z > 0$
 

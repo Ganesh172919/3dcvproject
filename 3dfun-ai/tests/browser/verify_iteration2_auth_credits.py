@@ -3,8 +3,6 @@ Authentication, User Profiles, Password Strength Meter, One-Click Demo Mode,
 and the Free Trial Credits Ledger with Real-time Wallet Modal.
 """
 import os
-import sys
-import time
 import uuid
 from playwright.sync_api import sync_playwright
 
@@ -82,7 +80,6 @@ def test_iteration2():
 
         # Step 4: Run Sample Generation to verify credit reservation & spend debit
         print("[5/6] Testing Generation Debit on Sample Asset...")
-        bal_before = int(page.locator("#wallet-value").inner_text().strip())
         
         # Load sample sneaker
         page.goto(f"{BASE_URL}/app/studio?sample=sneaker")

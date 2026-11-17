@@ -16,16 +16,15 @@ Theoretical Foundation:
 """
 from __future__ import annotations
 
-import os
-import sys
-
 # Re-export from evaluator implementation
 from ..lab4_evaluator.evaluate_metrics import (
     sample_mesh_surface,
     compute_chamfer_and_fscore,
-    approximate_earth_movers_distance,
+    compute_emd_approx as approximate_earth_movers_distance,
     run_evaluation,
 )
+
+__all__ = ["sample_mesh_surface", "compute_chamfer_and_fscore", "approximate_earth_movers_distance", "run_evaluation"]
 
 if __name__ == "__main__":
     import argparse
@@ -34,6 +33,6 @@ if __name__ == "__main__":
     parser.add_argument("--gt", type=str, default=None)
     parser.add_argument("--out-dir", type=str, default="./out/evaluation")
     args = parser.parse_args()
-    res = run_evaluation(pred_mesh=args.pred, gt_mesh=args.gt, out_dir=args.out_dir)
+    res = run_evaluation(pred_path=args.pred, gt_path=args.gt, out_dir=args.out_dir)
     print("Symmetric Chamfer Distance:", res["chamfer_distance"]["symmetric"])
     print("F-Score (tau=0.01):", res["f_scores"]["tau_0.01"]["f_score"])

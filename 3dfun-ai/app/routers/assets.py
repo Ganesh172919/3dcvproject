@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import datetime as dt
 import io
+import logging
 from html import escape
 from zipfile import ZipFile
 
@@ -18,6 +19,7 @@ from ..serializers import asset_public
 from ..storage import storage
 
 router = APIRouter(prefix="/assets", tags=["assets"])
+log = logging.getLogger(__name__)
 
 DELETION_GRACE_DAYS = 7
 

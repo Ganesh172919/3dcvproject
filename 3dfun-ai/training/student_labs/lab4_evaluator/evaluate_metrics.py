@@ -29,20 +29,27 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 log = logging.getLogger("lab4.evaluator")
 
 
-def sample_mesh_surface(mesh_path: str | Path, num_points: int = 5000) -> np.ndarray:
-    """Loads a mesh and samples points uniformly across surface faces."""
+def sample_mesh_surface(mesh_path: str | Path, num_points: int = 5000, seed: int | None = None) -> np.ndarray:
+    """Sample a mesh surface or read the vertices of a point cloud."""
     p = Path(mesh_path)
     if not p.exists():
         raise FileNotFoundError(f"Mesh not found: {p}")
 
     import trimesh
-    mesh = trimesh.load(str(p), force="mesh")
+    mesh = trimesh.load(str(p))
     if isinstance(mesh, trimesh.Scene):
-        if len(mesh.geometry) == 0:
-            raise ValueError("Scene contains no meshes.")
-        mesh = trimesh.util.concatenate([g for g in mesh.geometry.values() if isinstance(g, trimesh.Trimesh)])
+        mesh = mesh.to_mesh()
 
-    points, _ = trimesh.sample.sample_surface(mesh, num_points)
+    if isinstance(mesh, trimesh.points.PointCloud):
+        points = np.asarray(mesh.vertices)
+        if len(points) > num_points:
+            points = points[np.random.default_rng(seed).choice(len(points), num_points, replace=False)]
+    elif isinstance(mesh, trimesh.Trimesh) and len(mesh.faces):
+        points, _ = trimesh.sample.sample_surface(mesh, num_points, seed=seed)
+    else:
+        raise ValueError(f"{p.name} contains no usable mesh or point cloud.")
+    if not len(points) or not np.isfinite(points).all():
+        raise ValueError(f"{p.name} has empty or non-finite geometry.")
     return points.astype(np.float32)
 
 
@@ -86,14 +93,14 @@ def compute_chamfer_and_fscore(
     }
 
 
-def compute_emd_approx(pts_1: np.ndarray, pts_2: np.ndarray, max_pts: int = 1000) -> float:
-    """Earth Mover's Distance approximation using greedy matching or linear sum assignment."""
-    if len(pts_1) > max_pts:
-        idx1 = np.random.choice(len(pts_1), max_pts, replace=False)
-        pts_1 = pts_1[idx1]
-    if len(pts_2) > max_pts:
-        idx2 = np.random.choice(len(pts_2), max_pts, replace=False)
-        pts_2 = pts_2[idx2]
+def compute_emd_approx(pts_1: np.ndarray, pts_2: np.ndarray, max_pts: int = 1000,
+                       seed: int | None = None) -> float:
+    """Approximate Earth Mover's Distance with equal-size point samples."""
+    size = min(len(pts_1), len(pts_2), max_pts)
+    rng = np.random.default_rng(seed)
+    first = rng.choice(len(pts_1), size, replace=False)
+    second = first if len(pts_1) == len(pts_2) else rng.choice(len(pts_2), size, replace=False)
+    pts_1, pts_2 = pts_1[first], pts_2[second]
 
     # Fast 1-to-1 matching via scipy linear_sum_assignment
     from scipy.optimize import linear_sum_assignment
@@ -108,19 +115,23 @@ def run_evaluation(
     gt_path: str | Path | None = None,
     out_dir: str | Path = "out/student_labs/lab4",
     num_points: int = 4000,
+    seed: int = 17,
 ) -> dict[str, Any]:
-    out_path = Path(out_dir)
-    out_path.mkdir(parents=True, exist_ok=True)
+    if not 16 <= num_points <= 100_000 or not 0 <= seed <= 2**32 - 1:
+        raise ValueError("Use 16–100,000 points and a seed between 0 and 2³²−1.")
+    if (pred_path is None) != (gt_path is None):
+        raise ValueError("Provide both a prediction and a reference.")
+    rng = np.random.default_rng(seed)
 
-    if pred_path and gt_path and Path(pred_path).exists() and Path(gt_path).exists():
+    if pred_path is not None and gt_path is not None:
         log.info("Evaluating real meshes: %s vs %s", pred_path, gt_path)
-        pts_pred = sample_mesh_surface(pred_path, num_points=num_points)
-        pts_gt = sample_mesh_surface(gt_path, num_points=num_points)
+        pts_pred = sample_mesh_surface(pred_path, num_points=num_points, seed=seed)
+        pts_gt = sample_mesh_surface(gt_path, num_points=num_points, seed=seed)
     else:
         # Synthetic evaluation demo: ground truth sphere vs noisy / slightly deformed predicted sphere
         log.info("Generating synthetic sphere comparison benchmark (GT vs Predicted with noise)")
-        theta = np.random.uniform(0, 2 * np.pi, num_points)
-        phi = np.arccos(np.random.uniform(-1, 1, num_points))
+        theta = rng.uniform(0, 2 * np.pi, num_points)
+        phi = np.arccos(rng.uniform(-1, 1, num_points))
         r_gt = 0.7
         x_gt = r_gt * np.sin(phi) * np.cos(theta)
         y_gt = r_gt * np.sin(phi) * np.sin(theta)
@@ -128,12 +139,14 @@ def run_evaluation(
         pts_gt = np.stack([x_gt, y_gt, z_gt], axis=1).astype(np.float32)
 
         # Predicted has 3% Gaussian noise and 5% ellipsoid elongation
-        noise = np.random.normal(0, 0.015, size=pts_gt.shape).astype(np.float32)
+        noise = rng.normal(0, 0.015, size=pts_gt.shape).astype(np.float32)
         pts_pred = pts_gt * np.array([1.04, 0.98, 1.0], dtype=np.float32) + noise
 
     results = compute_chamfer_and_fscore(pts_pred, pts_gt, thresholds=[0.01, 0.05])
-    emd = compute_emd_approx(pts_pred, pts_gt, max_pts=800)
+    emd = compute_emd_approx(pts_pred, pts_gt, max_pts=800, seed=seed)
     results["earth_movers_distance"] = emd
+    results["seed"] = seed
+    results["point_counts"] = {"prediction": len(pts_pred), "reference": len(pts_gt)}
 
     log.info("Evaluation Complete:")
     log.info("  Chamfer Distance (Symmetric): %.5f", results["chamfer_distance"]["symmetric"])
@@ -147,7 +160,9 @@ def run_evaluation(
              results["f_scores"]["tau_0.05"]["recall"])
     log.info("  Earth Mover's Distance: %.5f", emd)
 
-    (out_path / "lab4_results.json").write_text(json.dumps(results, indent=2))
+    out_path = Path(out_dir)
+    out_path.mkdir(parents=True, exist_ok=True)
+    (out_path / "lab4_results.json").write_text(json.dumps(results, indent=2) + "\n", encoding="utf-8")
     return results
 
 
@@ -156,6 +171,10 @@ if __name__ == "__main__":
     parser.add_argument("--pred", type=str, default=None, help="Path to predicted mesh (.obj, .ply, .stl, .glb)")
     parser.add_argument("--gt", type=str, default=None, help="Path to ground truth mesh")
     parser.add_argument("--num-points", type=int, default=4000, help="Number of surface points to sample")
+    parser.add_argument("--seed", type=int, default=17)
     parser.add_argument("--out-dir", type=str, default="out/student_labs/lab4")
     args = parser.parse_args()
-    run_evaluation(args.pred, args.gt, args.out_dir, num_points=args.num_points)
+    try:
+        run_evaluation(args.pred, args.gt, args.out_dir, num_points=args.num_points, seed=args.seed)
+    except (OSError, ValueError) as exc:
+        parser.error(str(exc))

@@ -1,6 +1,7 @@
 """Credits ledger endpoints and billing (Stripe-compatible, optional)."""
 from __future__ import annotations
 
+import datetime as dt
 import hashlib
 import hmac
 import json
@@ -48,8 +49,8 @@ def transactions(user: User = Depends(get_current_user), db: Session = Depends(g
 COUPONS: dict[str, int] = {
     "STUDENT3D": 20,
     "IIITDHARWAD": 50,
-    "TRIPO3D": 15,
-    "MESHYAI": 15,
+    "COURSE17": 25,
+    "STUDENTCV": 25,
     "OPENCV": 25,
     "FREE50": 50,
 }

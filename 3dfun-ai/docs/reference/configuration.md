@@ -24,4 +24,4 @@ The Windows launcher calls Uvicorn on port 8010 by default. The POSIX launcher d
 
 ## Surface extraction and smoothing settings
 
-Draft, Standard, and High map to presets in `engine/recon/config.py`. The CLI accepts `--quality`, `--faces`, and `--voxels`. Other slab and meshing settings live in `PipelineConfig` and the calibration program. For measured parameter changes, see the [benchmark](../BENCHMARK.md) and [theory notes](../explanations/volumetric-inflation.md).
+Draft, Standard, and High map to presets in `engine/recon/config.py`. The CLI accepts `--quality`, `--faces`, and `--voxels`. Other slab and meshing settings live in `PipelineConfig` and the calibration program. For measured parameter changes, see the [benchmark](../BENCHMARK.md) and the report's ablation table.

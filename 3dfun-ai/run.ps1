@@ -13,6 +13,10 @@ try {
     $environment = if ($Device -eq 'cpu') { '.venv' } else { ".venv-$Device" }
     $requirements = if ($Device -eq 'cpu') { 'requirements.txt' } else { "requirements-$Device.txt" }
     $python = Join-Path $PSScriptRoot "$environment\Scripts\python.exe"
+    if ($Device -eq 'cpu' -and $env:VIRTUAL_ENV) {
+        $activePython = Join-Path $env:VIRTUAL_ENV 'Scripts\python.exe'
+        if (Test-Path -LiteralPath $activePython -PathType Leaf) { $python = $activePython }
+    }
     if ($PSBoundParameters.ContainsKey('Device')) { $env:RECON_DEVICE = $Device }
     if ($Install -or -not (Test-Path -LiteralPath $python)) {
         if (Get-Command uv -ErrorAction SilentlyContinue) {
@@ -31,13 +35,12 @@ try {
         if ($LASTEXITCODE -ne 0) { throw 'Could not install Python dependencies.' }
     }
 
-    $modelFiles = @('u2netp.onnx', 'depth_anything_v2_small_quantized.onnx', 'midas_v21_small.onnx',
-                    'triposr_encoder_int8.onnx', 'triposr_decoder.onnx')
+    $modelFiles = @('u2netp.onnx', 'depth_anything_v2_small_quantized.onnx')
     $missingModels = $modelFiles | Where-Object { -not (Test-Path -LiteralPath "engine/models/$_" -PathType Leaf) }
     if ($Install -or $InstallModels -or $InstallTripoSR -or $missingModels) {
         $modelArgs = @('scripts/fetch_models.py')
-        if ($Install -or $InstallModels -or -not $InstallTripoSR) { $modelArgs += '--all' }
-        else { $modelArgs += '--triposr' }
+        if ($InstallModels) { $modelArgs += '--all' }
+        elseif ($InstallTripoSR) { $modelArgs += '--triposr' }
         & $python @modelArgs
         if ($LASTEXITCODE -ne 0) { throw 'Model setup failed. Check the download error above and rerun.' }
     }

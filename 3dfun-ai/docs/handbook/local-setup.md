@@ -14,13 +14,13 @@ The base download installs U²-NetP and Depth Anything V2 Small. Use `--midas` o
 ## Run Studio locally
 
 ```sh
-python -m uvicorn app.main:app --host 127.0.0.1 --port 8010
+./run.ps1
 ```
 
-Open [Studio](http://127.0.0.1:8010/app/studio), register a local account, and upload the sneaker or box from `sample_data/`. Select Depth Anything V2 and Draft. When the job completes, orbit the mesh and export GLB. Use a simple background and keep the whole object in view for your own photos.
+Run the command above in Windows PowerShell. On macOS or Linux, use `bash run.sh` with the Python environment activated. Open [Studio](http://127.0.0.1:8010/app/studio), sign in with the demo account or register locally, and upload the sneaker or box from `sample_data/`. Select Depth Anything V2 and Draft. When the job completes, orbit the mesh and export GLB. Use a simple background and keep the whole object in view for your own photos.
 
 The default model runs on CPU. With a compatible GPU build, set `RECON_DEVICE` to `cuda` or `directml` in `.env` and restart. Check the provider actually used in the generation details. This submission's end-to-end checks use CPU.
 
-Optional chat requires your Gemini API key. Set `GEMINI_API_KEY` and an available `GEMINI_MODEL` in a local `.env` created from the `.env.example`. The server sends chat messages to Gemini. Local mesh generation uses the downloaded reconstruction weights.
+The chat can answer a few course questions locally. To enable the optional Gemini provider, set `GEMINI_API_KEY` and a model available to your account in a local `.env` created from `.env.example`. Cloud chat sends messages to Gemini. Mesh generation uses the local reconstruction weights.
 
 **Evidence** `scripts/fetch_models.py` · `engine/recon/runtime.py` · `app/config.py`

@@ -12,12 +12,12 @@ ROOT = Path(__file__).resolve().parents[1]
 ARCHIVE = "Group17_3dcv_project"
 MAX_ARCHIVE_BYTES = 200_000_000
 SOURCE_DIRS = (
-    "app", "benchmarks", "docs", "engine", "paper", "scripts", "submission",
+    "app", "benchmarks", "docs/handbook", "engine", "paper", "scripts", "submission",
     "tests", "training", "web", "tools", "results/figures", "results/summary",
 )
 SKIP_DIRS = {
     "__pycache__", ".pytest_cache", ".ruff_cache", "node_modules", "models",
-    "checkpoints", "data", "out",
+    "checkpoints", "data", "out", "reports",
 }
 SOURCE_SUFFIXES = {
     ".bib", ".cls", ".css", ".csv", ".gif", ".glb", ".html", ".ini", ".js", ".json",
@@ -25,8 +25,12 @@ SOURCE_SUFFIXES = {
     ".yaml", ".yml",
 }
 ROOT_FILES = (
-    "AUTHORS.md", "LICENSE", "run.ps1", "run.sh", ".env.example", ".gitignore",
-    "pytest.ini", "Makefile", "mkdocs.yml", "paper/main.pdf", "presentations/3DFUN-AI-Project.pptx",
+    "AUTHORS.md", "LICENSE", "run.ps1", "run.sh", ".env.example", ".gitignore", ".dockerignore",
+    "pytest.ini", "Makefile", "Dockerfile", "docker-compose.yml", "deploy.ps1",
+    "paper/main.pdf", "presentations/3DFUN-AI-Project.pptx",
+    "docs/BENCHMARK.md", "docs/how-to/academic-packaging-and-verification.md",
+    "docs/reference/api-spec.md", "docs/reference/configuration.md", "docs/reference/metrics.md",
+    "docs/explanations/tinydepth-and-pointcloud-evaluation.md",
     "results/environment.json",
     "results/dataset_metadata.json", "results/raw/runs.csv",
 )

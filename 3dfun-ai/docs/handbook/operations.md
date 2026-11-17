@@ -19,6 +19,10 @@ Start from the [local setup guide](local-setup.md). The package was exercised as
 
 Wait for active jobs to finish, then stop the server. Back up the database and asset storage together while the server is stopped. In the default setup they are under `data/`. If you set `DATABASE_URL` or `STORAGE_ROOT`, use those locations instead. Restore both from the same backup before restarting. Open Studio and check one previously completed asset and one new generation. Keep credentials, local uploads and backups outside the course archive.
 
-For deployment beyond loopback, review `NODE_ENV`, `APP_URL`, separate access and refresh secrets, TLS, and `COOKIE_SECURE`. The app warns about insecure production settings. Configure ingress, access, backup retention and capacity for the target environment, and validate them there. Cloud deployment and multi-worker operation are outside the verified course setup.
+## Run on one machine
+
+The launch scripts bind to loopback by default. For a hosted demonstration, use one worker behind an HTTPS reverse proxy. Set `NODE_ENV=production`, `APP_URL` to the public HTTPS origin, and `COOKIE_SECURE=true`. Generate separate random values for `JWT_ACCESS_SECRET` and `JWT_REFRESH_SECRET`, each at least 32 bytes. Production startup rejects insecure settings and disables the shared demo login. Use a fresh database for a hosted instance to avoid carrying development accounts over. Keep the data volume persistent and validate access, backups and capacity on the target host.
+
+The optional Docker Compose files are for a local container. Download weights first with `python scripts/fetch_models.py`, then run `docker compose up --build` from the source folder. The service binds to loopback and mounts the weights read-only. The native CPU launch is the verified course setup.
 
 **Evidence** `app/routers/system.py` · `app/config.py` · `app/storage.py`

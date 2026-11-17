@@ -42,21 +42,21 @@ function requireAuth(main) {
       type: 'button',
       onclick: async () => {
         demo.disabled = true;
-        demo.innerHTML = '<span class="spinner"></span> Launching Demo Sandbox…';
+        demo.innerHTML = '<span class="spinner"></span> Signing in…';
         try {
           const data = await api('/auth/demo', { method: 'POST' });
           localStorage.setItem('3dfun_token', data.access_token);
           state.token = data.access_token;
           await refreshUser();
-          toast(`Entered Student Sandbox · ${data.user.credits} credits granted`);
+          toast('Signed in to the demo account');
           renderRoute();
         } catch (err) {
           toast('Demo login failed: ' + err.message, 'error');
           demo.disabled = false;
-          demo.textContent = '⚡ One-Click Instant Demo Sandbox';
+          demo.textContent = 'Use demo account';
         }
       }
-    }, '⚡ One-Click Instant Demo Sandbox');
+    }, 'Use demo account');
 
     mount(main, h('div', { class: 'card auth-card center' },
       h('h2', {}, 'Sign in to continue'),
@@ -64,7 +64,7 @@ function requireAuth(main) {
       h('div', { class: 'row', style: 'justify-content:center' },
         h('a', { class: 'btn primary', href: `/app/login?${next}`, 'data-link': '' }, 'Sign in'),
         h('a', { class: 'btn', href: `/app/register?${next}`, 'data-link': '' }, 'Create account')),
-      demo));
+      state.meta?.features?.demo_account ? demo : null));
     return false;
   }
   return true;
@@ -124,22 +124,22 @@ function renderAuth(main, initialMode) {
     type: 'button',
     onclick: async () => {
       submit.disabled = demo.disabled = true;
-      demo.innerHTML = '<span class="spinner"></span> Launching Demo Sandbox…';
+      demo.innerHTML = '<span class="spinner"></span> Signing in…';
       try {
         const data = await api('/auth/demo', { method: 'POST' });
         localStorage.setItem('3dfun_token', data.access_token);
         state.token = data.access_token;
         await refreshUser();
-        toast(`Entered Student Sandbox · ${data.user.credits} credits granted`);
+        toast('Signed in to the demo account');
         navigate(destination);
       } catch (err) {
         errorBox.textContent = 'Demo login failed: ' + err.message;
       } finally {
         submit.disabled = demo.disabled = false;
-        demo.textContent = '⚡ One-Click Instant Demo Sandbox';
+        demo.textContent = 'Use demo account';
       }
     }
-  }, '⚡ One-Click Instant Demo Sandbox');
+  }, 'Use demo account');
 
   const form = h('form', { class: 'card auth-card' },
     h('h1', { style: 'font-size:24px' }, 'Welcome back'),
@@ -149,18 +149,18 @@ function renderAuth(main, initialMode) {
     nameField,
     h('label', { class: 'field' }, h('span', {}, 'Password'), password, strengthMeter),
     mfaField,
-    submit, demo,
+    submit, state.meta?.features?.demo_account ? demo : null,
     h('div', { class: 'row mt16', style: 'justify-content:space-between;align-items:center' },
       switchBtn,
       h('a', { class: 'muted', href: '/app/forgot', 'data-link': '', style: 'font-size:13px' }, 'Forgot password?')));
 
   function setMode(nextMode) {
     mode = nextMode;
-    form.querySelector('h1').textContent = mode === 'login' ? 'Welcome back' : 'Create your studio';
+    form.querySelector('h1').textContent = mode === 'login' ? 'Sign in' : 'Create a local account';
     form.querySelector('p').textContent = mode === 'login'
       ? 'Sign in to generate 3D models from photos.'
-      : 'New accounts start with 50 free generation credits.';
-    submit.textContent = mode === 'login' ? 'Sign in' : 'Create account & Claim 50 Credits';
+      : 'Use an account to save your models and compare runs.';
+    submit.textContent = mode === 'login' ? 'Sign in' : 'Create account';
     nameField.classList.toggle('hidden', mode === 'login');
     strengthMeter.classList.toggle('hidden', mode === 'login' || !password.value);
     switchBtn.textContent = mode === 'login' ? 'Create an account' : 'Sign in instead';
@@ -935,7 +935,7 @@ route('/app/benchmark', async (_p, main) => {
       h('th', {}, 'Method'),
       h('th', { class: 'num' }, 'Chamfer ↓'),
       h('th', { class: 'num' }, 'F-score ↑'),
-      h('th', { class: 'num' }, 'IoU ↑'),
+      h('th', { class: 'num' }, 'Surface IoU ↑'),
       h('th', { class: 'num' }, 'NC ↑'),
       h('th', { class: 'num' }, 'SSIM ↑'),
       h('th', { class: 'num' }, 'Silhouette IoU'),
@@ -982,7 +982,7 @@ route('/app/benchmark', async (_p, main) => {
           + `seed ${(data.dataset || {}).seed} · checksum ${(data.dataset || {}).checksum}`)),
       h('a', { class: 'btn', href: '/api/v1/results/summary', target: '_blank' }, 'Raw JSON')),
     h('div', { class: 'grid c4 mt16' },
-      statCard('Chamfer (CD)', num(cdBest, 4), 'lower is better · ICT-normalised'),
+      statCard('Chamfer (CD)', num(cdBest, 4), 'lower is better · normalized coordinates'),
       statCard('F-score @ 1%', num(fsBest, 3), 'harmonic mean of precision/recall'),
       statCard('Best SSIM', num(ssimBest, 3), 'reference-view render'),
       statCard('Winner', methods.find((m) => Number(m.chamfer_mean) === cdBest)?.method === 'proposed' ? '3DFUN AI' : 'baseline', 'by Chamfer distance')),
@@ -993,14 +993,14 @@ route('/app/benchmark', async (_p, main) => {
       h('div', { class: 'card' }, h('div', { class: 'section-title' }, h('h3', { class: 'mt0 mb0' }, 'Chamfer distance')), chart('chamfer_mean', true)),
       h('div', { class: 'card' }, h('div', { class: 'section-title' }, h('h3', { class: 'mt0 mb0' }, 'F-score @ 1%')), chart('f_score_mean', false))),
     h('div', { class: 'grid c2 mt16' },
-      h('div', { class: 'card' }, h('div', { class: 'section-title' }, h('h3', { class: 'mt0 mb0' }, 'Volumetric IoU')), chart('iou_mean', false)),
+      h('div', { class: 'card' }, h('div', { class: 'section-title' }, h('h3', { class: 'mt0 mb0' }, 'Surface IoU')), chart('iou_mean', false)),
       h('div', { class: 'card' }, h('div', { class: 'section-title' }, h('h3', { class: 'mt0 mb0' }, 'Render SSIM')), chart('ssim_mean', false))),
     ablation.length ? h('div', { class: 'card mt16' },
       h('div', { class: 'section-title' }, h('h3', { class: 'mt0 mb0' }, 'Ablation'),
         h('span', { class: 'hint' }, 'same engine, one setting changed at a time')),
       scrollTable('Ablation results',
         h('thead', {}, h('tr', {}, h('th', {}, 'Configuration'), h('th', { class: 'num' }, 'Chamfer ↓'),
-          h('th', { class: 'num' }, 'F-score ↑'), h('th', { class: 'num' }, 'IoU ↑'),
+          h('th', { class: 'num' }, 'F-score ↑'), h('th', { class: 'num' }, 'Surface IoU ↑'),
           h('th', { class: 'num' }, 'SSIM ↑'), h('th', { class: 'num' }, 'Time (s)'))),
         h('tbody', {}, ablation))) : null,
     stages.length ? h('div', { class: 'card mt16' },

@@ -22,7 +22,7 @@ See [`AUTHORS.md`](AUTHORS.md) for the per-area contribution table.
 
 ## Course submission
 
-The Group 17 archive has the four-page IEEE report, captioned demo, source, sample data and recorded results. Follow the [packaging and verification guide](docs/how-to/academic-packaging-and-verification.md) to build it. The [earlier mesh benchmark paper](paper/main.pdf) and [unsigned originality form](docs/CERTIFICATE_OF_ORIGINALITY.md) are also available.
+The Group 17 archive has the four-page IEEE report, captioned demo, source, sample data and recorded results. Follow the [packaging and verification guide](docs/how-to/academic-packaging-and-verification.md) to build it. The [earlier mesh benchmark paper](paper/main.pdf) covers the initial mesh experiments.
 
 ## What this repository is
 
@@ -57,10 +57,10 @@ de-lighting plus estimated AO / roughness / metallic / normal maps).
 From the project folder, install Python dependencies, verify and download the model weights, and start the local app:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\run.ps1 -Install -Seed
+powershell -ExecutionPolicy Bypass -File .\run.ps1 -Install
 ```
 
-The launcher uses Python 3.12. It can install Python through `uv` if available. Otherwise install Python 3.12 with the Windows `py` launcher first. `-Install` installs dependencies and verifies all five ONNX files (about 535 MB total). Use `-InstallModels` to download or repair just the weights. Open [the local lab](http://127.0.0.1:8010/) to rotate or download a built-in example. Open the Studio and sign in with **Use demo account**, or register your own account. Select a reference photo and an engine, then click **Generate model**. Stop the server with Ctrl+C. For later starts, run `powershell -ExecutionPolicy Bypass -File .\run.ps1`. Use `-Port` to change the local port.
+The launcher uses Python 3.12. It can install Python through `uv` if available. Otherwise install Python 3.12 with the Windows `py` launcher first. `-Install` installs dependencies and verifies the two base ONNX weights. Add `-InstallModels` for MiDaS and TripoSR, or use `-InstallTripoSR` for TripoSR alone. Open [the local lab](http://127.0.0.1:8010/) to rotate or download a built-in example. In Studio, sign in with **Use demo account** or use a local account. Select a reference photo and click **Generate model**. Stop the server with Ctrl+C. Use `-Port` to change the local port.
 
 ### GPU inference
 
@@ -101,10 +101,10 @@ python3 -m venv .venv && . .venv/bin/activate
 pip install -r requirements.txt
 
 # 2. install the verified weights and start the product
-python scripts/fetch_models.py --all
-./run.sh --seed
-#    → http://localhost:8000        landing page
-#    → http://localhost:8000/app/   web studio
+python scripts/fetch_models.py
+bash run.sh
+#    → http://127.0.0.1:8010        landing page
+#    → http://127.0.0.1:8010/app/   web studio
 #    → http://localhost:8000/docs   OpenAPI
 ```
 
@@ -219,8 +219,8 @@ Full list with measurements: `paper/` §Limitations, `docs/report.md` §7 and
 
 ## Documentation
 
-- [Local project handbook](docs/handbook/README.md) and [documentation index](docs/index.md).
-- [Architecture](docs/ARCHITECTURE.md), [REST API](docs/reference/api-spec.md), and [troubleshooting](docs/TROUBLESHOOTING.md).
+- [Local project handbook](docs/handbook/README.md).
+- [Architecture](docs/handbook/architecture.md), [REST API](docs/reference/api-spec.md), and [troubleshooting](docs/handbook/operations.md).
 - [Recorded benchmark protocol and results](docs/BENCHMARK.md) and [TinyDepth training](training/README.md).
 - [Course report source](submission/report.tex) and [archive build instructions](docs/how-to/academic-packaging-and-verification.md).
 

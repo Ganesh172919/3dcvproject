@@ -20,9 +20,9 @@ where $\alpha_i$ is evaluated from the 2D projected Gaussian footprint.
 ---
 
 ## 2. Laboratory Implementation: Mini Gaussian Splatter
-In `train_single_view_splat.py`, students optimize 3D Gaussians from a reference image using:
+In `train_single_view_splat.py`, the lab projects 3D centers with circular footprints. Depth sorts the footprints for alpha compositing. The input is one image, which leaves the fitted depths ambiguous.
 - **Learnable Parameters:** Centers $\mu \in \mathbb{R}^{N \times 3}$, Log-scales $\mathbf{s} \in \mathbb{R}^{N \times 3}$, Logit-opacities $\alpha \in \mathbb{R}^{N \times 1}$, Colors $\mathbf{c} \in \mathbb{R}^{N \times 3}$
-- **Objective:** Mean Squared Error (MSE) + Structural Similarity (SSIM) image reconstruction loss
+- **Objective:** Mean absolute image error (L1). PSNR is computed from the mean squared image error.
 
 ---
 
@@ -32,6 +32,8 @@ python -m training.student_labs.lab3_3dgs_mini.train_single_view_splat --num-poi
 ```
 
 Outputs:
-- `gaussians.ply`: Exported 3D Gaussian point cloud with positions, colors, and scales
-- `rendered_reconstruction.png`: 2D rendered splat image
+- `gaussian_splats.ply`: Fitted point positions and colors
+- `splat_render.png`: Final image from the fitting camera
 - `lab3_results.json`: Optimization loss history and PSNR metrics
+
+Use `--image ../sample_data/sneaker.png` from the archive's `code/` directory to fit the included photo. The default target is a generated icon.

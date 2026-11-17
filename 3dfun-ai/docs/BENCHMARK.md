@@ -22,21 +22,6 @@ Geometry columns use the synthetic split. Closure and wall time include all 25 s
 - `results/summary/ablation_table.csv`, `results/summary/thickness_sweep.csv` and `results/summary/failures.csv`.
 - `results/environment.json`. This cohort predates the TripoSR, MiDaS and TinyDepth experiments.
 
-## Real-World Startups & Commercial Platform Comparison
-
-| Platform / Startup | Core Representation | Local / Offline | 3D Watertight Solid | Average Latency | Educational Transparency | Free Trial Credits |
-|---|---|---|---|---|---|---|
-| **3DFUN AI (This Platform)** | **Silhouette SDF + Marching Cubes** | **100% Local (ONNX)** | **Yes (96% Closed)** | **12 – 45 s** | **Open 8 Tensors + PyTorch Labs** | **50 Free Credits + 10 Daily** |
-| **Tripo3D (TripoSR)** | Orthogonal Triplanes ($T_{xy}, T_{xz}, T_{yz}$) | Hybrid (TripoSR open) | Yes | 8 – 15 s | Partial (Weight release) | Daily quota |
-| **Meshy.ai** | Tetrahedral SDF (DMTet) + SDS | Cloud API Only | Yes | 45 – 90 s | Proprietary Black Box | Paid packs |
-| **Luma AI Genie** | 3D Gaussian Splats $(\mu, \Sigma, \alpha, c)$ | Cloud API Only | No (Radiance Field) | 20 – 60 s | Closed Proprietary | Limited trial |
-| **CSM.ai (Common Sense Machines)** | Neural Inverse CAD / B-Rep + Eikonal SDF | Cloud API Only | Yes | 60 – 180 s | Closed Enterprise API | Free trial tokens |
-| **Tencent Hunyuan3D 2.0** | Multi-View DiT + Sparse Voxel Triplane | 16 GB+ VRAM GPU | Yes | 25 – 50 s | Open Foundation Model Weights | Open commercial license |
-| **Kaedim 3D** | Subdivision Quad Mesh | Cloud B2B SaaS | Yes | 15 – 30 min | Closed Enterprise | Paid ($150+/mo) |
-| **Rodin Gen-2 (Deemos)** | Micro-Geometry Voxel Latent Diffusion | Cloud Supercomputing | Yes | 60 – 180 s | Closed Proprietary | Paid credit packs |
-| **Spline 3D** | Parametric WebGL + AI | Browser / Cloud | Yes | Interactive | Partial (Editor UI) | Free tier w/ watermark |
-| **Stable Fast 3D (SF3D)** | Triplane Transformer + Material MLP | High VRAM GPU | Yes | 0.5 – 2 s | Open weights (Stability AI) | Open source |
-
 ## Run the benchmark
 
 Use a separate working copy if you wish to preserve the recorded tables.

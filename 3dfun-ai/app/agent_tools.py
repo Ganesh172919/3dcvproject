@@ -9,9 +9,7 @@ Equips the AI Co-Pilot with real backend execution capabilities:
 """
 from __future__ import annotations
 
-import json
 import logging
-from pathlib import Path
 from typing import Any
 
 import cv2
@@ -22,7 +20,7 @@ from sqlalchemy.orm import Session
 from . import credits, events, providers, storage
 from .config import ROOT, settings
 from .db import (Asset, AssetVersion, AuditLog, Generation, GenerationStatus,
-                 Upload, User, new_id, utcnow)
+                 Upload, User)
 from .jobs import runner
 from .schemas import ApiError
 
@@ -274,7 +272,6 @@ def tool_repair_mesh(
 
     orig_v = len(mesh.vertices)
     orig_f = len(mesh.faces)
-    was_watertight = bool(mesh.is_watertight)
 
     executed_ops = []
     if "close_holes" in actions or "fill_holes" in actions:

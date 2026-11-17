@@ -14,9 +14,11 @@ From `code/`, the command below prints the stages without creating files:
 python -m training.pipeline --device cpu --ablation
 ```
 
-The plan renders RGB, depth, masks and camera metadata and splits by mesh identity. It selects a checkpoint on the validation split and exports it to ONNX. The point-cloud evaluator uses matched foreground pixels and camera intrinsics to compare predicted depth and a constant baseline against the reference depth. It records Chamfer distance and F-score per view and aggregates across held-out meshes. With `--ablation`, it uses the same split and metric settings for SILog alone.
+The plan renders RGB, depth, masks and camera metadata and saves a mesh-level split in `split.json`. It selects a checkpoint on validation MAE and exports it to ONNX. The point-cloud evaluator uses matched foreground pixels and camera intrinsics to compare the predicted and reference surfaces. It records Chamfer distance and F-score per view and aggregates across held-out meshes. With `--ablation`, the two runs share a split and metric settings. `comparison.json` records the paired scores and differences.
 
-Use `--mesh-dir` with at least three different OBJ or GLB meshes to plan a custom dataset. Use `--tau` and `--max-points` to set the 3D F-score threshold and point sample cap. The `training/README.md` explains optional dependencies and the explicit execution flag. The shipped box and sneaker are for the reconstruction demo.
+Use `--mesh-dir` with at least three different OBJ or GLB meshes, or `--data-dir` to reuse the output of the project renderer. Supply `--mesh-split` with a JSON map of `train`, `val`, and `test` mesh stems to keep variants together. See `training/README.md` for an example, the environment setup, and the explicit execution flag. The shipped box and sneaker are for the reconstruction demo.
+
+The website keeps the three small training lessons on the Student Labs page. Install the PyTorch dependencies from the training README before starting those lessons. The metrics lab runs on the base CPU install. Its seed and sample count make the noisy-sphere comparison repeatable. The evaluator also accepts actual meshes and point clouds on the command line. Compare geometry in a common coordinate frame when using your own files.
 
 ## Review an extracted package
 

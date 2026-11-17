@@ -50,6 +50,9 @@ CSP = ("default-src 'self'; "
 
 
 def create_app() -> FastAPI:
+    problems = settings.validate_production()
+    if problems:
+        raise RuntimeError("Production configuration: " + ". ".join(problems))
     app = FastAPI(
         title="3DFUN AI API",
         version=settings.version,
@@ -60,10 +63,6 @@ def create_app() -> FastAPI:
         openapi_url="/api/v1/openapi.json",
     )
     init_db()
-    problems = settings.validate_production()
-    if problems:
-        for p in problems:
-            log.warning("production configuration problem: %s", p)
 
     @app.middleware("http")
     async def observability_and_security(request: Request, call_next):
@@ -104,9 +103,10 @@ def create_app() -> FastAPI:
                 "Strict-Transport-Security", "max-age=31536000; includeSubDomains")
         # The SPA authenticates with a bearer token, so reflected CORS without
         # credentials is safe; cookie flows remain protected by the CSRF token.
-        if origin:
-            trusted = {settings.app_url.rstrip("/"), "http://localhost:8000",
-                       "http://127.0.0.1:8000"}
+        trusted = {settings.app_url.rstrip("/")}
+        if not settings.is_production:
+            trusted.update(("http://localhost:8000", "http://127.0.0.1:8000"))
+        if origin and (not settings.is_production or origin.rstrip("/") in trusted):
             response.headers.setdefault("Access-Control-Allow-Origin", origin)
             response.headers.setdefault("Vary", "Origin")
             if origin.rstrip("/") in trusted:
@@ -207,14 +207,14 @@ def create_app() -> FastAPI:
 
     @app.get("/report.pdf", include_in_schema=False)
     @app.get("/docs/report.pdf", include_in_schema=False)
-    def report_pdf():
+    def report_pdf(download: bool = False):
         candidates = [course_outputs / "report.pdf"]
         if submitted is not None:
             candidates.insert(0, submitted / "report.pdf")
         for pdf_path in candidates:
             if pdf_path.is_file():
-                return FileResponse(pdf_path, media_type="application/pdf", filename="3DFUN_AI_Project_Report.pdf",
-                                    content_disposition_type="inline")
+                return FileResponse(pdf_path, media_type="application/pdf", filename="report.pdf",
+                                    content_disposition_type="attachment" if download else "inline")
         return JSONResponse(status_code=404, content={"error": "Project Report PDF not found"})
 
     @app.get("/demo.mp4", include_in_schema=False)

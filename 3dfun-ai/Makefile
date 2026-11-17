@@ -2,7 +2,7 @@
 
 PYTHON ?= python3
 QUICK  ?= 0
-PORT   ?= 8000
+PORT   ?= 8010
 TECTONIC ?= tectonic
 
 .PHONY: help install install-dev models serve seed demo test lint benchmark figures report package verify clean
@@ -44,9 +44,10 @@ benchmark:       ## full benchmark: 25 images x 3 methods x 3 repetitions
 figures:         ## build legacy benchmark plots from locally recorded results
 	$(PYTHON) scripts/main.py
 
-report:          ## rebuild the four-page course report with Tectonic
+report:          ## rebuild the IEEE report and browser preview
 	mkdir -p out/course17
 	cd submission && $(TECTONIC) -o ../out/course17 report.tex
+	$(PYTHON) -m submission.report_preview
 
 package: report  ## rebuild the demo and assemble the course ZIP
 	$(PYTHON) -m submission.demo

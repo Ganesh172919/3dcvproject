@@ -68,13 +68,20 @@ def _ledger(db: Session, wallet: CreditWallet, user_id: str, reason: CreditReaso
 
 
 def grant(db: Session, user_id: str, amount: int, reason: CreditReason = CreditReason.SIGNUP_GRANT,
-          idempotency_key: str | None = None, meta: dict[str, Any] | None = None) -> CreditWallet:
+          idempotency_key: str | None = None, meta: dict[str, Any] | None = None,
+          *, commit: bool = True) -> CreditWallet:
     wallet = _locked_wallet(db, user_id)
+    if idempotency_key and db.scalar(select(CreditTransaction.id).where(
+            CreditTransaction.idempotency_key == idempotency_key)) is not None:
+        return wallet
+    if reason == CreditReason.STUDENT_LAB and amount < 0 and -amount > available(wallet.balance, wallet.reserved):
+        raise ApiError("INSUFFICIENT_CREDITS", "There are not enough credits for this action.", status=402)
     wallet.balance += amount
     wallet.lifetime_granted += max(amount, 0)
     _ledger(db, wallet, user_id, reason, amount, idempotency_key=idempotency_key, meta=meta)
-    db.commit()
-    db.refresh(wallet)
+    if commit:
+        db.commit()
+        db.refresh(wallet)
     return wallet
 
 

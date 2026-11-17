@@ -188,11 +188,22 @@ const preset = $('#training-preset');
 const ablation = $('#training-ablation');
 const command = $('#training-command');
 const copyStatus = $('#training-status');
+const trainingHint = $('#training-hint');
+const trainingPresets = {
+  reference: ['', ''],
+  quick: [' --views 3 --size 64 --epochs 2 --output-dir out/tinydepth-quick',
+    'Uses the built-in shapes with fewer views and epochs.'],
+  custom: [' --mesh-dir meshes --output-dir out/custom-depth',
+    'Put at least three distinct OBJ or GLB meshes in meshes/.'],
+  cached: [' --data-dir out/training_renders --output-dir out/reused-depth',
+    'Use the folder that already contains your RGB, depth, masks and camera records.'],
+};
 function showTrainingCommand() {
-  const quick = preset.value === 'quick';
+  const [options, hint] = trainingPresets[preset.value];
   command.textContent = `python -m training.pipeline --device ${device.value}`
-    + (quick ? ' --views 3 --size 64 --epochs 2 --output-dir out/tinydepth-quick' : '')
+    + options
     + (ablation.checked ? ' --ablation' : '');
+  trainingHint.textContent = hint;
   copyStatus.textContent = '';
 }
 for (const input of [device, preset, ablation]) input.addEventListener('change', showTrainingCommand);

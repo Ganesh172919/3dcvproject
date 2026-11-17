@@ -3,10 +3,12 @@ from __future__ import annotations
 
 import argparse
 import csv
+from hashlib import sha256
 from io import BytesIO, StringIO
 import json
 import math
 from pathlib import Path, PurePosixPath
+import re
 import subprocess
 from tempfile import TemporaryDirectory
 from zipfile import BadZipFile, ZipFile
@@ -15,6 +17,12 @@ from imageio_ffmpeg import get_ffmpeg_exe
 from pypdf import PdfReader
 
 from .package import ARCHIVE, EVIDENCE_FILES, MAX_ARCHIVE_BYTES
+
+REPORT_SECTIONS = (
+    "i. introduction", "ii. problem statement", "iii. literature review", "iv. objectives",
+    "v. methodology", "vi. results and discussion", "vii. conclusion", "references", "author contributions",
+)
+GROUP_IDS = ("23BDS024", "23BDS033", "23BDS011", "23BCS098", "23BDS075")
 
 
 def require(condition: bool, message: str) -> None:
@@ -45,16 +53,36 @@ def verify_archive(path: Path) -> None:
             "sample_data/box.png", "sample_data/box.obj", "sample_data/sneaker.png",
             "sample_data/manifest.json", "code/app/main.py", "code/engine/run_recon.py",
             "code/training/pipeline.py", "code/training/evaluate_clouds.py",
+            "code/training/dataset_gen/split_dataset.py", "code/training/compare_cloud_runs.py",
             "code/web/public/index.html", "code/web/app/index.html",
+            *{f"code/docs/handbook/{name}.md"
+              for name in ("README", "architecture", "local-setup", "operations", "reproducibility")},
             *{f"code/results/course17/{name}" for name in EVIDENCE_FILES},
         }
         require(expected <= {name.removeprefix(f"{ARCHIVE}/") for name in names}, "Missing required files.")
 
-        reader = PdfReader(BytesIO(read("report.pdf")))
-        require(len(reader.pages) == 4, "The course report must have four pages.")
+        pdf = read("report.pdf")
+        reader = PdfReader(BytesIO(pdf))
+        require(4 <= len(reader.pages) <= 6, "The course report must have four to six pages.")
+        preview = "code/web/public/report-preview/"
+        preview_index = read(preview + "index.html").decode()
+        require(sha256(pdf).hexdigest() in preview_index, "The browser preview is out of date.")
+        for page in range(1, len(reader.pages) + 1):
+            name = f"page-{page}.webp"
+            require(name in preview_index and read(preview + name)[8:12] == b"WEBP",
+                    f"Missing report preview page: {page}.")
         report = " ".join(page.extract_text() for page in reader.pages)
-        require("Group 17" in report and "author contributions" in report.casefold(),
-                "Missing report attribution.")
+        first_page = reader.pages[0].extract_text()
+        require("Group 17" in first_page and all(roll in first_page for roll in GROUP_IDS),
+                "Missing Group 17 attribution in the author block.")
+        # PDF extraction can put a space between the initial and the rest of a small-cap heading.
+        normalized = re.sub(r"\s+", "", report.casefold())
+        cursor = 0
+        for heading in REPORT_SECTIONS:
+            search = heading.replace(" ", "")
+            position = normalized.find(search, cursor)
+            require(position >= 0, f"Missing or out-of-order report section: {heading}.")
+            cursor = position + len(search)
 
         mesh_runs = list(csv.DictReader(StringIO(read("code/results/raw/runs.csv").decode())))
         cohort = json.loads(read("code/results/dataset_metadata.json"))["scenes"]
@@ -79,8 +107,8 @@ def verify_archive(path: Path) -> None:
             )
             timestamps = [int(line.partition("=")[2]) for line in result.stdout.splitlines()
                           if line.startswith("out_time_us=") and not line.endswith("=N/A")]
-            require(timestamps and abs(timestamps[-1] / 1_000_000 - 84) < .25,
-                    "The decoded course demo duration differs from 84 seconds.")
+            require(timestamps and 60 <= timestamps[-1] / 1_000_000 <= 120,
+                    "The decoded course demo must run for one to two minutes.")
 
 
 def main() -> None:
@@ -91,7 +119,7 @@ def main() -> None:
         verify_archive(args.archive)
     except (OSError, ValueError, KeyError, BadZipFile, subprocess.CalledProcessError) as exc:
         parser.exit(1, f"Submission verification failed: {exc}\n")
-    print("Verified archive, four-page report, benchmark rows, point-cloud scores, and 84-second demo.")
+    print("Verified archive, report sections, benchmark rows, point-cloud scores, and demo playback length.")
 
 
 if __name__ == "__main__":

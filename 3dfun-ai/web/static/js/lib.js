@@ -207,7 +207,9 @@ export async function renderRoute() {
         console.error(err);
         renderError(main, err);
       }
-      window.scrollTo({ top: 0 });
+      const anchor = document.getElementById(location.hash.slice(1));
+      if (anchor) anchor.scrollIntoView({ block: 'start' });
+      else window.scrollTo({ top: 0 });
       return;
     }
   }

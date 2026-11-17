@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   app:
     build:
@@ -9,18 +7,20 @@ services:
     container_name: 3dfun_ai_studio
     restart: unless-stopped
     ports:
-      - "8010:8010"
+      - "127.0.0.1:${PORT:-8010}:8010"
     environment:
       - HOST=0.0.0.0
       - PORT=8010
       - RECON_DEVICE=cpu
       - CREDITS_SIGNUP_GRANT=50
-      - DATABASE_URL=sqlite:///./out/3dfun.db
+      - DATABASE_URL=sqlite:///./data/3dfun.db
+      - APP_URL=http://127.0.0.1:${PORT:-8010}
     volumes:
       - ./out:/app/out
       - ./data:/app/data
+      - ./engine/models:/app/engine/models:ro
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8010/api/v1/system/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8010/api/v1/health/ready"]
       interval: 30s
       timeout: 10s
       retries: 3

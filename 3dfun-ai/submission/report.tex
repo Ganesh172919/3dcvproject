@@ -7,11 +7,11 @@
 \author{\IEEEauthorblockN{J Ganesh$^{1}$, M Jagadeshwar$^{2}$, B Varshith$^{3}$, Pranav Kashyap$^{4}$, C Sai Aravind$^{5}$}
 \IEEEauthorblockA{Group 17, 3D Computer Vision, Indian Institute of Information Technology Dharwad\\
 $^{1}$23BDS024, $^{2}$23BDS033, $^{3}$23BDS011, $^{4}$23BCS098, $^{5}$23BDS075\\
-Project contact: \texttt{23bds024@iiitdwd.ac.in}}}
+Correspondence: J Ganesh, \texttt{23bds024@iiitdwd.ac.in}}}
 \begin{document}
 \maketitle
 \begin{abstract}
-We built a local application that turns an object photograph into a textured triangle mesh. A foreground mask and pretrained relative depth drive a bounded thickness field; the zero surface of a signed distance grid provides the mesh. On 13 synthetic reference objects, the pipeline obtained mean Chamfer distance 0.0639 and an F-score of 0.148 at a 1\% threshold. It produced closed meshes in 96\% of runs across 25 scenes. We also built TinyDepth, a 24,369-parameter depth model trained on generated RGB and depth pairs. Its mean absolute error on an unseen cylinder was 0.124 normalized units, compared with 0.159 for a constant predictor. We report the two experiments separately and show where single-view completion fails.
+We built a local application that turns an object photograph into a textured triangle mesh. The outline and a pretrained depth estimate determine the thickness of a volume. We extract triangles from the zero level of its signed distance grid. On 13 synthetic reference objects, our meshes had mean Chamfer distance 0.0639 and F-score 0.148 at a 1\% threshold. Across all 25 scenes, 96\% of our runs produced closed meshes. In a separate experiment, we trained TinyDepth, a 24,369-parameter model, on rendered RGB and depth pairs. Its mean absolute error on a held-out cylinder was 0.124 normalized units, compared with 0.159 for a constant predictor. The ring example shows a limitation of the mesh method. The inferred volume fills an opening that should stay empty.
 \end{abstract}
 \begin{IEEEkeywords}
 single-view reconstruction, monocular depth, signed distance field, synthetic training, mesh evaluation
@@ -45,7 +45,7 @@ Marching Cubes \cite{cubes} converts a scalar grid to triangles. Its output depe
 \end{itemize}
 
 \section{Methodology}
-\subsection{Production reconstruction}
+\subsection{Reconstruction from one image}
 The input is oriented, cropped and composited on a neutral square canvas. The foreground comes from an alpha channel or U$^2$-NetP followed by mask cleanup. We scale the foreground inverse-depth values using the second and 98th percentiles, clamp to $[0,1]$, smooth the result, and optionally apply a weak left-to-right symmetry prior. Let $d(p)$ denote the resulting closeness at pixel $p\in\Omega$, where $\Omega$ is the foreground silhouette. The width $W$ of the projected object sets a thickness limit $t_{\max}=\max(t_{\min},kW)$:
 \begin{equation}
 t(p)=t_{\min}+(t_{\max}-t_{\min})
@@ -58,7 +58,7 @@ The signed distance field is the outside distance transform minus the inside tra
 \subsection{Synthetic data and network}
 We generate two boxes, two cylinders, a cone, a sphere, an ellipsoid and a capsule. We center each mesh and divide coordinates by its largest bounding-box extent. We render each sample at eight camera poses at $96\!\times\!96$ pixels, with a focal length of $1.2$ times the image width and a depth translation of 1.8 units. Lambertian shading gives shape cues in RGB. We interpolate perspective depth from reciprocal vertex $Z$ and retain the closest fragment at a pixel. The renderer writes RGB, depth, masks, normals and camera parameters. A 16-bit PNG stores normalized depth multiplied by 1000, with zero reserved for background.
 
-All views of a mesh stay in one split: 48 training views from six meshes, eight capsule validation views and eight cylinder test views. The training meshes include a wider cylinder. The split tests transfer across instances of a familiar family. No claim is made about transfer to real images or an unseen family.
+We kept all views of a mesh in one split. We used 48 training views from six meshes, eight capsule views for validation and eight cylinder views for testing. The training set included a wider cylinder, so this split tested a different instance of a familiar shape family. The packaged trainer can reuse rendered datasets, record the split and keep a chosen shape family together through an explicit mesh assignment. The results below come from the recorded CPU experiment.
 
 TinyDepth computes 16 full-resolution feature channels. Three convolutions, including one dilated layer, form a stride-two context branch. After bilinear upsampling, context is concatenated with the original features. Two convolutions and a softplus return positive depth. For a valid foreground pixel $i$ define $r_i=\log(\hat z_i)-\log(z_i)$. The objective is
 \begin{equation}
@@ -75,7 +75,7 @@ For TinyDepth, we average per-image foreground MAE, RMSE, absolute relative erro
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=.78\textwidth]{output_comparison.png}
-\caption{Actual renders. The last column shows a second view for the sneaker and duck and the MiDaS Small output for the ring. Both ring reconstructions lose the through-opening.}
+\caption{Reconstructed meshes. The last column shows a second view for the sneaker and duck and the MiDaS Small result \cite{midas} for the ring. Both ring reconstructions fill the opening.}
 \label{fig:outputs}
 \end{figure*}
 
@@ -149,13 +149,13 @@ SILog + gradients & .1239 & .1411 & .0931 & .989\\
 
 Given predicted $Z$ and known intrinsics, we back-project a valid pixel center $(u,v)$ to $X=(u-c_x)Z/f_x$ and $Y=(c_y-v)Z/f_y$. The inference script writes the visible colored cloud to PLY so students can see how depth errors become errors in 3D. Unknown intrinsics, background segmentation and occluded surfaces fall outside that experiment. The checkpoint is separate from the pretrained estimator used by Studio.
 
-We computed symmetric unsquared Chamfer distance and F-score at a distance of 0.01 normalized units in the camera frame. Each comparison used the same sample of up to 4,096 valid foreground pixels per view. Averaged over eight cylinder views, SILog with gradients achieved Chamfer 0.0980 and F-score 0.0456. SILog alone reached 0.0989 and 0.0424, and the constant predictor reached 0.1358 and 0.0211. The low F-scores reflect how rarely the clouds fall within the tight threshold. The archive includes the per-view measurements and the complete CPU training command.
+We computed symmetric unsquared Chamfer distance and F-score in the camera frame using the same sample of up to 4,096 foreground pixels per view. At a distance threshold of 0.01 normalized units, SILog with gradients achieved Chamfer 0.0980 and F-score 0.0456 across the eight cylinder views. SILog alone reached 0.0989 and 0.0424. The constant predictor reached 0.1358 and 0.0211. The low F-scores show that few points fell within the tight threshold. The archive includes the per-view measurements. The updated pipeline can compare both loss settings using identical held-out views and export the per-mesh differences.
 
 \balance
 \section{Conclusion}
 The local workflow exposes the stages of single-image mesh reconstruction and trains a small supervised depth model. In our benchmark, a depth-guided volume and constant thickness core improved geometric scores over the selected baselines. Mesh closure did not assure geometric accuracy. TinyDepth beat its constant baseline under controlled rendering conditions. A larger holdout, real depth data, and multi-view consistency checks would make the claims stronger. A representation of free space or a multi-view pipeline could address the closed ring and other thin-structure failures.
 
-\begin{thebibliography}{7}
+\begin{thebibliography}{8}
 \bibitem{eigen} D. Eigen, C. Puhrsch, and R. Fergus, \emph{Depth map prediction from a single image using a multi-scale deep network}, Proc. NeurIPS, 2014.
 \bibitem{depth} L. Yang, B. Kang, Z. Huang, Z. Zhao, X. Xu, J. Feng, and H. Zhao, \emph{Depth Anything V2}, Proc. NeurIPS, 2024.
 \bibitem{u2} X. Qin \emph{et al.}, \emph{U$^2$-Net: Going deeper with nested U-structure for salient object detection}, Pattern Recognit., vol. 106, Art. no. 107404, 2020.
@@ -163,8 +163,9 @@ The local workflow exposes the stages of single-image mesh reconstruction and tr
 \bibitem{cubes} W. E. Lorensen and H. E. Cline, \emph{Marching cubes: A high resolution 3D surface construction algorithm}, Proc. SIGGRAPH, 1987, pp. 163--169.
 \bibitem{taubin} G. Taubin, \emph{A signal processing approach to fair surface design}, Proc. SIGGRAPH, 1995, pp. 351--358.
 \bibitem{triposr} D. Tochilkin \emph{et al.}, \emph{TripoSR: Fast 3D object reconstruction from a single image}, arXiv:2403.02151, 2024.
+\bibitem{midas} R. Ranftl, K. Lasinger, D. Hafner, K. Schindler, and V. Koltun, \emph{Towards robust monocular depth estimation: Mixing datasets for zero-shot cross-dataset transfer}, arXiv:1907.01341, 2019.
 \end{thebibliography}
 \section*{Author Contributions}
-Based on the project contribution record, J Ganesh and M Jagadeshwar worked on the reconstruction engine, dataset and benchmark. B Varshith and Pranav Kashyap worked on the backend, authentication and generation lifecycle. C Sai Aravind and B Varshith worked on the Studio, 3D viewer and gallery. All five contributed to project materials and verification. AI coding assistance was used for upgraded scripts, the report draft and packaging.
+J Ganesh and M Jagadeshwar worked on the reconstruction engine, dataset and benchmark. B Varshith and Pranav Kashyap worked on the backend, authentication and generation jobs. C Sai Aravind and B Varshith worked on the Studio, 3D viewer and gallery. All five contributed to the report and submission materials. We used AI assistance to review the scripts, report and archive.
 \end{document}
 

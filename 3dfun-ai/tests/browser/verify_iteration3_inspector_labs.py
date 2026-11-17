@@ -2,8 +2,6 @@
 Student 3D Construction Visualizer (8 Stages) & Training Lab Modules.
 """
 import os
-import sys
-import time
 from playwright.sync_api import sync_playwright
 
 BASE_URL = "http://127.0.0.1:8010"

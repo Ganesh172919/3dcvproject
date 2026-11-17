@@ -3,8 +3,8 @@ from __future__ import annotations
 
 import argparse
 import json
-import random
 from pathlib import Path
+import sys
 
 import cv2
 import numpy as np
@@ -12,10 +12,11 @@ import torch
 from torch.nn import functional as F
 from torch.utils.data import DataLoader, Dataset
 
-if __package__:
-    from .model import TinyDepth, load_model
-else:
-    from model import TinyDepth, load_model
+if not __package__:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
+from training.dataset_gen.split_dataset import mesh_views, seeded_mesh_split, view_splits
+from training.fine_tune_depth.model import TinyDepth, load_model
 
 
 class DepthDataset(Dataset):
@@ -48,20 +49,17 @@ class DepthDataset(Dataset):
                 torch.from_numpy(valid[None]))
 
 
-def dataset_splits(folder, seed):
-    groups = {}
-    for path in sorted((folder / "rgb").glob("*.png")):
-        group, marker, view = path.stem.rpartition("_view_")
-        if not marker or not group or not view.isdecimal():
-            raise ValueError(f"{path.name}: expected SHAPE_view_NN.png")
-        groups.setdefault(group, []).append(path.name)
-    keys = sorted(groups)
-    if len(keys) < 3:
-        raise ValueError("Training needs at least three different mesh stems (train/validation/test).")
-    random.Random(seed).shuffle(keys)
-    n = max(1, len(keys) // 5)
-    return {split: [name for key in selected for name in groups[key]]
-            for split, selected in (("train", keys[2 * n:]), ("val", keys[n:2 * n]), ("test", keys[:n]))}
+def dataset_splits(folder, seed, split_file=None):
+    groups = mesh_views(folder)
+    if split_file is None:
+        return view_splits(groups, seeded_mesh_split(groups, seed))
+    record = json.loads(split_file.read_text(encoding="utf-8"))
+    if not isinstance(record, dict) or record.get("schema_version") != 1:
+        raise ValueError("Expected a version 1 dataset split.")
+    views = view_splits(groups, record.get("meshes"))
+    if record.get("views") != views:
+        raise ValueError("The saved split does not match the current dataset views.")
+    return views
 
 
 def loss_components(pred, truth, mask):
@@ -115,7 +113,7 @@ def run(args):
         metrics = evaluate(model, split_loader(args, state["splits"]["test"]), device)
         print(json.dumps({"test": metrics}, indent=2))
         return
-    splits = dataset_splits(args.data_dir, args.seed)
+    splits = dataset_splits(args.data_dir, args.seed, args.split_file)
     train, val, test = (split_loader(args, splits[k], training=(k == "train")) for k in ("train", "val", "test"))
     out = args.output_dir
     out.mkdir(parents=True, exist_ok=True)
@@ -132,6 +130,8 @@ def run(args):
             optimizer.zero_grad(set_to_none=True)
             a, b = loss_components(model(rgb), truth, mask)
             loss = a + args.grad_weight * b
+            if not loss.isfinite().item():
+                raise ValueError(f"Non-finite training loss in epoch {epoch}. Try a lower learning rate.")
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
             optimizer.step()
@@ -167,13 +167,14 @@ def main():
     parser.add_argument("--batch-size", type=int, default=4)
     parser.add_argument("--threads", type=int, default=2)
     parser.add_argument("--seed", type=int, default=17)
+    parser.add_argument("--split-file", type=Path, help="Frozen dataset split created by the experiment pipeline")
     parser.add_argument("--grad-weight", type=float, default=0.5)
     parser.add_argument("--device", choices=("auto", "cpu", "cuda"), default="auto")
     parser.add_argument("--evaluate", type=Path, help="Re-evaluate a saved checkpoint on its recorded test split")
     args = parser.parse_args()
     if (min(args.epochs, args.batch_size, args.threads) < 1 or not 16 <= args.size <= 512
             or not np.isfinite(args.lr) or args.lr <= 0
-            or not np.isfinite(args.grad_weight) or args.grad_weight < 0):
+            or not np.isfinite(args.grad_weight) or args.grad_weight < 0 or not 0 <= args.seed <= 2**32 - 1):
         parser.error("Require positive epochs, batch size, threads and learning rate, size 16-512, gradient weight >= 0.")
     try:
         run(args)

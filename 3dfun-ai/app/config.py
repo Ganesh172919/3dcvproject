@@ -5,6 +5,7 @@ import os
 import secrets
 from dataclasses import dataclass, field
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from dotenv import dotenv_values, load_dotenv
 
@@ -111,17 +112,31 @@ class Settings:
     def is_production(self) -> bool:
         return self.environment.lower() in {"production", "prod"}
 
+    @property
+    def demo_login_enabled(self) -> bool:
+        return self.environment.lower() in {"development", "test"}
+
     def validate_production(self) -> list[str]:
+        if not self.is_production:
+            return []
         problems = []
-        if self.is_production:
-            if "dev-only" in self.jwt_access_secret:
-                problems.append("JWT_ACCESS_SECRET must be set in production")
-            if "dev-only" in self.jwt_refresh_secret:
-                problems.append("JWT_REFRESH_SECRET must be set in production")
-            if not self.cookie_secure:
-                problems.append("COOKIE_SECURE must be true in production")
-            if self.storage_driver == "local" and self.environment == "production":
-                problems.append("local storage driver in production (S3-compatible expected)")
+        for name, secret in (("JWT_ACCESS_SECRET", self.jwt_access_secret),
+                             ("JWT_REFRESH_SECRET", self.jwt_refresh_secret)):
+            if len(secret.encode()) < 32 or "dev-only" in secret:
+                problems.append(f"{name} must be at least 32 bytes and replace the development default")
+        if self.jwt_access_secret == self.jwt_refresh_secret:
+            problems.append("JWT access and refresh secrets must be different")
+        if not self.cookie_secure:
+            problems.append("COOKIE_SECURE must be true in production")
+        try:
+            origin = urlsplit(self.app_url)
+            https_origin = (origin.scheme == "https" and origin.hostname and not origin.username
+                            and not origin.password and origin.path in {"", "/"}
+                            and not origin.query and not origin.fragment)
+        except ValueError:
+            https_origin = False
+        if not https_origin:
+            problems.append("APP_URL must be the HTTPS origin of the deployment")
         return problems
 
 

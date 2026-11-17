@@ -20,4 +20,4 @@ For the pixel center $(u,v)$ and known focal length $f$, the evaluator computes 
 
 Scores average the eight views of a single held-out mesh. Chamfer averages unsquared nearest-neighbor distances in both directions. F-score is the harmonic mean of the fractions falling within 0.01 normalized units in each direction. The training set includes a wider cylinder, so this experiment measures transfer to another instance of a familiar shape family.
 
-The recorded summaries, training histories, and per-view CSVs are in `results/course17/`. Run the [TinyDepth pipeline](../how-to/fine-tune-depth.md) to regenerate them. The mesh benchmark uses a different protocol and independently normalized full meshes.
+The recorded summaries, training histories, and per-view CSVs are in `results/course17/`. See the [experiment guide](../handbook/reproducibility.md) to plan a repeat run. The mesh benchmark uses a different protocol and independently normalized full meshes.

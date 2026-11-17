@@ -43,29 +43,38 @@ def compare(output):
 
 
 def depth_figure(experiment, output):
+    manifest_path = experiment / "experiment.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.is_file() else {}
     data = experiment / "dataset"
-    model = experiment / "model/tinydepth.onnx"
-    view = "cylinder_view_01.png"
-    rgb = plt.imread(data / "rgb" / view)[..., :3]
-    truth = cv2.imread(str(data / "depth" / view), cv2.IMREAD_UNCHANGED) * .001
-    valid = truth > 0
-    opts = ort.SessionOptions()
-    opts.intra_op_num_threads = 2
-    session = ort.InferenceSession(str(model), opts, providers=["CPUExecutionProvider"])
-    pred = session.run(None, {"rgb": rgb.transpose(2, 0, 1)[None].astype(np.float32)})[0][0, 0]
+    if not data.is_dir() and "dataset" in manifest:
+        data = Path(manifest["dataset"])
     hist = json.loads((experiment / "model/training_history.json").read_text(encoding="utf-8"))
     other = json.loads((experiment / "silog_only/training_history.json").read_text(encoding="utf-8"))
+    view = hist["splits"]["test"][0]
+    rgb = plt.imread(data / "rgb" / view)[..., :3]
+    truth = cv2.imread(str(data / "depth" / view), cv2.IMREAD_UNCHANGED) * .001
+    valid = (truth > 0) & (cv2.imread(str(data / "mask" / view), cv2.IMREAD_GRAYSCALE) > 0)
+    size = int(hist["size"])
+    network_rgb = cv2.resize(rgb, (size, size), interpolation=cv2.INTER_AREA)
+    opts = ort.SessionOptions()
+    opts.intra_op_num_threads = 2
+    session = ort.InferenceSession(str(experiment / "model/tinydepth.onnx"), opts, providers=["CPUExecutionProvider"])
+    pred = session.run(["depth"], {"rgb": network_rgb.transpose(2, 0, 1)[None].astype(np.float32)})[0][0, 0]
+    if pred.shape != truth.shape:
+        pred = cv2.resize(pred, truth.shape[::-1], interpolation=cv2.INTER_LINEAR)
+    low = min(truth[valid].min(), pred[valid].min())
+    high = max(truth[valid].max(), pred[valid].max())
     fig = plt.figure(figsize=(7.08, 2.4), layout="constrained")
     grid = fig.add_gridspec(1, 4, width_ratios=(1, 1, 1, 2))
     for i, (image, label) in enumerate(((rgb, "Held-out RGB"), (truth, "Reference depth"), (pred, "Predicted depth"))):
         a = fig.add_subplot(grid[0, i])
         plotted = a.imshow(np.ma.masked_where(~valid, image) if i else image,
-                           cmap="viridis", vmin=1.2 if i else None, vmax=1.9 if i else None)
+                           cmap="viridis", vmin=low if i else None, vmax=high if i else None)
         a.set_title(label, fontsize=8)
         a.axis("off")
         if i == 2:
             cb = fig.colorbar(plotted, ax=a, shrink=.53, location="bottom",
-                              pad=.03, ticks=[1.2, 1.9])
+                              pad=.03)
             cb.ax.tick_params(labelsize=7)
     a = fig.add_subplot(grid[0, 3])
     for row, label in ((hist, "SILog + gradients"), (other, "SILog only")):

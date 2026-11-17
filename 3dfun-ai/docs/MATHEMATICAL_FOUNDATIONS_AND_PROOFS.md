@@ -165,16 +165,16 @@ If the upper $3 \times 3$ block is invertible, $\bar{\mathbf{v}}$ is solved dire
 
 ---
 
-## 7. Comparative Computational Complexity: Startups vs. 3DFUN AI
+## 7. Comparative Computational Complexity: 3D CV Paradigms vs. 3DFUN AI Course Platform
 
-| Algorithmic Stage | 3DFUN AI (Our Core) | Tripo3D (LRM) | Meshy.ai (DMTet) | Luma Genie (3DGS) |
+| Algorithmic Stage | 3DFUN AI Course Platform | Feed-Forward LRM | Multi-View DMTet | 3D Gaussian Splatting (3DGS) |
 |---|---|---|---|---|
 | **Feature Extraction** | $O(HW \cdot C)$ (ViT/U²-Net) | $O(HW \cdot C + N_{\text{tokens}}^2)$ | $O(K \cdot N_{\text{diff\_steps}} \cdot HW)$ | $O(HW \cdot C)$ |
 | **Geometry Representation** | $O(N_{\text{vox}}^3)$ Voxel SDF Grid | $O(3 N_{\text{tri}}^2 C + N_{\text{queries}} \cdot \text{MLP})$ | $O(N_{\text{tet}} + N_{\text{steps}} \cdot \text{SDS})$ | $O(M_{\text{gauss}} \cdot D)$ |
 | **Isosurface Extraction** | $O(N_{\text{vox}}^3)$ Marching Cubes | $O(N_{\text{eval}}^3)$ Marching Cubes | $O(N_{\text{tet}})$ Differentiable Tetra | None (Splat) or Poisson $O(M \log M)$ |
 | **Smoothing & Cleanup** | $O(V + E)$ Taubin Smoothing | $O(V)$ Post-clean | $O(E \log E)$ QEM Quad Decimate | None / Point Prune |
-| **Hardware Requirement** | **Consumer CPU / DirectML** | Cloud H100 (80GB VRAM) | Cloud A100 (40GB VRAM) | Cloud RTX 4090 (24GB) |
-| **Unit Cloud Cost** | **\$0.00 (Local / Edge)** | **\$0.08 – \$0.15 / model** | **\$0.25 – \$0.50 / model** | **\$0.12 – \$0.25 / model** |
+| **Hardware Requirement** | **Consumer CPU / DirectML** | Server H100 (80GB VRAM) | Cluster A100 (40GB VRAM) | Dedicated CUDA (24GB) |
+| **Deployment Mode** | **Local Student Machine** | Cloud Server Node | Multi-GPU Farm | Dedicated GPU Rig |
 
 ---
 

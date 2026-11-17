@@ -1,8 +1,8 @@
 """Lab: 3D Metric Evaluation Suite (Chamfer Distance, EMD, F-Score)."""
-from .evaluate_metrics import (
+from ..lab4_evaluator.evaluate_metrics import (
     sample_mesh_surface,
     compute_chamfer_and_fscore,
-    approximate_earth_movers_distance,
+    compute_emd_approx as approximate_earth_movers_distance,
     run_evaluation,
 )
 

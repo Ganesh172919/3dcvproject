@@ -34,5 +34,7 @@ python -m training.student_labs.lab4_evaluator.evaluate_metrics `
 ```
 
 Outputs:
-- `lab4_results.json`: Chamfer distance, precision, recall, and F-score table
+- `lab4_results.json` with Chamfer distance, F-scores, approximate EMD, seed and sample counts
 - Prints formatted comparison metrics directly to terminal
+
+The prediction and reference must use a common coordinate frame. The evaluator samples mesh faces or reads vertices from a point cloud. Omit both input flags to try the seeded noisy-sphere demo. Use `--seed` to repeat the sampling.

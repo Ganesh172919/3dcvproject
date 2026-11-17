@@ -6,8 +6,8 @@
 <title>3DFUN AI · Image to 3D Lab</title>
 <meta name="description" content="A student-built 3D computer vision lab for reconstructing objects from a single photo. Compare three local models and learn how their meshes are made.">
 <meta name="theme-color" content="#ffffff">
-<link rel="stylesheet" href="/static/css/app.css?v=white_theme_2">
-<link rel="stylesheet" href="/static/css/landing.css?v=white_theme_2">
+<link rel="stylesheet" href="/static/css/app.css?v=course-review">
+<link rel="stylesheet" href="/static/css/landing.css?v=course-review">
 <link rel="icon" href="/static/lab-icon.svg">
 <script type="importmap">
 {"imports":{"three":"/static/vendor/three.module.js","three/addons/":"/static/vendor/"}}
@@ -19,23 +19,14 @@
   <a class="brand" href="/"><span class="brand-mark">3D</span> 3DFUN <span class="dim">AI</span></a>
   <button class="btn sm home-menu" id="home-menu" type="button" aria-controls="home-nav" aria-expanded="false">Menu</button>
   <nav class="nav" id="home-nav" aria-label="Primary">
-    <a href="#workflows">Workflows</a>
-    <a href="#prototypes">Prototypes</a>
-    <a href="#models">Models</a>
-    <a href="#comparison">Startups vs 3DFUN</a>
-    <a href="/app/showcase" style="color:var(--cyan);font-weight:600;">✦ Showcase & Hub</a>
-    <a href="#theory">Math Foundations</a>
-    <a href="/app/inspector">Inspector</a>
-    <a href="/app/labs">Student Labs</a>
-    <a href="/app/chat">AI Co-Pilot</a>
-    <a href="#pricing">Free Credits</a>
+    <a href="#examples">Examples</a>
+    <a href="#work">How it works</a>
+    <a href="#evaluation">Results</a>
+    <a href="#training">Training</a>
     <a href="/project-docs">Handbook</a>
-    <a href="#team">Team</a>
-    <a href="/app/benchmark">Benchmarks</a>
     <a class="home-mobile-signin" href="/app/login">Sign in</a>
   </nav>
   <div class="topbar-right">
-    <a class="btn sm" href="/app/register" style="color:var(--accent);font-weight:600;">◆ 50 Free Credits</a>
     <a class="btn sm" href="/app/login">Sign in</a>
     <a class="btn sm primary" href="/app/studio">Open studio</a>
   </div>
@@ -43,10 +34,9 @@
 <main class="lab-shell" id="content">
   <section class="lab-hero" aria-labelledby="lab-title">
     <div>
-      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.3);color:var(--accent);padding:6px 14px;border-radius:100px;font-size:12.5px;font-weight:600;margin-bottom:14px;"><span style="color:#06b6d4;">✦ NEW</span> Free Trial: 50 Free Credits on Sign Up · +10 Daily Streak Refill</div>
-      <p class="course-label">3D COMPUTER VISION · IIIT DHARWAD</p>
+      <p class="course-label">GROUP 17 · IIIT DHARWAD</p>
       <h1 id="lab-title">From one photo<br>to a <span>3D model.</span></h1>
-      <p class="lead">Reconstruct an object from a single image. Compare three models that run locally, then inspect and download the mesh.</p>
+      <p class="lead">We built a local 3D vision lab. Rotate a saved reconstruction or upload a photo to see how the outline and depth affect the mesh.</p>
       <button type="button" class="drop landing-drop" id="home-upload">
         <span class="upload-mark" aria-hidden="true">↑</span>
         <span><strong>Upload your image</strong><small>Drop a file here or browse</small></span>
@@ -54,7 +44,7 @@
       <input id="home-file" type="file" accept="image/png,image/jpeg,image/webp,image/bmp,.bmp" hidden>
       <p id="home-upload-status" class="form-error" role="status"></p>
       <p class="lab-upload-formats">PNG, JPEG, WebP or BMP <span id="home-upload-limit"></span></p>
-      <a class="lab-guide-link" href="#guide">How to run a comparison <span aria-hidden="true">↓</span></a>
+      <div class="row wrap gap12"><a class="lab-guide-link" href="/site/report-preview/">Read the report</a><a class="lab-guide-link" href="/app/showcase#demo">Watch the demo</a></div>
     </div>
     <section class="lab-demo" aria-label="Interactive examples" id="examples">
       <header class="lab-demo-head">
@@ -80,55 +70,6 @@
         <a class="text-link" id="example-source" href="https://github.com/VAST-AI-Research/TripoSR/tree/107cefdc244c39106fa830359024f6a2f1c78871/examples">Image source</a>
       </div>
     </section>
-  </section>
-
-  <section class="lab-methods" id="workflows" aria-labelledby="workflows-title">
-    <div class="lab-section-head">
-      <h2 id="workflows-title">Real-World Industry Pipelines</h2>
-      <p>3DFUN AI bridges single-view neural synthesis with practical production workflows, educational transparency, and edge model deployment.</p>
-    </div>
-    <div class="workflow-grid">
-      <div class="workflow-card">
-        <div class="workflow-icon">🎮</div>
-        <h3>Game Development &amp; XR</h3>
-        <p>Convert concept sketches and photos into game-ready 3D assets with clean manifold topology, quadric decimation, and embedded PBR textures.</p>
-        <div class="workflow-tags">
-          <span class="workflow-tag">GLB / OBJ</span>
-          <span class="workflow-tag">Unity / Unreal</span>
-          <span class="workflow-tag">Decimated LODs</span>
-        </div>
-      </div>
-      <div class="workflow-card">
-        <div class="workflow-icon">🖨️</div>
-        <h3>3D Printing &amp; Prototyping</h3>
-        <p>Automated watertight manifold verification (Euler χ = 2), non-manifold edge zeroing, wall thickness validation, and calibrated STL/OBJ slicing.</p>
-        <div class="workflow-tags">
-          <span class="workflow-tag">Binary STL</span>
-          <span class="workflow-tag">100% Watertight</span>
-          <span class="workflow-tag">mm Calibration</span>
-        </div>
-      </div>
-      <div class="workflow-card">
-        <div class="workflow-icon">🛍️</div>
-        <h3>E-Commerce &amp; AR Quick Look</h3>
-        <p>Generate interactive 360° product showcases, WebGL embed widgets, and mobile AR Quick Look assets for retail and catalog digitization.</p>
-        <div class="workflow-tags">
-          <span class="workflow-tag">USDZ (iOS AR)</span>
-          <span class="workflow-tag">Turntable 360°</span>
-          <span class="workflow-tag">WebGL Embed</span>
-        </div>
-      </div>
-      <div class="workflow-card">
-        <div class="workflow-icon">🔬</div>
-        <h3>Academic CV &amp; Student Labs</h3>
-        <p>Demystify black-box neural networks. Scrub through 8 transparent reconstruction stages, slice 3D distance fields, and train custom PyTorch labs.</p>
-        <div class="workflow-tags">
-          <span class="workflow-tag">8 Tensors</span>
-          <span class="workflow-tag">PyTorch Labs</span>
-          <span class="workflow-tag">ONNX INT8</span>
-        </div>
-      </div>
-    </div>
   </section>
 
   <section class="lab-methods" id="prototypes" aria-labelledby="prototypes-title">
@@ -183,8 +124,8 @@
 
   <section class="lab-methods" id="evaluation" aria-labelledby="evaluation-title">
     <div class="lab-section-head">
-      <h2 id="evaluation-title">Course benchmark</h2>
-      <p>The saved CPU evaluation compares the proposed course pipeline with TSDF fusion and visual hull. Chamfer distance measures how closely meshes match the calibrated CAD reference surfaces.</p>
+      <h2 id="evaluation-title">How close were the meshes?</h2>
+      <p>We compared our mesh pipeline with single-view TSDF and silhouette extrusion. The chart uses the 13 synthetic scenes with reference meshes. Shorter bars mean less distance between the reconstructed and reference surfaces.</p>
     </div>
     <div class="lab-benchmark" id="home-benchmark" hidden>
       <div class="lab-benchmark-info">
@@ -201,150 +142,16 @@
     <a class="btn" id="home-benchmark-link" href="/app/benchmark">View benchmark results</a>
   </section>
 
-  <section class="lab-methods" id="comparison" aria-labelledby="comparison-title">
-    <div class="lab-section-head">
-      <h2 id="comparison-title">3D Computer Vision Architectural Taxonomy</h2>
-      <p>Rigorous architectural classification and empirical benchmark of single-view 3D reconstruction paradigms analyzed in Course 17 at IIIT Dharwad.</p>
-    </div>
-    <div class="startup-comparison-wrap">
-      <table class="startup-table">
-        <thead>
-          <tr>
-            <th>Methodological Paradigm</th>
-            <th>Primary Architecture</th>
-            <th>Inference Runtime</th>
-            <th>Speed (Draft)</th>
-            <th>Free Credits &amp; Access</th>
-            <th>Educational Transparency</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>3DFUN AI (Course Platform)</strong></td>
-            <td><span class="startup-badge-highlight">Hybrid DINOv2 + TSDF + Taubin</span></td>
-            <td>Local ONNX (CPU / DirectML / CUDA)</td>
-            <td><strong>12 – 45 s</strong></td>
-            <td><strong>50 Free Trial Credits</strong> + 10 Daily Streak</td>
-            <td><strong>100% Open 8-Stage Tensors + PyTorch Labs</strong></td>
-          </tr>
-          <tr>
-            <td><strong>Feed-Forward Triplane Transformer (LRM)</strong></td>
-            <td>Large Reconstruction Model (LRM) Transformer</td>
-            <td>GPU Cluster / DirectML Execution</td>
-            <td>8 – 15 s</td>
-            <td>Open Weights Foundation Model</td>
-            <td>Feed-Forward Single Step Matrix Operations</td>
-          </tr>
-          <tr>
-            <td><strong>Multi-View Latent Diffusion &amp; DMTet</strong></td>
-            <td>Multi-view Diffusion + Marching Tetrahedra</td>
-            <td>Cloud GPU Clusters</td>
-            <td>45 – 90 s</td>
-            <td>High Compute Cloud Requirement</td>
-            <td>Iterative Score Distillation Backpropagation</td>
-          </tr>
-          <tr>
-            <td><strong>3D Radiance Fields &amp; Gaussian Splatting</strong></td>
-            <td>3D Diffusion + Gaussian Splatting (3DGS)</td>
-            <td>CUDA Shader Kernels</td>
-            <td>20 – 60 s</td>
-            <td>Differentiable Rasterizer Kernels</td>
-            <td>Explicit Radiance Field Covariance Projection</td>
-          </tr>
-          <tr>
-            <td><strong>Supervised Subdivision Quad Retopology</strong></td>
-            <td>Machine Learning + Topological Face Optimization</td>
-            <td>Production Pipeline</td>
-            <td>15 – 30 min</td>
-            <td>High-Poly Quad Budget</td>
-            <td>B-Rep Edge Loop Analysis</td>
-          </tr>
-          <tr>
-            <td><strong>Parametric WebGL &amp; Procedural Mesh</strong></td>
-            <td>Parametric WebGL/WebGPU + AI Texture Generation</td>
-            <td>Browser Canvas + Local Engine</td>
-            <td>Interactive (&lt;1s / 20s AI)</td>
-            <td>Interactive Client Runtime</td>
-            <td>Client-Side Mesh Evaluation</td>
-          </tr>
-          <tr>
-            <td><strong>Neural Inverse CAD / B-Rep Optimization</strong></td>
-            <td>Neural Inverse CAD / B-Rep + Eikonal SDF</td>
-            <td>Multi-View Video Diffusion + Learned SfM</td>
-            <td>60 – 180 s</td>
-            <td>CAD Engineering Workflows</td>
-            <td>Unit-Gradient Regularized Level Set</td>
-          </tr>
-          <tr>
-            <td><strong>Multi-View DiT &amp; Sparse Triplane Occupancy</strong></td>
-            <td>Multi-View DiT + Sparse Voxel Triplane Occupancy</td>
-            <td>Diffusion Transformer + Triplane Decoder</td>
-            <td>25 – 50 s</td>
-            <td>Open Foundation Model Checkpoints</td>
-            <td>Self-Hostable Open Weights (16 GB+ GPU)</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Architectural Paradigms Grid -->
-    <div class="workflow-grid mt24" style="margin-top:24px;">
-      <article class="workflow-card">
-        <span class="workflow-step-num">PARADIGM 1</span>
-        <h3>Feed-Forward Triplane Transformers (LRM Architecture)</h3>
-        <p>Uses Vision Transformers (ViT) to map single 2D image tokens into explicit triplane representations $T_{xy}, T_{xz}, T_{yz} \in \mathbb{R}^{3 \times N \times N \times C}$. Ray samples query a lightweight MLP decoder. Yields ultra-fast generation (&lt;15s) with continuous volumetric radiance.</p>
-        <div style="font-family:var(--mono);font-size:11px;color:var(--cyan);background:rgba(6,182,212,0.08);padding:8px;border-radius:6px;margin-top:10px;">
-          ✦ Key Metric: 8–15s Latency · High VRAM Training (Objaverse 800k assets)
-        </div>
-      </article>
-
-      <article class="workflow-card">
-        <span class="workflow-step-num">PARADIGM 2</span>
-        <h3>Multi-View Latent Diffusion &amp; DMTet (Score Distillation)</h3>
-        <p>Employs image-conditioned 2D diffusion models (Zero-1-to-3, SV3D) to synthesize canonical views at 0°, 90°, 180°, 270°. Surface geometry is extracted via Differentiable Marching Tetrahedra (DMTet) with neural score distillation sampling and high-resolution PBR baking.</p>
-        <div style="font-family:var(--mono);font-size:11px;color:var(--accent);background:rgba(99,102,241,0.08);padding:8px;border-radius:6px;margin-top:10px;">
-          ✦ Key Metric: High Visual Fidelity · 60–120s Compute · Quad Topology Optimization
-        </div>
-      </article>
-
-      <article class="workflow-card">
-        <span class="workflow-step-num">PARADIGM 3</span>
-        <h3>Hybrid Open Core Pipeline (Course 17 Platform)</h3>
-        <p>Combines foundational relative depth estimation (Depth Anything V2 DINOv2) with deterministic projective camera geometry, Euclidean distance transform $\Phi(x)$, Marching Cubes, and Taubin dual-pass smoothing. Zero cloud dependency, 100% student transparency, and local ONNX runtime.</p>
-        <div style="font-family:var(--mono);font-size:11px;color:var(--success);background:rgba(16,185,129,0.08);padding:8px;border-radius:6px;margin-top:10px;">
-          ✦ Key Metric: 100% Free &amp; Offline Capable · 8-Stage Tensor Inspection · 4 Student Labs
-        </div>
-      </article>
-
-      <article class="workflow-card">
-        <span class="workflow-step-num">PARADIGM 4</span>
-        <h3>3D Gaussian Splatting Synthesis (3DGS)</h3>
-        <p>Generates dense explicit 3D Gaussian radiance fields $\mathcal{G}_i = (\mu_i, \Sigma_i, \alpha_i, c_i)$ directly from latent image tokens. Real-time 60 FPS viewport rendering with high-frequency view-dependent specular highlights and non-Lambertian reflections.</p>
-        <div style="font-family:var(--mono);font-size:11px;color:var(--warning);background:rgba(234,179,8,0.08);padding:8px;border-radius:6px;margin-top:10px;">
-          ✦ Key Metric: 20–60s Latency · High Specular Fidelity · Radiance Field Representation
-        </div>
-      </article>
-
-      <article class="workflow-card">
-        <span class="workflow-step-num">PARADIGM 5</span>
-        <h3>Ultra-Fast Feedforward Transformers (SF3D Architecture)</h3>
-        <p>State-of-the-art feedforward architecture predicts triplane neural representations, UV unwrap coordinates, and material parameters in under 1 second. Bridges high-speed generative synthesis with instant game-engine asset import.</p>
-        <div style="font-family:var(--mono);font-size:11px;color:var(--accent);background:rgba(99,102,241,0.08);padding:8px;border-radius:6px;margin-top:10px;">
-          ✦ Key Metric: 0.5–2s Latency · Triplane + Material Heads · Direct Engine Export
-        </div>
-      </article>
-    </div>
-  </section>
   <section class="lab-methods" id="training" aria-labelledby="training-title">
     <div class="lab-section-head">
       <h2 id="training-title">Custom training lab</h2>
-      <p>TinyDepth learns from synthetic color and depth pairs. The trainer holds out entire mesh instances so their views never appear in training.</p>
+      <p>TinyDepth estimates depth from rendered images. We hold out whole mesh instances and use their camera data to measure the predicted surface in 3D.</p>
     </div>
     <div class="lab-training-layout">
       <div>
         <ol class="lab-steps">
           <li><strong>Render reference views.</strong> Turn built-in or custom OBJ and GLB meshes into RGB images, depth labels, masks and camera records.</li>
-          <li><strong>Fit the depth model.</strong> Select the checkpoint by validation MAE. Compare it with a training-set median and optionally rerun with SILog alone.</li>
+          <li><strong>Save the splits and fit TinyDepth.</strong> Keep all views of a mesh together and reuse the same split for the loss comparison. Select the checkpoint by validation MAE. Compare it with a training-set median and optionally rerun with SILog alone.</li>
           <li><strong>Measure the visible 3D surface.</strong> Export the verified ONNX model, back-project held-out depth, then compare the point clouds using Chamfer distance and F-score.</li>
         </ol>
         <p>TinyDepth uses known camera intrinsics and a foreground mask for the point cloud. Studio uses pretrained models to generate full meshes from a single photo.</p>
@@ -363,14 +170,17 @@
             <select id="training-preset">
               <option value="reference">Reference experiment</option>
               <option value="quick">Quick check</option>
+              <option value="custom">Custom meshes</option>
+              <option value="cached">Pre-rendered views</option>
             </select>
           </label>
         </div>
+        <p class="lab-training-hint" id="training-hint"></p>
         <label class="lab-training-check"><input id="training-ablation" type="checkbox"> Include SILog-only comparison</label>
         <pre id="training-command" tabindex="0">python -m training.pipeline --device cpu</pre>
         <div class="row wrap gap8">
           <button class="btn sm" id="training-copy" type="button">Copy command</button>
-        <a class="btn sm" href="/project-docs/reproducibility.md">Experiment guide</a>
+          <a class="btn sm" href="/project-docs/reproducibility.md">Experiment guide</a>
         </div>
         <p class="lab-training-status" id="training-status" role="status"></p>
       </div>
@@ -457,97 +267,6 @@
     </div>
   </section>
 
-  <section class="lab-methods" id="theory" aria-labelledby="theory-title">
-    <div class="lab-section-head">
-      <h2 id="theory-title">Mathematical &amp; Algorithmic Foundations</h2>
-      <p>Every reconstruction stage in 3DFUN AI is grounded in peer-reviewed 3D computer vision and differential geometry principles.</p>
-    </div>
-    <div class="math-explainer-grid">
-      <div class="math-card">
-        <h4>1. Feed-Forward Triplane Transformer (LRM Architecture)</h4>
-        <pre>f(x) = proj_xy(T_xy, x,y) ⊕ proj_xz(T_xz, x,z) ⊕ proj_yz(T_yz, y,z)
-Ĉ(r) = ∫ T(t)·σ(r(t))·c(r(t),d) dt,  T(t) = exp(−∫σ(r(s))ds)</pre>
-        <p>Orthogonal triplane features queried by bilinear projection and decoded by an MLP into volume density and colour. Feed-forward 8–15s generation on large synthetic 3D corpora.</p>
-      </div>
-      <div class="math-card">
-        <h4>2. Multi-View Latent Diffusion &amp; DMTet (Score Distillation)</h4>
-        <pre>∇_θ L_SDS = E_t,ε[ w(t) (ε̂_φ(z_t; y, t) − ε) · ∂z/∂θ ]
-z_t = √(ᾱ_t)·z + √(1−ᾱ_t)·ε  (noisy render latent)</pre>
-        <p>Differentiable Marching Tetrahedra optimizes per-vertex SDF values via Score Distillation backpropagated from a frozen 2D diffusion prior. High visual fidelity, 45–90s compute.</p>
-      </div>
-      <div class="math-card">
-        <h4>3. 3D Gaussian Covariance Splatting (3DGS)</h4>
-        <pre>Σ_i = R(q_i) S(s_i) S(s_i)ᵀ R(q_i)ᵀ
-Σ'_i = J W Σ_i Wᵀ Jᵀ   (2D projection)
-C = Σ c_i α_i Π_{j&lt;i}(1 − α_j)  (alpha compositing)</pre>
-        <p>Explicit Gaussian radiance field factored via rotation quaternion and anisotropic scale. Tile-based rasterization at 60 FPS. Non-solid radiance field representation.</p>
-      </div>
-      <div class="math-card">
-        <h4>4. Neural Inverse CAD / B-Rep &amp; Eikonal SDF</h4>
-        <pre>L_eikonal = E[(‖∇_x f_ψ(x)‖₂ − 1)²]
-L_total = L_photo + λ_n·L_normal + λ_e·L_eikonal</pre>
-        <p>Implicit occupancy network with joint SfM pose optimization. Eikonal term enforces unit-gradient SDF regularity. Post-processing recovers sharp B-Rep edges for CAD/STEP export.</p>
-      </div>
-      <div class="math-card">
-        <h4>5. Volumetric SDF + Marching Cubes (Course 17 Platform)</h4>
-        <pre>Φ(x) = ±min_{y∈∂V} ‖x−y‖  (silhouette-constrained 128³ grid)
-p = v_a + (τ−Φ(v_a))/(Φ(v_b)−Φ(v_a)) · (v_b−v_a)
-χ = V − E + F = 2  (genus-0 watertight manifold, τ = 0)</pre>
-        <p>Deterministic: silhouette-constrained SDF → Marching Cubes → Taubin dual-pass smoothing (λ&gt;0, μ&lt;−λ). Result: 100% watertight, Chamfer 0.0639, F@1% 0.148. 100% local ONNX, zero cloud.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="lab-methods" id="pricing" aria-labelledby="pricing-title">
-    <div class="lab-section-head">
-      <h2 id="pricing-title">Transparent Credit System &amp; Plans</h2>
-      <p>No credit card required. Every new user receives 50 free credits instantly, with daily refills and educational promo codes.</p>
-    </div>
-    <div class="pricing-grid">
-      <div class="pricing-card featured">
-        <div class="pricing-badge">Free Trial</div>
-        <h3>Student Sandbox</h3>
-        <p class="muted">For students and researchers exploring 3D computer vision.</p>
-        <div class="price">50 Credits <small>/ free on signup</small></div>
-        <ul class="pricing-features">
-          <li><span class="check">✓</span> 50 Free Trial Credits immediately upon registration</li>
-          <li><span class="check">✓</span> +10 Daily Streak Refill every 24 hours</li>
-          <li><span class="check">✓</span> 8-Stage Interactive Pipeline Inspector access</li>
-          <li><span class="check">✓</span> 4 PyTorch Student Training Labs</li>
-          <li><span class="check">✓</span> Multi-format export (.GLB, .OBJ, .STL, .PLY)</li>
-          <li><span class="check">✓</span> Voucher support (IIITDHARWAD gives +50 credits)</li>
-        </ul>
-        <a class="btn primary" href="/app/register">Create Free Account (50 Credits)</a>
-      </div>
-      <div class="pricing-card">
-        <h3>Lab Researcher</h3>
-        <p class="muted">For thesis work, synthetic dataset generation, and benchmarks.</p>
-        <div class="price">Unlimited <small>/ local offline</small></div>
-        <ul class="pricing-features">
-          <li><span class="check">✓</span> 100% Local ONNX Runtime (CPU / DirectML)</li>
-          <li><span class="check">✓</span> Zero cloud lock-in or privacy leakage</li>
-          <li><span class="check">✓</span> Batch quantitative benchmark execution</li>
-          <li><span class="check">✓</span> Custom fine-tuning with train_student_depth.py</li>
-          <li><span class="check">✓</span> CAD reference Chamfer Distance evaluation</li>
-        </ul>
-        <a class="btn" href="/app/benchmark">View Benchmarks</a>
-      </div>
-      <div class="pricing-card">
-        <h3>Studio Pro &amp; API</h3>
-        <p class="muted">For automated generation pipelines and high-res asset pipelines.</p>
-        <div class="price">API Access <small>/ self-hosted</small></div>
-        <ul class="pricing-features">
-          <li><span class="check">✓</span> Complete REST API (50+ documented endpoints)</li>
-          <li><span class="check">✓</span> Agentic AI Copilot tool calling integration</li>
-          <li><span class="check">✓</span> Server-Sent Events (SSE) live telemetry stream</li>
-          <li><span class="check">✓</span> Docker containerized deployment scripts</li>
-          <li><span class="check">✓</span> Direct 3D print slicing prep &amp; manifold repair</li>
-        </ul>
-        <a class="btn" href="/docs">Inspect OpenAPI Specs</a>
-      </div>
-    </div>
-  </section>
-
   <section class="lab-methods" id="team">
     <div class="lab-section-head">
       <h2>Course project and team</h2>
@@ -561,14 +280,8 @@ p = v_a + (τ−Φ(v_a))/(Φ(v_b)−Φ(v_a)) · (v_b−v_a)
       <li><strong>C Sai Aravind</strong><small>23BDS075</small></li>
     </ul>
     <div class="row wrap gap8 mt16">
-      <a class="btn primary" href="/app/team">View team and defense schedule</a>
-      <a class="btn" href="/demo.mp4" target="_blank" rel="noopener">Watch the course demo</a>
-      <a class="btn" href="/app/showcase" style="color:var(--cyan);font-weight:600;">✦ Research &amp; Startup Hub</a>
-      <a class="btn" href="/docs/STARTUPS_COMPARATIVE_SURVEY.md" target="_blank">2026 Startups Survey (.md)</a>
-      <a class="btn" href="/docs/MATHEMATICAL_FOUNDATIONS_AND_PROOFS.md" target="_blank">Mathematical Proofs (.md)</a>
-      <a class="btn" href="/docs/STARTUP_LANDSCAPE_AND_BUSINESS_MODELS.md" target="_blank">Startup Unit Economics (.md)</a>
-      <a class="btn" href="/paper/main.pdf" target="_blank">Download IEEE Paper (.pdf)</a>
-      <a class="btn" href="/report.pdf" target="_blank">Download Project Report (.pdf)</a>
+      <a class="btn" href="/app/team">Team roles</a>
+      <a class="btn primary" href="/app/showcase">Report, demo and results</a>
     </div>
   </section>
 

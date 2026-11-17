@@ -26,10 +26,10 @@
     <polygon points="8 0, 0 2.5, 8 5" fill="var(--_arrow)" stroke="var(--_arrow)" stroke-width="0.75" stroke-linejoin="round" />
   </marker>
 </defs>
-<g class="subgraph" data-id="UI" data-label="Modern Tripo3D/Meshy Studio">
+<g class="subgraph" data-id="UI" data-label="Creative 3D Studio &amp; Viewport">
   <rect x="40" y="1174.1999999999998" width="717.7299999999999" height="181.8" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
   <rect x="40" y="1174.1999999999998" width="717.7299999999999" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
-  <text x="52" y="1188.1999999999998" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">Modern Tripo3D/Meshy Studio</text>
+  <text x="52" y="1188.1999999999998" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">Creative 3D Studio &amp; Viewport</text>
 </g>
 <g class="subgraph" data-id="Core" data-label="Engine Reconstruction Pipeline">
   <rect x="414.25975" y="360.70000000000005" width="278.46599999999995" height="691.1999999999999" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />

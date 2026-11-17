@@ -470,7 +470,7 @@ export async function renderStudio(_params, main) {
     h('div', { class: 'spread' }, h('h2', { class: 'mb0', style: 'font-size:18px;' }, '🎨 3D Creative Studio'),
       h('span', { class: 'runtime-chip' }, PROVIDER_NAMES[state.meta?.inference?.preferred] || 'DirectML / CPU')),
     drop, fileInput, reference,
-    h('div', {}, h('small', { class: 'sample-label', style: 'color:var(--text-2);font-weight:600;' }, 'Instant Presets & Samples:'),
+    h('div', {}, h('small', { class: 'sample-label', style: 'color:var(--text-2);font-weight:600;' }, 'Sample images'),
       h('div', { class: 'sample-strip' }, ...samples)),
     h('div', { class: 'studio-fields' },
       h('label', { class: 'field' }, h('span', { id: 'studio-engine-label' }, 'Reconstruction Engine'), engine),
@@ -507,8 +507,8 @@ export async function renderStudio(_params, main) {
   mount(main,
     h('header', { class: 'studio-title' },
       h('p', { class: 'course-label' }, '3D COMPUTER VISION · IIIT DHARWAD'),
-      h('h1', {}, 'Image-to-3D Studio & Educational Laboratory'),
-      h('p', { class: 'muted mb0' }, 'Transform 2D photographs into watertight PBR 3D models with interactive tensor inspection.')),
+      h('h1', {}, 'Image-to-3D Studio'),
+      h('p', { class: 'muted mb0' }, 'Generate a mesh from one photo, inspect the stages, and download the result.')),
     h('div', { class: 'studio-layout' }, leftDock, centerCanvas, rightDock),
     bottomDock);
 

@@ -203,9 +203,9 @@ The AI Co-Pilot in `app/routers/chat.py` implements autonomous FastAPI function 
 
 ## 5. Five Foundational Mathematical Paradigms of Image-to-3D Generation
 
-The generative 3D industry converges on five canonical mathematical paradigms. Each encodes 3D information in a fundamentally different mathematical structure, with distinct trade-offs in resolution, differentiability, watertightness, and computational cost.
+The generative 3D field converges on five canonical mathematical paradigms. Each encodes 3D information in a fundamentally different mathematical structure, with distinct trade-offs in resolution, differentiability, watertightness, and computational cost.
 
-### Paradigm 1: LRM Triplane Neural Radiance Fields (Tripo3D, TripoSR, Stable Fast 3D)
+### Paradigm 1: Feed-Forward Triplane Transformers (LRM Architecture)
 
 The Large Reconstruction Model (LRM) encodes a 3D scene as three axis-aligned orthogonal feature planes $T_{xy}, T_{xz}, T_{yz} \in \mathbb{R}^{N \times N \times C}$. For any continuous query point $\mathbf{x} = (x, y, z)$, the feature vector is obtained by bilinear projection and channel-wise concatenation:
 
@@ -215,11 +215,11 @@ A vision transformer (ViT/DINO) tokenizes the input image and cross-attends over
 
 $$\hat{C}(\mathbf{r}) = \int_{t_n}^{t_f} T(t)\, \sigma(\mathbf{r}(t))\, \mathbf{c}(\mathbf{r}(t), \mathbf{d})\; dt, \qquad T(t) = \exp\!\left(-\int_{t_n}^{t} \sigma(\mathbf{r}(s))\, ds\right)$$
 
-**Key properties:** Feed-forward (8–15s); $O(N^2)$ memory; resolution limited by $N$; trained on Objaverse 800k+ objects across 64+ H100 clusters.
+**Key properties:** Feed-forward (8–15s); $O(N^2)$ memory; resolution limited by $N$; trained on synthetic 3D corpora across distributed clusters.
 
 ---
 
-### Paradigm 2: DMTet Score Distillation Sampling (Meshy.ai, SV3D, Wonder3D)
+### Paradigm 2: Multi-View Latent Diffusion & DMTet (Score Distillation Sampling)
 
 Differentiable Marching Tetrahedra (DMTet) maintains a deformable tetrahedral grid $\mathcal{T} = (\mathcal{V}_\text{tet}, \mathcal{E}_\text{tet})$ where each vertex $i$ stores a learnable SDF value $s_i \in \mathbb{R}$ and displacement $\Delta\mathbf{v}_i \in \mathbb{R}^3$. The triangle mesh is differentiably extracted from the zero-crossing of these SDF values.
 
@@ -233,7 +233,7 @@ where $\mathbf{z}_t = \sqrt{\bar{\alpha}_t}\,\mathbf{z} + \sqrt{1-\bar{\alpha}_t
 
 ---
 
-### Paradigm 3: 3D Gaussian Splatting Covariance (Luma AI Genie, Luma 3D)
+### Paradigm 3: 3D Gaussian Covariance Splatting (3DGS)
 
 Each Gaussian primitive $\mathcal{G}_i$ is parameterized by center $\mu_i \in \mathbb{R}^3$, 3D covariance matrix $\Sigma_i$, opacity $\alpha_i \in [0,1]$, and spherical harmonics color coefficients $\mathbf{c}_i$. The covariance is factored via rotation quaternion $\mathbf{q}_i$ and anisotropic scale $\mathbf{s}_i$:
 
@@ -255,11 +255,11 @@ $$C = \sum_{i \in \mathcal{N}} \mathbf{c}_i\, \alpha_i \prod_{j=1}^{i-1}(1 - \al
 
 ---
 
-### Paradigm 4: Inverse CAD Boundary Representation (CSM.ai)
+### Paradigm 4: Neural Inverse CAD & Eikonal SDF Optimization
 
-CSM.ai optimizes a continuous implicit occupancy network $f_\psi: \mathbb{R}^3 \to [0, 1]$ jointly with camera poses $\{R_k, \mathbf{t}_k\}$ recovered by learned Structure-from-Motion. The composite loss enforces photometric, normal, and Eikonal constraints:
+Optimizes a continuous implicit occupancy network $f_\psi: \mathbb{R}^3 \to [0, 1]$ jointly with camera poses $\{R_k, \mathbf{t}_k\}$ recovered by learned Structure-from-Motion. The composite loss enforces photometric, normal, and Eikonal constraints:
 
-$$\mathcal{L}_{\text{CSM}} = \mathcal{L}_{\text{photo}} + \lambda_n\, \mathcal{L}_{\text{normal}} + \lambda_e\, \mathcal{L}_{\text{eikonal}}$$
+$$\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{photo}} + \lambda_n\, \mathcal{L}_{\text{normal}} + \lambda_e\, \mathcal{L}_{\text{eikonal}}$$
 
 The Eikonal term enforces the signed distance function regularity $\|\nabla f\| = 1$ almost everywhere:
 
@@ -293,38 +293,38 @@ $$\mathbf{p}^{(n+\frac{1}{2})}_i = \mathbf{p}^{(n)}_i + \lambda \sum_{j \in \mat
 
 ---
 
-## 6. Deconstruction of Real-World Generative 3D Startups & Foundation Models
+## 6. Academic Classification of 3D Computer Vision Architectural Paradigms & Model Deployment
 
-To provide students and computer vision researchers with real-world industry context, we analyze the architectural paradigms, mathematical representations, and trade-offs of the leading commercial generative 3D startups:
+To provide students and computer vision researchers with rigorous theoretical and practical context, we analyze the architectural paradigms, mathematical representations, and trade-offs of the dominant single-view 3D reconstruction methodologies:
 
 ```
 +-----------------------------------------------------------------------------------------------------------------------------+
-|                                COMMERCIAL IMAGE-TO-3D GENERATIVE TAXONOMY (2024 - 2026)                                     |
+|                                3D COMPUTER VISION ARCHITECTURAL PARADIGMS & RUNTIMES                                        |
 +-----------------------------------------------------------------------------------------------------------------------------+
-| Paradigm A: Feed-Forward Transformers (LRM, Tripo3D, TripoSR, Stable Fast 3D)                                               |
+| Paradigm A: Feed-Forward Orthogonal Triplane Transformers                                                                   |
 |             Image -> ViT Tokenizer -> Cross-Attention Blocks -> Orthogonal Triplanes T_xy, T_xz, T_yz -> MLP -> Isosurface  |
 |                                                                                                                             |
-| Paradigm B: Multi-View Diffusion + DMTet (Meshy.ai, SV3D, Zero123++, Wonder3D)                                              |
+| Paradigm B: Multi-View Latent Diffusion + DMTet (Score Distillation Sampling)                                               |
 |             Image -> 2D Multi-View Latent Diffusion -> Score Distillation Sampling (SDS) -> Differentiable Marching Tetra |
 |                                                                                                                             |
-| Paradigm C: 3D Gaussian Splatting Synthesis (Luma AI Genie, Luma 3D)                                                        |
+| Paradigm C: 3D Gaussian Splatting Synthesis (3DGS)                                                                          |
 |             Image -> 3D Splat Diffusion -> Continuous Radiance Primitives (mu, Sigma, alpha, c) -> Differentiable Rasterizer |
 |                                                                                                                             |
-| Paradigm D: Hybrid Deterministic Reconstruction (3DFUN AI Open Core)                                                        |
+| Paradigm D: Hybrid Deterministic Reconstruction (Course 17 Platform)                                                        |
 |             Image -> DINOv2 Depth -> Ray Unprojection -> Euclidean SDF Transform -> Marching Cubes -> Taubin Filter         |
 +-----------------------------------------------------------------------------------------------------------------------------+
 ```
 
-### 6.1 Tripo3D & TripoSR (VAST AI Research)
+### 6.1 Feed-Forward Orthogonal Triplane Transformers
 - **Core Architecture:** Large Reconstruction Model (LRM) Transformer.
 - **Mathematical Representation:** Triplane Neural Radiance Fields ($T_{xy}, T_{xz}, T_{yz} \in \mathbb{R}^{3 \times N \times N \times C}$).
 - **Inference Mechanism:** An input image $I$ is encoded by a vision transformer (DINO ViT). A sequence of multi-head self-attention and cross-attention transformer layers directly regresses features on the three orthogonal axis-aligned planes. For any continuous 3D query point $\mathbf{x} = (x, y, z)$, its feature vector is synthesized via bilinear interpolation:
   $$f(\mathbf{x}) = \text{proj}_{xy}(T_{xy}, x, y) \oplus \text{proj}_{xz}(T_{xz}, x, z) \oplus \text{proj}_{yz}(T_{yz}, y, z)$$
   A lightweight MLP evaluates volume density $\sigma(\mathbf{x})$ and RGB color $\mathbf{c}(\mathbf{x})$.
-- **Strengths:** Blazing inference speed (8 – 15 seconds), deterministic feed-forward runtime, no multi-view optimization loop.
-- **Limitations:** Spatial discretization of triplanes introduces resolution bottlenecks for micro-relief; requires training over vast datasets (Objaverse 800k+ models) across 64+ NVIDIA H100 clusters.
+- **Strengths:** Rapid inference speed (8 – 15 seconds), deterministic feed-forward runtime, no multi-view optimization loop.
+- **Trade-offs:** Spatial discretization of triplanes introduces resolution bottlenecks for micro-relief; requires training over vast datasets across distributed GPU clusters.
 
-### 6.2 Meshy.ai
+### 6.2 Multi-View Latent Diffusion & Differentiable Marching Tetrahedra (DMTet)
 - **Core Architecture:** Multi-View Latent Diffusion + Differentiable Marching Tetrahedra (DMTet).
 - **Mathematical Representation:** Signed Distance Field on a deformable tetrahedral grid $\mathcal{T} = (\mathcal{V}_{\text{tet}}, \mathcal{E}_{\text{tet}})$.
 - **Inference Mechanism:** 
@@ -332,73 +332,37 @@ To provide students and computer vision researchers with real-world industry con
   2. *Surface Optimization:* DMTet optimizes vertex SDF values $s_i \in \mathbb{R}$ and displacement offsets $\Delta \mathbf{v}_i \in \mathbb{R}^3$ via Score Distillation Sampling (SDS) loss:
      $$\nabla_\theta \mathcal{L}_{\text{SDS}} = \mathbb{E}_{t, \epsilon} \left[ w(t) (\hat{\epsilon}_\phi(\mathbf{z}_t; y, t) - \epsilon) \frac{\partial \mathbf{z}}{\partial \theta} \right]$$
   3. *Post-Processing:* Quadric Error Metric (QEM) decimation to production quad topology and high-resolution PBR texture baking.
-- **Strengths:** Photorealistic material fidelity, clean quad topology suited for rigging and game engines.
-- **Limitations:** Slower latency (45 – 90 seconds); susceptible to the "Janus artifact" (multi-faced hallucinations) when multi-view cross-attention conditioning diverges.
+- **Strengths:** High material fidelity, clean quad topology suited for rigging and game engines.
+- **Trade-offs:** Slower latency (45 – 90 seconds); susceptible to multi-face hallucinations when multi-view cross-attention conditioning diverges.
 
-### 6.3 Luma AI Genie
+### 6.3 3D Gaussian Splatting Synthesis (3DGS)
 - **Core Architecture:** Latent 3D Diffusion + 3D Gaussian Splatting (3DGS).
 - **Mathematical Representation:** Mixture of 3D Gaussians $\mathcal{G}_i = (\mu_i, \Sigma_i, \alpha_i, \mathbf{c}_i)$ where covariance is factored into rotation quaternion $\mathbf{q}_i$ and scale $\mathbf{s}_i$:
   $$\Sigma_i = R(\mathbf{q}_i) S(\mathbf{s}_i) S(\mathbf{s}_i)^T R(\mathbf{q}_i)^T$$
 - **Inference Mechanism:** Direct regression and denoising of Gaussian parameters from image conditioning, followed by tile-based rasterization and alpha blending.
 - **Strengths:** View-dependent specular highlights, complex non-Lambertian reflections, real-time 60 FPS viewport rendering.
-- **Limitations:** Splat representations are non-solid and non-manifold; converting 3D Gaussians into 3D-printable watertight solid meshes ($\chi = 2$) requires secondary Poisson or Marching Tetrahedra surface reconstruction which often degrades thin geometry.
+- **Trade-offs:** Splat representations are non-solid and non-manifold; converting 3D Gaussians into 3D-printable watertight solid meshes ($\chi = 2$) requires secondary Poisson or Marching Tetrahedra surface reconstruction.
 
-### 6.4 Spline 3D (Parametric WebGL & AI Generation)
-- **Core Architecture:** WebGL/WebGPU parametric geometry engine with cloud generative AI microservices.
-- **Representation:** Parametric NURBS, procedural subdivision surfaces, and polygon meshes with real-time physics.
-- **Focus:** Interactive web canvas integration, spatial user interactions, and game prototyping rather than single-view photorealistic inverse problem reconstruction.
-
-### 6.5 Kaedim 3D
-- **Core Architecture:** Machine Learning initial shape estimation coupled with automated and human-in-the-loop retopology.
-- **Focus:** Enterprise game development pipelines requiring strict sub-d quad geometry and strict vertex budgets.
-- **Latency & Cost:** High latency (15 – 30 minutes) and high enterprise subscription costs ($150 – $500/month).
-
-### 6.6 CSM.ai (Common Sense Machines)
-- **Core Architecture:** Multi-view Video-to-3D diffusion + Neural Inverse CAD representation.
-- **Mathematical Representation:** Continuous Boundary Representation (B-Rep). An implicit occupancy network $f_\psi: \mathbb{R}^3 \to [0, 1]$ is optimized jointly with camera pose graph $\{R_k, \mathbf{t}_k\}$ recovered by learned Structure-from-Motion. The volumetric loss combines photometric re-projection and surface normal consistency:
-  $$\mathcal{L}_{\text{CSM}} = \mathcal{L}_{\text{photo}} + \lambda_n \mathcal{L}_{\text{normal}} + \lambda_e \mathcal{L}_{\text{eikonal}}$$
+### 6.4 Neural Inverse CAD & Eikonal Regularized SDF
+- **Core Architecture:** Multi-view video diffusion + Neural Inverse CAD representation.
+- **Mathematical Representation:** Continuous Boundary Representation (B-Rep). An implicit occupancy network $f_\psi: \mathbb{R}^3 \to [0, 1]$ is optimized jointly with camera pose graph $\{R_k, \mathbf{t}_k\}$ recovered by learned Structure-from-Motion:
+  $$\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{photo}} + \lambda_n \mathcal{L}_{\text{normal}} + \lambda_e \mathcal{L}_{\text{eikonal}}$$
   where the Eikonal term enforces unit-gradient SDF regularity:
   $$\mathcal{L}_{\text{eikonal}} = \mathbb{E}_{\mathbf{x}}\!\left[\left(\|\nabla f_\psi(\mathbf{x})\|_2 - 1\right)^2\right]$$
-  Sharp B-Rep edges are recovered post-hoc by feature-line detection on the extracted mesh normals.
-- **Inference Mechanism:** Ingests a short rotating video or orthographic snapshots, computes camera pose trajectories via learned Structure-from-Motion (SfM), and optimizes an implicit field with surface normal regularizers to generate CAD-compatible geometric surfaces.
-- **Strengths:** High geometric accuracy on industrial objects, sharp edges suitable for manufacturing, native CAD export format support.
-- **Limitations:** Higher latency (60 – 180 seconds); sensitive to motion blur in casual smartphone video captures.
+- **Inference Mechanism:** Ingests rotating imagery, computes camera pose trajectories via learned Structure-from-Motion (SfM), and optimizes an implicit field with surface normal regularizers to generate CAD-compatible geometric surfaces.
+- **Strengths:** High geometric accuracy on mechanical objects, sharp edges suitable for manufacturing, native CAD export format support.
+- **Trade-offs:** Higher latency (60 – 180 seconds); sensitive to motion blur in casual smartphone video captures.
 
-### 6.7 Rodin Gen-2 (Deemos Technology)
-- **Core Architecture:** Micro-Geometry Voxel Diffusion Model running on cloud supercomputing clusters.
-- **Mathematical Representation:** Denoising diffusion process operating on a high-resolution voxel latent field $\mathbf{z} \in \mathbb{R}^{V \times V \times V \times C}$. The forward diffusion process corrupts latents as:
-  $$q(\mathbf{z}_t | \mathbf{z}_0) = \mathcal{N}(\mathbf{z}_t; \sqrt{\bar{\alpha}_t}\,\mathbf{z}_0,\; (1 - \bar{\alpha}_t)\mathbf{I})$$
-  Reverse denoising conditioned on image embedding $\mathbf{e}_I$ yields micro-geometry detail via:
-  $$p_\theta(\mathbf{z}_{t-1} | \mathbf{z}_t, \mathbf{e}_I) = \mathcal{N}(\mathbf{z}_{t-1};\; \mu_\theta(\mathbf{z}_t, t, \mathbf{e}_I),\; \sigma_t^2 \mathbf{I})$$
-- **Inference Mechanism:** Image-conditioned latent diffusion reverse process followed by high-fidelity mesh extraction with subdivision surface refinement and displacement-mapped micro-geometry.
-- **Strengths:** Best-in-class surface micro-detail and human character fidelity; suited for cinematic VFX character pipelines.
-- **Limitations:** Proprietary cloud-only; latency 60–180 seconds; paid subscription credit model; zero educational transparency.
+### 6.5 Comprehensive 3D Computer Vision Paradigm Matrix
 
-### 6.8 Tencent Hunyuan3D 1.0 & 2.0
-- **Core Architecture:** Two-Stage Foundation Model: Multi-view Diffusion Transformer (Hunyuan-DiT) + Feed-Forward Sparse Voxel Reconstruction.
-- **Mathematical Representation:** Sparse-voxel triplane occupancy field. The diffusion transformer encodes image conditioning $\mathbf{c}$ and predicts multi-view normal maps $\hat{N}_k$ for $k$ canonical views. A triplane decoder $f_\phi: \mathbb{R}^{3 \times N \times N \times C} \to [0,1]$ yields continuous occupancy:
-  $$o(\mathbf{x}) = \sigma\!\left(f_\phi\bigl(\text{proj}_{xy}(T_{xy}, x, y) \oplus \text{proj}_{xz}(T_{xz}, x, z) \oplus \text{proj}_{yz}(T_{yz}, y, z)\bigr)\right)$$
-  where $\sigma$ is the sigmoid function and the surface is extracted at the $o(\mathbf{x}) = 0.5$ iso-level.
-- **Inference Mechanism:** 
-  1. *View Generation:* Conditioned on text or image prompts, a diffusion transformer synthesizes multi-view normal and RGB projections.
-  2. *Volume Reconstruction:* A sparse-voxel triplane backbone decodes occupancy without slow Score Distillation Sampling (SDS).
-- **Strengths:** High geometric consistency across views, open foundation model weights, sharp texture baking with specular decoupling.
-- **Limitations:** Requires high GPU memory (minimum 16 GB VRAM) for local deployment.
-
-### 6.9 Comprehensive Industry Comparison Matrix
-
-| Startup / Platform | Core Mathematical Representation | Inference Backbone | Average Latency | Watertight Solid? | Educational Transparency | Offline Capable? | Free Trial Credits |
+| Methodological Paradigm | Core Mathematical Representation | Inference Backbone | Average Latency | Watertight Solid? | Educational Transparency | Offline Capable? | Free Student Credits |
 |---|---|---|---|---|---|---|---|
-| **3DFUN AI (This Work)** | **Silhouette SDF + Marching Cubes** | **ONNX INT8 (CPU / DirectML / CUDA)** | **12 – 45 s** | **Yes (96.0%)** | **100% Open & Interactive** | **Yes (Zero Cloud)** | **50 Credits + 10 Daily** |
-| **Tripo3D (TripoSR)** | Orthogonal Triplane NeRF ($T_{xy}, T_{xz}, T_{yz}$) | Large Reconstruction Transformer | 8 – 15 s | Yes | Partial (TripoSR weights open) | No (Cloud API) | Limited daily quota |
-| **Meshy.ai** | Tetrahedral SDF (DMTet) | Multi-View Diffusion + SDS | 45 – 90 s | Yes | No (Proprietary Black Box) | No (Cloud API) | Paid credit packs |
-| **Luma Genie** | Explicit 3D Gaussians $(\mu, \Sigma, \alpha, c)$ | 3D Latent Diffusion | 20 – 60 s | No (Radiance Field) | No (Proprietary) | No (Cloud API) | Sandbox quota |
-| **CSM.ai** | Neural Inverse CAD / B-Rep | Multi-view Video Diffusion + SfM | 60 – 180 s | Yes | No (Proprietary Cloud API) | No (Cloud API) | Free trial tokens |
-| **Tencent Hunyuan3D 2.0** | Multi-View DiT + Sparse Voxels | Diffusion Transformer + Triplane | 25 – 50 s | Yes | Open Model Weights | Yes (16GB+ VRAM GPU) | Open Model License |
-| **Kaedim 3D** | Subdivision Quad Mesh | ML + Human Retopology Loop | 15 – 30 min | Yes | No (Enterprise B2B) | No (Cloud SaaS) | Paid subscription ($150+) |
-| **Spline 3D** | Parametric WebGL / Mesh | Web Canvas + Cloud AI | Interactive / 20 s | Yes | Partial (Editor UI open) | No (Web Cloud) | Free tier w/ watermark |
-| **Rodin Gen-2 (Deemos)** | Micro-Geometry Voxel Diffusion | Cloud Supercomputing Farm | 60 – 180 s | Yes | No (Proprietary) | No (Cloud API) | Paid credit packs |
-| **Stable Fast 3D** | Triplane Transformer + Material MLP | Feedforward ViT (Stability AI) | 0.5 – 2 s | Yes | Open weights | Yes (High VRAM GPU) | Open model release |
+| **3DFUN AI Course Platform** | **Silhouette SDF + Marching Cubes** | **ONNX INT8 (CPU / DirectML / CUDA)** | **12 – 45 s** | **Yes (96.0%)** | **100% Open & Interactive** | **Yes (Zero Cloud)** | **50 Credits + 10 Daily** |
+| **Feed-Forward Triplane Transformer (LRM)** | Orthogonal Triplane NeRF ($T_{xy}, T_{xz}, T_{yz}$) | Large Reconstruction Transformer | 8 – 15 s | Yes | Partial (Open Weights) | Yes (DirectML/GPU) | Open Model Checkpoint |
+| **Multi-View Latent Diffusion & DMTet** | Tetrahedral SDF (DMTet) | Multi-View Diffusion + SDS | 45 – 90 s | Yes | High Complexity Prior | No (Cloud Multi-GPU) | Cloud Compute Required |
+| **3D Gaussian Splatting (3DGS)** | Explicit 3D Gaussians $(\mu, \Sigma, \alpha, c)$ | 3D Latent Diffusion | 20 – 60 s | No (Radiance Field) | Open CUDA Kernels | Yes (CUDA Shader Rig) | Local Rasterizer |
+| **Neural Inverse CAD & Eikonal SDF** | Neural Inverse CAD / B-Rep | Multi-view Video Diffusion + SfM | 60 – 180 s | Yes | Mathematical Loss Formulation | No (High VRAM Node) | Cloud Pipeline |
+| **Feed-Forward Instant Mesh / SF3D** | Triplane Transformer + Material MLP | Feedforward ViT | 0.5 – 2 s | Yes | Open Graph Weights | Yes (Mid-Tier GPU) | Open Model Release |
 
 ---
 
