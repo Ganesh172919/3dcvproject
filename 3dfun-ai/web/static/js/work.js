@@ -169,8 +169,12 @@ export function renderWork(main) {
         '3DFUN AI synthesizes single-view RGB photographs into watertight, calibrated 3D meshes. Inspired by leading generative 3D startups (Tripo3D, Meshy, Luma, Kaedim), our platform provides both local execution and complete mathematical transparency across every tensor transformation.'),
       h('div', { class: 'row wrap gap8 mt16' },
         h('a', { class: 'btn primary', href: '/app/studio?sample=chair&engine=triposr', 'data-link': '' }, 'Launch Creative Studio'),
+        h('a', { class: 'btn', href: '/app/showcase', 'data-link': '', style: 'color:var(--cyan);font-weight:600;' }, '✦ Showcase & Hub'),
         h('a', { class: 'btn', href: '/app/inspector', 'data-link': '' }, '🔬 8-Stage Pipeline Inspector'),
         h('a', { class: 'btn', href: '/app/labs', 'data-link': '' }, '🎓 Student Curriculum Labs'),
+        h('a', { class: 'btn', href: '/docs/STARTUPS_COMPARATIVE_SURVEY.md', target: '_blank' }, '🏢 2026 Startups Survey'),
+        h('a', { class: 'btn', href: '/docs/MATHEMATICAL_FOUNDATIONS_AND_PROOFS.md', target: '_blank' }, '📐 Math Proofs'),
+        h('a', { class: 'btn', href: '/docs/STARTUP_LANDSCAPE_AND_BUSINESS_MODELS.md', target: '_blank' }, '💰 Unit Economics'),
         h('a', { class: 'btn', href: '/paper/main.pdf', target: '_blank' }, '📄 Download IEEE Paper (.pdf)'),
         h('a', { class: 'btn', href: '/report.pdf', target: '_blank' }, '📊 Download Project Report (.pdf)'))),
 

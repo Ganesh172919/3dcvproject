@@ -180,7 +180,21 @@ def create_app() -> FastAPI:
         guides = {"local-setup.md", "architecture.md", "operations.md", "reproducibility.md"}
         if filename not in guides:
             return JSONResponse(status_code=404, content={"error": "Guide not found"})
-        return FileResponse(docs_dir / "handbook" / filename, media_type="text/plain")
+        return FileResponse(docs_dir / "handbook" / filename, media_type="text/plain; charset=utf-8")
+
+    @app.get("/docs/{filename:path}", include_in_schema=False)
+    def serve_docs_file(filename: str):
+        if filename in {"report.pdf"}:
+            return report_pdf()
+        target = (docs_dir / filename).resolve()
+        if not target.is_relative_to(docs_dir.resolve()) or not target.is_file():
+            return JSONResponse(status_code=404, content={"error": f"Document '{filename}' not found"})
+        media_type = "text/plain; charset=utf-8"
+        if target.suffix == ".pdf":
+            media_type = "application/pdf"
+        elif target.suffix == ".html":
+            media_type = "text/html"
+        return FileResponse(target, media_type=media_type)
 
     @app.get("/paper/main.pdf", include_in_schema=False)
     def paper_pdf():
