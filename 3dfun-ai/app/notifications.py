@@ -44,7 +44,7 @@ class ResendTransport:
         if not settings.resend_api_key:
             log.warning("RESEND_API_KEY missing; dropping email")
             return False
-        body = json.dumps({"from": "3DFUN AI <noreply@example.com>", "to": [email.to],
+        body = json.dumps({"from": "3DCV Lab Group 17 <noreply@example.com>", "to": [email.to],
                            "subject": email.subject, "text": email.text,
                            "html": email.html or ""}).encode()
         req = urllib.request.Request("https://api.resend.com/emails", data=body,
@@ -68,12 +68,12 @@ def _shell(title: str, body: str, cta: str = "", url: str = "") -> tuple[str, st
     text = f"{title}\n\n{body}\n"
     if cta and url:
         text += f"\n{cta}: {url}\n"
-    text += "\n— 3DFUN AI\n"
+    text += "\n— 3DCV Lab Group 17\n"
     html_body = body.replace("\n", "<br>")
     html = (f"<h2 style='font-family:sans-serif'>{title}</h2>"
             f"<p style='font-family:sans-serif'>{html_body}</p>"
             + (f"<p><a href='{url}' style='font-family:sans-serif'>{cta}</a></p>" if cta else "")
-            + "<p style='color:#666;font-family:sans-serif;font-size:12px'>3DFUN AI</p>")
+            + "<p style='color:#666;font-family:sans-serif;font-size:12px'>3DCV Lab Group 17</p>")
     return text, html
 
 
@@ -95,7 +95,7 @@ def notify(db: Session, user_id: str, kind: str, title: str, body: str = "") -> 
 # ---------------------------------------------------------------------------
 def send_verify_email(user: User, token: str) -> bool:
     url = f"{settings.app_url}/app/verify-email?token={token}"
-    return send_email(user.email, "Verify your 3DFUN AI account",
+    return send_email(user.email, "Verify your 3DCV Lab Group 17 account",
                       "Verify your email",
                       "Confirm your address to activate generation credits.",
                       "Verify email", url)
@@ -103,14 +103,14 @@ def send_verify_email(user: User, token: str) -> bool:
 
 def send_password_reset(user: User, token: str) -> bool:
     url = f"{settings.app_url}/app/reset-password?token={token}"
-    return send_email(user.email, "Reset your 3DFUN AI password",
+    return send_email(user.email, "Reset your 3DCV Lab Group 17 password",
                       "Password reset requested",
                       "This link expires in 60 minutes. If you did not request it, ignore this email.",
                       "Reset password", url)
 
 
 def send_welcome(user: User, credits: int) -> bool:
-    return send_email(user.email, "Welcome to 3DFUN AI",
+    return send_email(user.email, "Welcome to 3DCV Lab Group 17",
                       "Your 3D studio is ready",
                       f"We added {credits} credits to your account. Upload a photo and generate your first model.",
                       "Open the studio", f"{settings.app_url}/app/studio")

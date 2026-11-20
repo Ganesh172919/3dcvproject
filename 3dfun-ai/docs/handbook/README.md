@@ -1,4 +1,4 @@
-# 3DFUN AI project handbook
+# 3DCV Course Project Handbook — Group 17
 
 These guides cover the packaged course build. Start with the `README.md` for the supported installation and sample run.
 

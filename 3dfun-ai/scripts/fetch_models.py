@@ -71,7 +71,7 @@ def download(url: str, output: BinaryIO, size: int = 0) -> None:
 
 
 def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(description="Fetch the ONNX models used by 3DFUN AI")
+    ap = argparse.ArgumentParser(description="Fetch the ONNX models used by 3DCV Lab Group 17")
     ap.add_argument("--check", action="store_true", help="verify without downloading")
     ap.add_argument("--triposr", action="store_true", help="also install the 436 MB TripoSR INT8 model")
     ap.add_argument("--midas", action="store_true", help="also install the 67 MB MiDaS depth model")

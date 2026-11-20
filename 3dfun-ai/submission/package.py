@@ -27,7 +27,7 @@ SOURCE_SUFFIXES = {
 ROOT_FILES = (
     "AUTHORS.md", "LICENSE", "run.ps1", "run.sh", ".env.example", ".gitignore", ".dockerignore",
     "pytest.ini", "Makefile", "Dockerfile", "docker-compose.yml", "deploy.ps1",
-    "paper/main.pdf", "presentations/3DFUN-AI-Project.pptx",
+    "paper/main.pdf", "presentations/3DCV-Lab-Group17-Project.pptx",
     "docs/BENCHMARK.md", "docs/how-to/academic-packaging-and-verification.md",
     "docs/reference/api-spec.md", "docs/reference/configuration.md", "docs/reference/metrics.md",
     "docs/explanations/tinydepth-and-pointcloud-evaluation.md",
@@ -52,7 +52,7 @@ def check_media(report: Path, demo: Path) -> None:
 
 
 def build_archive(report: Path, demo: Path, evidence: Path, output_dir: Path) -> Path:
-    from benchmarks.make_dataset import write_synthetic_scene
+    from benchmarks.make_dataset import write_render_3d_scene
 
     check_media(report, demo)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -60,7 +60,7 @@ def build_archive(report: Path, demo: Path, evidence: Path, output_dir: Path) ->
     with TemporaryDirectory(prefix="course-archive-", dir=output_dir) as directory:
         scratch = Path(directory)
         box_image, box_mesh = scratch / "box.png", scratch / "box.obj"
-        write_synthetic_scene("box", box_image, box_mesh)
+        write_render_3d_scene("box", box_image, box_mesh)
         draft = scratch / final.name
         with ZipFile(draft, "w", ZIP_DEFLATED, compresslevel=6) as archive:
             def put(path: Path, dest: str) -> None:
@@ -90,7 +90,7 @@ def build_archive(report: Path, demo: Path, evidence: Path, output_dir: Path) ->
             put(box_mesh, "sample_data/box.obj")
             put(ROOT / "engine/testdata/sneaker.png", "sample_data/sneaker.png")
             archive.writestr(f"{ARCHIVE}/sample_data/manifest.json", json.dumps(
-                {"entries": [{"id": "synthetic/box", "image": "box.png", "gt_mesh": "box.obj"}]},
+                {"entries": [{"id": "3D render/box", "image": "box.png", "gt_mesh": "box.obj"}]},
                 indent=2,
             ))
 

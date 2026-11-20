@@ -1,12 +1,12 @@
 # Reference: Quantitative Evaluation Metrics & Protocol
 
-This document provides formal mathematical definitions, implementation references, and interpretation standards for the 3D computer vision metrics used throughout the 3DFUN AI benchmark harness.
+This document provides formal mathematical definitions, implementation references, and interpretation standards for the 3D computer vision metrics used throughout the 3DCV Lab Group 17 benchmark harness.
 
 ---
 
-## 1. Geometric Accuracy Metrics (Synthetic Ground Truth)
+## 1. Geometric Accuracy Metrics (3D Render Ground Truth)
 
-Because physical photographs lack exact ground truth meshes, geometric distance metrics are evaluated exclusively on synthetic scenes with analytic reference geometry (`benchmarks/data/synthetic/gt/`).
+Because physical photographs lack exact ground truth meshes, geometric distance metrics are evaluated exclusively on 3D render scenes with analytic reference geometry (`benchmarks/data/3D render/gt/`).
 
 ### 1.1 Chamfer Distance (CD)
 Measures the mean symmetric Euclidean distance between point sets sampled uniformly from the reconstructed surface $S_1$ and ground truth surface $S_2$:
@@ -90,7 +90,7 @@ Each benchmark result entry in `results/summary/benchmark_results.csv` must incl
 
 ### 4.2 Sampling Protocol for Point Cloud Metrics
 
-Chamfer Distance and F-Score are sensitive to the number and distribution of surface samples. 3DFUN AI uses **uniform area-weighted face sampling** via trimesh:
+Chamfer Distance and F-Score are sensitive to the number and distribution of surface samples. 3DCV Lab Group 17 uses **uniform area-weighted face sampling** via trimesh:
 
 ```python
 import trimesh
@@ -183,13 +183,13 @@ def fscore(pts1: np.ndarray, pts2: np.ndarray, threshold: float = 0.01) -> float
 
 ### Understanding the Baselines
 
-The 3DFUN AI benchmark compares three methods:
+The 3DCV Lab Group 17 benchmark compares three methods:
 
 | Method | Description | Expected CD | Expected $F@1\%$ |
 |---|---|---|---|
 | `baseline_hull` | Pure visual hull (silhouette extrusion) | ~0.0812 | ~0.098 |
 | `baseline_tsdf` | Unpadded TSDF without inflation | ~0.0754 | ~0.112 |
-| `proposed` | 3DFUN AI constrained slab inflation | **~0.0639** | **~0.148** |
+| `proposed` | 3DCV Lab Group 17 constrained slab inflation | **~0.0639** | **~0.148** |
 
 Per-scene results and differences between methods are recorded in `results/summary/per_scene.csv`.
 

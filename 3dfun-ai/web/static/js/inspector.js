@@ -1,7 +1,7 @@
 // Student Pipeline Inspector: 8-Stage Interactive Tensor & Geometric Construction Visualizer.
 // Course: 3D Computer Vision Course Project · IIIT Dharwad
 
-import { api, clear, fmt, h, mount, toast } from './lib.js';
+import { api, clear, fmt, h, mount, renderMathInDOM, toast } from './lib.js';
 
 export const DEFAULT_STAGES = [
   {
@@ -308,10 +308,12 @@ export class PipelineInspector {
       assetPills,
       interactiveControls,
       telemetryBox);
+    renderMathInDOM(this.body);
   }
 }
 
 export async function renderInspector(main) {
+  document.title = '8-Stage Pipeline Inspector · 3DCV Fun AI Lab · Group 17 · IIIT Dharwad';
   clear(main);
   const container = h('div', { class: 'studio-wrap', style: 'padding: 24px; max-width: 1400px; margin: 0 auto;' });
   const header = h('header', { class: 'spread mb16' },

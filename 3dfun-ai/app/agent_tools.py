@@ -247,6 +247,45 @@ def tool_inspect_stage_tensor(
     return {"success": True, "action": "inspect_stage_tensor", "telemetry": stats}
 
 
+def _resolve_asset_glb_path(asset: Asset) -> tuple[str, Path]:
+    """Resolve storage key and filesystem path for an asset's GLB file."""
+    files = asset.files or {}
+    candidates = []
+
+    # 1. Direct matches in files dict
+    for k in ("glb", "model.glb", "model_repaired.glb"):
+        if k in files:
+            val = files[k]
+            key = val if "/" in str(val) else f"{asset.storage_prefix}/{val}"
+            candidates.append(key)
+
+    # 2. Key matching .glb
+    for k, v in files.items():
+        if isinstance(k, str) and k.endswith(".glb"):
+            candidates.append(v if "/" in str(v) else f"{asset.storage_prefix}/{v}")
+        elif isinstance(v, str) and v.endswith(".glb"):
+            candidates.append(v if "/" in str(v) else f"{asset.storage_prefix}/{v}")
+
+    # 3. Standard storage paths
+    candidates.append(f"{asset.storage_prefix}/model.glb")
+    candidates.append(f"{asset.storage_prefix}/model_repaired.glb")
+
+    for key in candidates:
+        if key:
+            p = storage.storage.local_path(key)
+            if p and p.exists():
+                return key, p
+
+    # 4. Search directory
+    prefix_dir = storage.storage.local_path(asset.storage_prefix)
+    if prefix_dir and prefix_dir.is_dir():
+        for f in prefix_dir.glob("*.glb"):
+            if f.is_file():
+                return f"{asset.storage_prefix}/{f.name}", f
+
+    raise ApiError("NO_GLB_FILE", "The 3D model does not have a GLB file to operate on.", status=400)
+
+
 def tool_repair_mesh(
     db: Session,
     user: User,
@@ -257,13 +296,7 @@ def tool_repair_mesh(
     asset = _get_target_asset(db, user, mesh_id)
     actions = actions or ["close_holes", "remove_non_manifold", "smooth"]
 
-    glb_key = asset.files.get("glb")
-    if not glb_key:
-        raise ApiError("NO_GLB_FILE", "The 3D model does not have a GLB file to repair.", status=400)
-
-    glb_path = storage.storage.local_path(glb_key)
-    if not glb_path or not glb_path.exists():
-        raise ApiError("FILE_NOT_FOUND", "GLB file missing on server storage.", status=404)
+    glb_key, glb_path = _resolve_asset_glb_path(asset)
 
     import trimesh
     mesh = trimesh.load(str(glb_path), force="mesh")
@@ -334,13 +367,7 @@ def tool_decimate_mesh(
 ) -> dict[str, Any]:
     """Decimate mesh to exact target polygon count for game engine or mobile deployment."""
     asset = _get_target_asset(db, user, mesh_id)
-    glb_key = asset.files.get("glb")
-    if not glb_key:
-        raise ApiError("NO_GLB_FILE", "The 3D model does not have a GLB file.", status=400)
-
-    glb_path = storage.storage.local_path(glb_key)
-    if not glb_path or not glb_path.exists():
-        raise ApiError("FILE_NOT_FOUND", "GLB file missing on server storage.", status=404)
+    glb_key, glb_path = _resolve_asset_glb_path(asset)
 
     import trimesh
     mesh = trimesh.load(str(glb_path), force="mesh")
@@ -412,10 +439,7 @@ def tool_convert_export(
     if fmt not in ("glb", "obj", "stl", "ply", "usdz"):
         raise ApiError("UNSUPPORTED_FORMAT", f"Format '{fmt}' is not supported. Use glb, obj, stl, ply, or usdz.", status=400)
 
-    glb_key = asset.files.get("glb")
-    glb_path = storage.storage.local_path(glb_key) if glb_key else None
-    if not glb_path or not glb_path.exists():
-        raise ApiError("FILE_NOT_FOUND", "Source GLB model missing for export conversion.", status=404)
+    glb_key, glb_path = _resolve_asset_glb_path(asset)
 
     import trimesh
     mesh = trimesh.load(str(glb_path), force="mesh")

@@ -37,7 +37,7 @@ def check_status(url: str) -> int:
 
 def run_e2e_audit():
     print("==================================================================")
-    print("3DFUN AI — COMPREHENSIVE END-TO-END BROWSER & BENCHMARK AUDIT")
+    print("3DCV Lab Group 17 — COMPREHENSIVE END-TO-END BROWSER & BENCHMARK AUDIT")
     print("==================================================================")
 
     audit_results = {

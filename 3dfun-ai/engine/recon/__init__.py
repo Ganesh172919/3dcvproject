@@ -1,4 +1,4 @@
-"""3DFUN AI Reconstruction Engine (Public API).
+"""3DCV Lab Group 17 Reconstruction Engine (Public API).
 
 Course: 3D Computer Vision (Autumn Semester 2026)
 Institution: Indian Institute of Information Technology (IIIT), Dharwad

@@ -236,7 +236,7 @@ def reconstruct(image: bytes | str | Path, out_dir: str | Path,
         "depth_model": cfg.depth_model,
         "matte_method": prepared.meta["matte_method"],
         "face_count": mesh.metrics["faces"],
-        "generated_by": "3DFUN AI",
+        "generated_by": "3DCV Lab Group 17",
     }
 
     t = time.perf_counter()
@@ -289,7 +289,7 @@ def reconstruct(image: bytes | str | Path, out_dir: str | Path,
     manifest = {
         "manifest_version": "1.0",
         "engine": {
-            "name": "3DFUN AI reconstruction engine",
+            "name": "3DCV Lab Group 17 reconstruction engine",
             "version": cfg.pipeline_version,
             "pipeline": "silhouette-constrained monocular depth inflation + marching cubes",
             "depth_model": cfg.depth_model,

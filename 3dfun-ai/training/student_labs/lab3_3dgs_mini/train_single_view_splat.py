@@ -124,7 +124,7 @@ def train_gaussian_splat(
         resized = cv2.resize(img_bgr, (img_size, img_size), interpolation=cv2.INTER_AREA)
         img_rgb = cv2.cvtColor(resized, cv2.COLOR_BGR2RGB).astype(np.float32) / 255.0
     else:
-        # Create a synthetic target (multi-colored concentric geometric icon)
+        # Create a 3D render target (multi-colored concentric geometric icon)
         y, x = np.mgrid[-1:1:complex(0, img_size), -1:1:complex(0, img_size)]
         r = np.sqrt(x**2 + y**2)
         img_rgb = np.zeros((img_size, img_size, 3), dtype=np.float32)

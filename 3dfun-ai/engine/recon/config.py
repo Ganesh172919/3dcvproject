@@ -1,4 +1,4 @@
-"""Pipeline configuration for the 3DFUN AI reconstruction engine.
+"""Pipeline configuration for the 3DCV Lab Group 17 reconstruction engine.
 
 Every knob that influences output geometry/texture lives here so that a run is
 fully reproducible from a serialised config (stored on each Generation row).

@@ -1,4 +1,4 @@
-"""3DFUN AI - FastAPI application factory, middleware and API wiring.
+"""3DCV Lab Group 17 - FastAPI application factory, middleware and API wiring.
 
 Course: 3D Computer Vision Course Project · IIIT Dharwad
 Supervisor: Dr. Shirshendu Layek (Dept. of DSAI)
@@ -54,7 +54,7 @@ def create_app() -> FastAPI:
     if problems:
         raise RuntimeError("Production configuration: " + ". ".join(problems))
     app = FastAPI(
-        title="3DFUN AI API",
+        title="3DCV Lab Group 17 API",
         version=settings.version,
         description=("Single-image to 3D reconstruction platform. "
                      "Course project, 3D Computer Vision, IIIT Dharwad."),
@@ -263,7 +263,7 @@ def create_app() -> FastAPI:
 
     @app.on_event("startup")
     def _startup() -> None:
-        log.info("3DFUN AI %s starting (env=%s, provider=%s, queue=%s, events=%s)",
+        log.info("3DCV Lab Group 17 %s starting (env=%s, provider=%s, queue=%s, events=%s)",
                  settings.version, settings.environment, settings.generation_provider,
                  queue_backend()["kind"], event_backend())
         log.info("health endpoint: %s/api/v1/health", settings.app_url)

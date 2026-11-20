@@ -1,6 +1,6 @@
 # How-To Guide: Exporting Watertight Meshes for Additive Manufacturing (3D Printing)
 
-Unlike unconstrained monocular reconstruction methods that generate open shells, floating triangles, or non-manifold edges, 3DFUN AI is mathematically proven to produce closed, orientable 2-manifold surfaces (see Lemma 1 in the technical report). This guide explains how to export, verify, and slice 3DFUN AI meshes for 3D printing.
+Unlike unconstrained monocular reconstruction methods that generate open shells, floating triangles, or non-manifold edges, 3DCV Lab Group 17 is mathematically proven to produce closed, orientable 2-manifold surfaces (see Lemma 1 in the technical report). This guide explains how to export, verify, and slice 3DCV Lab Group 17 meshes for 3D printing.
 
 ---
 
@@ -31,7 +31,7 @@ Consumer FDM (Fused Deposition Modeling) and SLA (Stereolithography) printers re
 - **FDM Printers (0.4 mm nozzle):** Minimum wall thickness $\ge 1.2$ mm (3 perimeter shells).
 - **SLA Resin Printers:** Minimum wall thickness $\ge 0.8$ mm.
 
-In 3DFUN AI, the minimum wall thickness is parameterized by $t_{\min}$ in `engine/recon/pipeline.py`:
+In 3DCV Lab Group 17, the minimum wall thickness is parameterized by $t_{\min}$ in `engine/recon/pipeline.py`:
 
 ```bash
 python scripts/run_pipeline.py \
@@ -177,3 +177,83 @@ print(f"High-quality mesh: {len(mesh.triangles)} triangles, watertight: {mesh.is
 
 *Evidence: Mesh I/O and repair in `engine/recon/meshing.py`; topology checks in `benchmarks/metrics.py`.*
 *Authors: J Ganesh, M Jagadeshwar, B Varshith, Pranav Kashyap, C Sai Aravind (Supervisor: Dr. Shirshendu Layek, Dept. of DSAI, IIIT Dharwad).*
+
+
+---
+
+## 7. 3D Printing Production Workflow Architecture
+
+```
+┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                               3D PRINTING PRODUCTION DATAFLOW                                    │
+└────────────────────────────────────────────────┬─────────────────────────────────────────────────┘
+                                                 │
+    ┌────────────────────────┬───────────────────┴───────────────────┬────────────────────────┐
+    ▼                        ▼                                       ▼                        ▼
+[WATERTIGHT EXTRACTION]  [TOPOLOGY AUDIT]                        [PHYSICAL SCALING]       [SLICER PREPARATION]
+• Marching Cubes SDF     • Validates Euler chi = 2               • Bounding box scale     • PrusaSlicer / Cura
+• Lorensen-Cline Lookup  • Eliminates non-manifold edges         • Millimeter calibration • Layer height: 0.16mm
+• Smooth zero-crossing   • Fills boundary hole loops             • Wall thickness check   • Binary STL / 3MF
+```
+
+---
+
+## 8. Automated Slicer Preparation Pipeline
+
+```python
+"""Automated pre-print validation and physical dimension scaling."""
+import trimesh
+import numpy as np
+
+def prepare_mesh_for_slicer(
+    input_glb_path: str,
+    output_stl_path: str,
+    target_height_mm: float = 120.0,
+    min_wall_thickness_mm: float = 1.2,
+) -> dict[str, Any]:
+    """Validates manifold closure, scales to physical millimeters, and exports binary STL."""
+    mesh = trimesh.load(input_glb_path, file_type="glb")
+    if isinstance(mesh, trimesh.Scene):
+        mesh = mesh.dump(concatenate=True)
+        
+    # 1. Topological audit
+    if not mesh.is_watertight:
+        trimesh.repair.fill_holes(mesh)
+        trimesh.repair.fix_normals(mesh)
+        
+    assert mesh.is_watertight, "Mesh failed manifold closure assertion."
+    
+    # 2. Scale to target millimeter dimensions
+    current_height = mesh.bounds[1][1] - mesh.bounds[0][1]
+    scale_factor = target_height_mm / max(current_height, 1e-4)
+    mesh.apply_scale(scale_factor)
+    
+    # 3. Orient base to z = 0 plane
+    mesh.vertices[:, 2] -= mesh.bounds[0][2]
+    
+    # 4. Export binary STL
+    mesh.export(output_stl_path, file_type="stl")
+    
+    return {
+        "status": "ready_for_print",
+        "bounding_box_mm": (mesh.bounds[1] - mesh.bounds[0]).tolist(),
+        "volume_cm3": round(mesh.volume / 1000.0, 2),
+        "surface_area_cm2": round(mesh.area / 100.0, 2),
+        "watertight": True,
+    }
+```
+
+---
+
+## 9. Physical Scale Normalization & Infill Density Optimization
+
+- **Dimensional Calibration**: Models are exported in true millimeter coordinates ($1.0 = 1.0\text{ mm}$), avoiding slicer scale unit ambiguities.
+- **Infill Recommendations**: For decorative models, a 15% gyroid infill provides maximum strength-to-weight ratio. For functional brackets, 40% triangular infill is recommended.
+
+---
+
+## 10. Multi-Material 3MF Export with Embedded Texture Atlases
+
+The platform supports modern `.3mf` packaging that bundles geometry, conformal UV mappings, and 1024x1024 diffuse texture PNGs in an open XML zip container, enabling full-color multi-material 3D printing on PolyJet and Bambu Lab AMS systems.
+
+*3D Printing Export Handbook documented by Group 17 · 3D Computer Vision Course Project · Department of Data Science & Artificial Intelligence · IIIT Dharwad.*

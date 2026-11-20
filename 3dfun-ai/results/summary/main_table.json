@@ -2,7 +2,7 @@
   {
     "method": "proposed",
     "n_runs": 75,
-    "n_synthetic": 39,
+    "n_3D render": 39,
     "n_real": 36,
     "watertight_pct": 96.0,
     "chamfer_mean": 0.06392234304749018,
@@ -55,7 +55,7 @@
   {
     "method": "tsdf",
     "n_runs": 75,
-    "n_synthetic": 39,
+    "n_3D render": 39,
     "n_real": 36,
     "watertight_pct": 0.0,
     "chamfer_mean": 0.09622522498084171,
@@ -108,7 +108,7 @@
   {
     "method": "visual_hull",
     "n_runs": 75,
-    "n_synthetic": 39,
+    "n_3D render": 39,
     "n_real": 36,
     "watertight_pct": 0.0,
     "chamfer_mean": 0.0728051677561453,

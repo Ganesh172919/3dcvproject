@@ -1,4 +1,4 @@
-"""Comprehensive end-to-end browser test for all 3DFUN AI upgraded features.
+"""Comprehensive end-to-end browser test for all 3DCV Lab Group 17 upgraded features.
 Runs with Playwright Edge channel on http://127.0.0.1:8010.
 """
 from __future__ import annotations
@@ -142,15 +142,17 @@ def run_verification() -> bool:
         print("  -> Student Pipeline Inspector container & header verified.")
 
         # ----------------------------------------------------------------------
-        # TEST 5: Agentic AI Co-Pilot (Tab B)
+        # TEST 5: Agentic 3D AI Chat (Tab B)
         # ----------------------------------------------------------------------
-        print("[6/7] Testing Agentic AI Co-Pilot...")
-        tab_chat = page.locator("button:has-text('AI Co-Pilot')")
+        print("[6/7] Testing Agentic 3D AI Chat...")
+        tab_chat = page.locator("button:has-text('3D AI Chat')")
+        if tab_chat.count() == 0:
+            tab_chat = page.locator("button:has-text('AI Co-Pilot')")
         expect(tab_chat).to_be_visible()
         tab_chat.click()
         expect(page.locator(".chat-dock")).to_be_visible()
 
-        # Send question to Professor 3D
+        # Send question to 3D AI Chat
         chat_input = page.locator("#chat-message")
         expect(chat_input).to_be_visible()
         chat_input.fill("Explain the mathematical difference between Depth Anything V2 and MiDaS.")

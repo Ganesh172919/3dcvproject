@@ -215,6 +215,62 @@ class TripoSRProvider(LocalReconstructionProvider):
                               artifact_dir=str(result.out_dir), manifest=result.manifest)
 
 
+class TinyDepthProvider(LocalReconstructionProvider):
+    slug = "tinydepth"
+    model_name = "TinyDepth Student CNN (Lab 1)"
+    depth_model = "midas-v2.1-small"
+
+    def estimate_cost(self, quality: str, options: dict[str, Any]) -> CostEstimate:
+        estimate = super().estimate_cost(quality, options)
+        estimate.credits = 3
+        estimate.estimated_seconds = {"draft": 15, "standard": 25, "high": 40}[quality]
+        return estimate
+
+
+class SirenSdfProvider(LocalReconstructionProvider):
+    slug = "siren_sdf"
+    model_name = "SIREN Implicit Occupancy MLP (Lab 2)"
+
+    def estimate_cost(self, quality: str, options: dict[str, Any]) -> CostEstimate:
+        estimate = super().estimate_cost(quality, options)
+        estimate.credits = 4
+        estimate.estimated_seconds = {"draft": 20, "standard": 35, "high": 55}[quality]
+        return estimate
+
+
+class GaussianSplatProvider(LocalReconstructionProvider):
+    slug = "gaussian_splat"
+    model_name = "3D Gaussian Splatting (3DGS / Lab 3)"
+
+    def estimate_cost(self, quality: str, options: dict[str, Any]) -> CostEstimate:
+        estimate = super().estimate_cost(quality, options)
+        estimate.credits = 5
+        estimate.estimated_seconds = {"draft": 25, "standard": 45, "high": 70}[quality]
+        return estimate
+
+
+class HybridTriplaneProvider(LocalReconstructionProvider):
+    slug = "hybrid_triplane"
+    model_name = "Hybrid Triplane-SDF (Lab 5)"
+
+    def estimate_cost(self, quality: str, options: dict[str, Any]) -> CostEstimate:
+        estimate = super().estimate_cost(quality, options)
+        estimate.credits = 5
+        estimate.estimated_seconds = {"draft": 30, "standard": 50, "high": 80}[quality]
+        return estimate
+
+
+class InstantMeshDiTProvider(LocalReconstructionProvider):
+    slug = "instantmesh_dit"
+    model_name = "InstantMesh DiT (Multi-View + DMTet)"
+
+    def estimate_cost(self, quality: str, options: dict[str, Any]) -> CostEstimate:
+        estimate = super().estimate_cost(quality, options)
+        estimate.credits = 6
+        estimate.estimated_seconds = {"draft": 40, "standard": 65, "high": 110}[quality]
+        return estimate
+
+
 class HttpGenerationProvider:
     """Adapter for a REST vendor: POST /generations, GET /generations/{id}."""
 
@@ -393,7 +449,7 @@ def _mock_artifacts(workdir: Path, glb: Path) -> dict[str, str]:
     written = {"glb": glb.name}
     obj = workdir / "model.obj"
     with open(obj, "w", encoding="utf-8") as fh:
-        fh.write("# 3DFUN AI mock fixture\nmtllib model.mtl\no cube\n")
+        fh.write("# 3DCV Lab Group 17 mock fixture\nmtllib model.mtl\no cube\n")
         for v in verts:
             fh.write(f"v {v[0]:.6f} {v[1]:.6f} {v[2]:.6f}\n")
         fh.write("usemtl mock\n")
@@ -430,6 +486,11 @@ _REGISTRY: dict[str, Callable[[], GenerationProvider]] = {
     "local": LocalReconstructionProvider,
     "triposr": TripoSRProvider,
     "midas": MiDaSProvider,
+    "tinydepth": TinyDepthProvider,
+    "siren_sdf": SirenSdfProvider,
+    "gaussian_splat": GaussianSplatProvider,
+    "hybrid_triplane": HybridTriplaneProvider,
+    "instantmesh_dit": InstantMeshDiTProvider,
     "http": HttpGenerationProvider,
     "mock": MockProvider,
 }

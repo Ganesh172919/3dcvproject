@@ -197,7 +197,7 @@ def verify_totp(secret: str, code: str, window: int = 1, step: int = 30) -> bool
     return False
 
 
-def totp_provisioning_uri(secret: str, email: str, issuer: str = "3DFUN AI") -> str:
+def totp_provisioning_uri(secret: str, email: str, issuer: str = "3DCV Lab Group 17") -> str:
     from urllib.parse import quote
     label = quote(f"{issuer}:{email}")
     return (f"otpauth://totp/{label}?secret={secret}&issuer={quote(issuer)}"

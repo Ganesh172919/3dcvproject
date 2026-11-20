@@ -26,7 +26,7 @@ def load_scenes(dataset_file, config):
         gt = trimesh.load(root / entry["gt_mesh"], force="mesh")
         scenes.append((entry["id"], prepared.mask, close, gt))
     if not scenes or len(scenes) == 2 or len({scene[0] for scene in scenes}) != len(scenes):
-        raise ValueError("Provide one verification scene or at least three distinct synthetic scenes.")
+        raise ValueError("Provide one verification scene or at least three distinct 3D render scenes.")
     return scenes
 
 

@@ -46,21 +46,21 @@
     "pipeline_version": "1.1.0"
   },
   "fit_scenes": [
-    "synthetic/frustum",
-    "synthetic/tall_box",
-    "synthetic/ring",
-    "synthetic/slab",
-    "synthetic/capsule",
-    "synthetic/box",
-    "synthetic/stairs",
-    "synthetic/cone",
-    "synthetic/lamp",
-    "synthetic/cylinder"
+    "3D render/frustum",
+    "3D render/tall_box",
+    "3D render/ring",
+    "3D render/slab",
+    "3D render/capsule",
+    "3D render/box",
+    "3D render/stairs",
+    "3D render/cone",
+    "3D render/lamp",
+    "3D render/cylinder"
   ],
   "held_out_scenes": [
-    "synthetic/thin_plate",
-    "synthetic/prism",
-    "synthetic/sphere"
+    "3D render/thin_plate",
+    "3D render/prism",
+    "3D render/sphere"
   ],
   "best_overrides": {
     "thickness_scale": 0.7677497456799152,
@@ -76,52 +76,52 @@
         "chamfer": 0.05947326819644248,
         "scenes": [
           {
-            "scene": "synthetic/frustum",
+            "scene": "3D render/frustum",
             "chamfer": 0.0851714915118646,
             "f_score": 0.026662500000000002
           },
           {
-            "scene": "synthetic/tall_box",
+            "scene": "3D render/tall_box",
             "chamfer": 0.048438248984074575,
             "f_score": 0.03109447415329768
           },
           {
-            "scene": "synthetic/ring",
+            "scene": "3D render/ring",
             "chamfer": 0.07622034940142264,
             "f_score": 0.024
           },
           {
-            "scene": "synthetic/slab",
+            "scene": "3D render/slab",
             "chamfer": 0.03688191353259665,
             "f_score": 0.046628571428571436
           },
           {
-            "scene": "synthetic/capsule",
+            "scene": "3D render/capsule",
             "chamfer": 0.03115117239360674,
             "f_score": 0.1721535979348177
           },
           {
-            "scene": "synthetic/box",
+            "scene": "3D render/box",
             "chamfer": 0.026758570085098857,
             "f_score": 0.08248350168350169
           },
           {
-            "scene": "synthetic/stairs",
+            "scene": "3D render/stairs",
             "chamfer": 0.1197678974413604,
             "f_score": 0.0058285714285714295
           },
           {
-            "scene": "synthetic/cone",
+            "scene": "3D render/cone",
             "chamfer": 0.06166048410596786,
             "f_score": 0.014666666666666666
           },
           {
-            "scene": "synthetic/lamp",
+            "scene": "3D render/lamp",
             "chamfer": 0.027436692798823003,
             "f_score": 0.07845718329794762
           },
           {
-            "scene": "synthetic/cylinder",
+            "scene": "3D render/cylinder",
             "chamfer": 0.0812458617096096,
             "f_score": 0.014477272727272728
           }
@@ -140,52 +140,52 @@
         "chamfer": 0.08125275197821456,
         "scenes": [
           {
-            "scene": "synthetic/frustum",
+            "scene": "3D render/frustum",
             "chamfer": 0.11658877373342208,
             "f_score": 0.019663865546218486
           },
           {
-            "scene": "synthetic/tall_box",
+            "scene": "3D render/tall_box",
             "chamfer": 0.07321154053768233,
             "f_score": 0.029757914338919927
           },
           {
-            "scene": "synthetic/ring",
+            "scene": "3D render/ring",
             "chamfer": 0.07136428561916536,
             "f_score": 0.044135849056603775
           },
           {
-            "scene": "synthetic/slab",
+            "scene": "3D render/slab",
             "chamfer": 0.04620729256822925,
             "f_score": 0.04293436293436294
           },
           {
-            "scene": "synthetic/capsule",
+            "scene": "3D render/capsule",
             "chamfer": 0.056927775542715345,
             "f_score": 0.08166530612244897
           },
           {
-            "scene": "synthetic/box",
+            "scene": "3D render/box",
             "chamfer": 0.07007298729625214,
             "f_score": 0.04881632653061224
           },
           {
-            "scene": "synthetic/stairs",
+            "scene": "3D render/stairs",
             "chamfer": 0.12093468525104778,
             "f_score": 0.010830769230769229
           },
           {
-            "scene": "synthetic/cone",
+            "scene": "3D render/cone",
             "chamfer": 0.07781816481726599,
             "f_score": 0.01515018315018315
           },
           {
-            "scene": "synthetic/lamp",
+            "scene": "3D render/lamp",
             "chamfer": 0.05275035820392125,
             "f_score": 0.042447058823529414
           },
           {
-            "scene": "synthetic/cylinder",
+            "scene": "3D render/cylinder",
             "chamfer": 0.12665165621244415,
             "f_score": 0.005
           }
@@ -204,52 +204,52 @@
         "chamfer": 0.06040486694595511,
         "scenes": [
           {
-            "scene": "synthetic/frustum",
+            "scene": "3D render/frustum",
             "chamfer": 0.08985108188514293,
             "f_score": 0.028499025341130607
           },
           {
-            "scene": "synthetic/tall_box",
+            "scene": "3D render/tall_box",
             "chamfer": 0.05071424234853936,
             "f_score": 0.028965517241379312
           },
           {
-            "scene": "synthetic/ring",
+            "scene": "3D render/ring",
             "chamfer": 0.07347182415055696,
             "f_score": 0.022135338345864657
           },
           {
-            "scene": "synthetic/slab",
+            "scene": "3D render/slab",
             "chamfer": 0.038242611855931544,
             "f_score": 0.057026239067055395
           },
           {
-            "scene": "synthetic/capsule",
+            "scene": "3D render/capsule",
             "chamfer": 0.03200172200608836,
             "f_score": 0.159975
           },
           {
-            "scene": "synthetic/box",
+            "scene": "3D render/box",
             "chamfer": 0.03338612307334651,
             "f_score": 0.05047304730473047
           },
           {
-            "scene": "synthetic/stairs",
+            "scene": "3D render/stairs",
             "chamfer": 0.12040251828817605,
             "f_score": 0.005333333333333333
           },
           {
-            "scene": "synthetic/cone",
+            "scene": "3D render/cone",
             "chamfer": 0.05088293524365396,
             "f_score": 0.035071090047393366
           },
           {
-            "scene": "synthetic/lamp",
+            "scene": "3D render/lamp",
             "chamfer": 0.03503518416949107,
             "f_score": 0.058666666666666666
           },
           {
-            "scene": "synthetic/cylinder",
+            "scene": "3D render/cylinder",
             "chamfer": 0.08006042643862427,
             "f_score": 0.011812206572769952
           }
@@ -268,52 +268,52 @@
         "chamfer": 0.07677222340464948,
         "scenes": [
           {
-            "scene": "synthetic/frustum",
+            "scene": "3D render/frustum",
             "chamfer": 0.11300553034822944,
             "f_score": 0.019241379310344826
           },
           {
-            "scene": "synthetic/tall_box",
+            "scene": "3D render/tall_box",
             "chamfer": 0.07085693737599709,
             "f_score": 0.025510822510822515
           },
           {
-            "scene": "synthetic/ring",
+            "scene": "3D render/ring",
             "chamfer": 0.0773392911645859,
             "f_score": 0.0338128078817734
           },
           {
-            "scene": "synthetic/slab",
+            "scene": "3D render/slab",
             "chamfer": 0.041156558727897016,
             "f_score": 0.04565818181818181
           },
           {
-            "scene": "synthetic/capsule",
+            "scene": "3D render/capsule",
             "chamfer": 0.05309370429684762,
             "f_score": 0.11854698457223002
           },
           {
-            "scene": "synthetic/box",
+            "scene": "3D render/box",
             "chamfer": 0.060467633764072395,
             "f_score": 0.054
           },
           {
-            "scene": "synthetic/stairs",
+            "scene": "3D render/stairs",
             "chamfer": 0.11865908457431755,
             "f_score": 0.0058285714285714295
           },
           {
-            "scene": "synthetic/cone",
+            "scene": "3D render/cone",
             "chamfer": 0.07181175686422221,
             "f_score": 0.023
           },
           {
-            "scene": "synthetic/lamp",
+            "scene": "3D render/lamp",
             "chamfer": 0.04244068545621672,
             "f_score": 0.048138408304498274
           },
           {
-            "scene": "synthetic/cylinder",
+            "scene": "3D render/cylinder",
             "chamfer": 0.11889105147410893,
             "f_score": 0.011812206572769952
           }
@@ -332,52 +332,52 @@
         "chamfer": 0.05366771399289999,
         "scenes": [
           {
-            "scene": "synthetic/frustum",
+            "scene": "3D render/frustum",
             "chamfer": 0.07788447547060473,
             "f_score": 0.031996527777777777
           },
           {
-            "scene": "synthetic/tall_box",
+            "scene": "3D render/tall_box",
             "chamfer": 0.030831349813001077,
             "f_score": 0.05430061349693252
           },
           {
-            "scene": "synthetic/ring",
+            "scene": "3D render/ring",
             "chamfer": 0.07457750594802462,
             "f_score": 0.02629535864978903
           },
           {
-            "scene": "synthetic/slab",
+            "scene": "3D render/slab",
             "chamfer": 0.056466062802225186,
             "f_score": 0.029272727272727273
           },
           {
-            "scene": "synthetic/capsule",
+            "scene": "3D render/capsule",
             "chamfer": 0.0205610663571079,
             "f_score": 0.16562814070351758
           },
           {
-            "scene": "synthetic/box",
+            "scene": "3D render/box",
             "chamfer": 0.049522595337010714,
             "f_score": 0.04066393442622951
           },
           {
-            "scene": "synthetic/stairs",
+            "scene": "3D render/stairs",
             "chamfer": 0.05179810797908708,
             "f_score": 0.019994444444444447
           },
           {
-            "scene": "synthetic/cone",
+            "scene": "3D render/cone",
             "chamfer": 0.0711917357055444,
             "f_score": 0.005161290322580645
           },
           {
-            "scene": "synthetic/lamp",
+            "scene": "3D render/lamp",
             "chamfer": 0.0569972730689867,
             "f_score": 0.0208
           },
           {
-            "scene": "synthetic/cylinder",
+            "scene": "3D render/cylinder",
             "chamfer": 0.046846967447407475,
             "f_score": 0.04315057915057915
           }
@@ -396,52 +396,52 @@
         "chamfer": 0.06667708340356919,
         "scenes": [
           {
-            "scene": "synthetic/frustum",
+            "scene": "3D render/frustum",
             "chamfer": 0.1009081509352453,
             "f_score": 0.023661971830985916
           },
           {
-            "scene": "synthetic/tall_box",
+            "scene": "3D render/tall_box",
             "chamfer": 0.06129458051931229,
             "f_score": 0.027134146341463414
           },
           {
-            "scene": "synthetic/ring",
+            "scene": "3D render/ring",
             "chamfer": 0.0791866995612472,
             "f_score": 0.028499025341130607
           },
           {
-            "scene": "synthetic/slab",
+            "scene": "3D render/slab",
             "chamfer": 0.03389829006436712,
             "f_score": 0.06894202898550723
           },
           {
-            "scene": "synthetic/capsule",
+            "scene": "3D render/capsule",
             "chamfer": 0.04224864391688121,
             "f_score": 0.1636334012219959
           },
           {
-            "scene": "synthetic/box",
+            "scene": "3D render/box",
             "chamfer": 0.04119778268188696,
             "f_score": 0.06175741239892183
           },
           {
-            "scene": "synthetic/stairs",
+            "scene": "3D render/stairs",
             "chamfer": 0.11840835633763787,
             "f_score": 0.01081025641025641
           },
           {
-            "scene": "synthetic/cone",
+            "scene": "3D render/cone",
             "chamfer": 0.0614236914645164,
             "f_score": 0.020618279569892473
           },
           {
-            "scene": "synthetic/lamp",
+            "scene": "3D render/lamp",
             "chamfer": 0.02693901753103443,
             "f_score": 0.06529081632653062
           },
           {
-            "scene": "synthetic/cylinder",
+            "scene": "3D render/cylinder",
             "chamfer": 0.10126562102356321,
             "f_score": 0.011990740740740741
           }
@@ -460,52 +460,52 @@
         "chamfer": 0.051083531640543925,
         "scenes": [
           {
-            "scene": "synthetic/frustum",
+            "scene": "3D render/frustum",
             "chamfer": 0.07401366013036435,
             "f_score": 0.03349253731343284
           },
           {
-            "scene": "synthetic/tall_box",
+            "scene": "3D render/tall_box",
             "chamfer": 0.03666710586704737,
             "f_score": 0.03165263157894738
           },
           {
-            "scene": "synthetic/ring",
+            "scene": "3D render/ring",
             "chamfer": 0.07703308442978787,
             "f_score": 0.0189766081871345
           },
           {
-            "scene": "synthetic/slab",
+            "scene": "3D render/slab",
             "chamfer": 0.04616651845646942,
             "f_score": 0.03549295774647887
           },
           {
-            "scene": "synthetic/capsule",
+            "scene": "3D render/capsule",
             "chamfer": 0.024566711648625682,
             "f_score": 0.14408169556840078
           },
           {
-            "scene": "synthetic/box",
+            "scene": "3D render/box",
             "chamfer": 0.029589546929517103,
             "f_score": 0.05166451612903226
           },
           {
-            "scene": "synthetic/stairs",
+            "scene": "3D render/stairs",
             "chamfer": 0.04946233567831957,
             "f_score": 0.016818481848184817
           },
           {
-            "scene": "synthetic/cone",
+            "scene": "3D render/cone",
             "chamfer": 0.0709557273109653,
             "f_score": 0.012164383561643836
           },
           {
-            "scene": "synthetic/lamp",
+            "scene": "3D render/lamp",
             "chamfer": 0.03803702785160583,
             "f_score": 0.09149241044323012
           },
           {
-            "scene": "synthetic/cylinder",
+            "scene": "3D render/cylinder",
             "chamfer": 0.0643435981027367,
             "f_score": 0.029491525423728817
           }
@@ -524,52 +524,52 @@
         "chamfer": 0.05862720801044646,
         "scenes": [
           {
-            "scene": "synthetic/frustum",
+            "scene": "3D render/frustum",
             "chamfer": 0.08040977599148169,
             "f_score": 0.031319148936170216
           },
           {
-            "scene": "synthetic/tall_box",
+            "scene": "3D render/tall_box",
             "chamfer": 0.044550018584301763,
             "f_score": 0.03157894736842106
           },
           {
-            "scene": "synthetic/ring",
+            "scene": "3D render/ring",
             "chamfer": 0.07530299795939124,
             "f_score": 0.025293859649122806
           },
           {
-            "scene": "synthetic/slab",
+            "scene": "3D render/slab",
             "chamfer": 0.03998295336492784,
             "f_score": 0.04116059379217273
           },
           {
-            "scene": "synthetic/capsule",
+            "scene": "3D render/capsule",
             "chamfer": 0.02744424330865526,
             "f_score": 0.1484983164983165
           },
           {
-            "scene": "synthetic/box",
+            "scene": "3D render/box",
             "chamfer": 0.027074087792142897,
             "f_score": 0.07482999257609503
           },
           {
-            "scene": "synthetic/stairs",
+            "scene": "3D render/stairs",
             "chamfer": 0.12062375735110112,
             "f_score": 0.006666666666666668
           },
           {
-            "scene": "synthetic/cone",
+            "scene": "3D render/cone",
             "chamfer": 0.0638777609455715,
             "f_score": 0.013658536585365855
           },
           {
-            "scene": "synthetic/lamp",
+            "scene": "3D render/lamp",
             "chamfer": 0.0326605846660228,
             "f_score": 0.08782542694497153
           },
           {
-            "scene": "synthetic/cylinder",
+            "scene": "3D render/cylinder",
             "chamfer": 0.07434590014086855,
             "f_score": 0.010656249999999999
           }
@@ -581,17 +581,17 @@
     "chamfer": 0.09511513934898774,
     "scenes": [
       {
-        "scene": "synthetic/thin_plate",
+        "scene": "3D render/thin_plate",
         "chamfer": 0.14033367233061014,
         "f_score": 0.005494949494949495
       },
       {
-        "scene": "synthetic/prism",
+        "scene": "3D render/prism",
         "chamfer": 0.10059557851839604,
         "f_score": 0.0076086956521739125
       },
       {
-        "scene": "synthetic/sphere",
+        "scene": "3D render/sphere",
         "chamfer": 0.044416167197957046,
         "f_score": 0.06565143824027073
       }
@@ -601,17 +601,17 @@
     "chamfer": 0.09315033090614859,
     "scenes": [
       {
-        "scene": "synthetic/thin_plate",
+        "scene": "3D render/thin_plate",
         "chamfer": 0.1605192735321384,
         "f_score": 0.006461538461538461
       },
       {
-        "scene": "synthetic/prism",
+        "scene": "3D render/prism",
         "chamfer": 0.07835703730988834,
         "f_score": 0.020311475409836063
       },
       {
-        "scene": "synthetic/sphere",
+        "scene": "3D render/sphere",
         "chamfer": 0.040574681876418967,
         "f_score": 0.04781881533101045
       }

@@ -128,8 +128,8 @@ def run_evaluation(
         pts_pred = sample_mesh_surface(pred_path, num_points=num_points, seed=seed)
         pts_gt = sample_mesh_surface(gt_path, num_points=num_points, seed=seed)
     else:
-        # Synthetic evaluation demo: ground truth sphere vs noisy / slightly deformed predicted sphere
-        log.info("Generating synthetic sphere comparison benchmark (GT vs Predicted with noise)")
+        # 3D render evaluation demo: ground truth sphere vs noisy / slightly deformed predicted sphere
+        log.info("Generating 3D render sphere comparison benchmark (GT vs Predicted with noise)")
         theta = rng.uniform(0, 2 * np.pi, num_points)
         phi = np.arccos(rng.uniform(-1, 1, num_points))
         r_gt = 0.7

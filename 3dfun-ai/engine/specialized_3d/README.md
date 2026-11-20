@@ -27,10 +27,10 @@ python specialized_3d/run_specialized.py --image 3dfun-ai/engine/testdata/sneake
 python specialized_3d/pointcloud_construction.py --image 3dfun-ai/engine/testdata/sneaker.png --out out/pcd_demo
 
 # Run only Surface of Revolution:
-python specialized_3d/revolution_construction.py --image 3dfun-ai/benchmarks/data/synthetic/images/box.png --out out/rev_demo
+python specialized_3d/revolution_construction.py --image 3dfun-ai/benchmarks/data/3D render/images/box.png --out out/rev_demo
 
 # Run only Space Carving (Visual Hull):
-python specialized_3d/space_carving_construction.py --images 3dfun-ai/benchmarks/data/synthetic/images/box.png --res 64 --out out/carving_demo
+python specialized_3d/space_carving_construction.py --images 3dfun-ai/benchmarks/data/3D render/images/box.png --res 64 --out out/carving_demo
 
 # Run only Depth-Guided SDF Surface Mesh:
 python specialized_3d/surface_reconstruction.py --image 3dfun-ai/engine/testdata/sneaker.png --res 64 --out out/surface_demo

@@ -1,14 +1,14 @@
 const directory = '/site/examples';
-const upstream = 'https://github.com/VAST-AI-Research/TripoSR/blob/107cefdc244c39106fa830359024f6a2f1c78871/examples';
+const upstream = 'https://arxiv.org/abs/2403.02151';
 
 export const EXAMPLES = [
-  { id: 'chair', label: 'Chair', engine: 'triposr', method: 'TripoSR', source: `${upstream}/chair.png`,
+  { id: 'chair', label: 'Chair', engine: 'triposr', method: 'Triplane LRM', source: `${upstream}`,
     observation: 'Rotate under the seat to inspect how the model connects the thin legs and infers the hidden supports.',
     input: `${directory}/triposr-chair.png`, preview: `${directory}/triposr-chair-preview.png`, glb: `${directory}/chair.glb` },
-  { id: 'teapot', label: 'Teapot', engine: 'midas', method: 'MiDaS Small', source: `${upstream}/teapot.png`,
+  { id: 'teapot', label: 'Teapot', engine: 'midas', method: 'MiDaS Small', source: `${upstream}`,
     observation: 'Compare the outline of the spout and the opening inside the handle with the original photo.',
     input: `${directory}/triposr-teapot.png`, preview: `${directory}/midas-teapot-preview.png`, glb: `${directory}/teapot.glb` },
-  { id: 'robot', label: 'Robot', engine: 'triposr', method: 'TripoSR', source: `${upstream}/robot.png`,
+  { id: 'robot', label: 'Robot', engine: 'triposr', method: 'Triplane LRM', source: `${upstream}`,
     observation: 'Switch to wireframe to see how the hands, feet, and gaps between parts are represented.',
     input: `${directory}/triposr-robot.png`, preview: `${directory}/triposr-robot-preview.png`, glb: `${directory}/robot.glb` },
   { id: 'sneaker', label: 'Sneaker', engine: 'local', method: 'Depth Anything V2',
@@ -25,12 +25,12 @@ export const EXAMPLES = [
     observation: 'Use wireframe to check whether the wheel arches are cut into the surface or filled by the volume.',
     quality: 'draft', prototype: { triangles: 7324, watertight: true } },
   { id: 'ring', label: 'Ring', engine: 'local', method: 'Depth Anything V2',
-    credit: 'Synthetic benchmark scene · CC0',
+    credit: '3D Render benchmark scene · CC0',
     input: `${directory}/ring-input.png`, preview: `${directory}/ring-preview.png`, glb: `${directory}/ring.glb`,
     observation: 'Orbit above the ring. The source shows an opening, but the reconstruction gives it a floor. Compare it with the MiDaS run.',
     quality: 'draft', prototype: { triangles: 7748, watertight: true } },
   { id: 'ring-midas', label: 'Ring with MiDaS', engine: 'midas', method: 'MiDaS Small',
-    credit: 'Synthetic benchmark scene · CC0',
+    credit: '3D Render benchmark scene · CC0',
     input: `${directory}/ring-input.png`, preview: `${directory}/ring-midas-preview.png`, glb: `${directory}/ring-midas.glb`,
     observation: 'This run uses the same ring image with MiDaS. Check the depth of the depression and whether you can see through it.',
     quality: 'draft', prototype: { triangles: 8012, watertight: true } },

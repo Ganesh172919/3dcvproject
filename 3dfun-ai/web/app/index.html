@@ -3,11 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>3DFUN AI · Studio</title>
+<title>3DCV Fun AI Lab · Group 17 · IIIT Dharwad</title>
 <meta name="description" content="Use the Group 17 3D vision lab to reconstruct a mesh from a photo and inspect the result.">
 <meta name="theme-color" content="#ffffff">
 <link rel="stylesheet" href="/static/css/app.css?v=course-review">
+<link rel="stylesheet" href="/static/vendor/katex.min.css">
 <link rel="icon" href="/static/lab-icon.svg">
+<script src="/static/vendor/katex.min.js"></script>
+<script src="/static/vendor/auto-render.min.js"></script>
 <script type="importmap">
 {
   "imports": {
@@ -21,14 +24,18 @@
 <a class="skip-link" href="#main">Skip to content</a>
 
 <header class="topbar app-topbar">
-  <a class="brand" href="/app/" data-link><span class="brand-mark">3D</span> 3DFUN <span class="dim">AI</span></a>
+  <a class="brand" href="/app/" data-link><span class="brand-mark">3D</span> 3DCV Fun AI Lab <span class="dim">Group 17</span></a>
   <button type="button" class="btn sm nav-toggle" id="nav-toggle" aria-controls="nav" aria-expanded="false">Menu</button>
   <nav class="nav" id="nav" aria-label="Primary">
     <a href="/app/studio" data-link>Studio</a>
-    <a href="/app/showcase" data-link>Course results</a>
+    <a href="/app/architecture" data-link>Architecture</a>
+    <a href="/app/mindmaps" data-link>Mindmaps</a>
+    <a href="/app/optimization" data-link>Optimization</a>
+    <a href="/app/deployment" data-link>Deployment</a>
     <a href="/app/inspector" data-link>Inspector</a>
     <a href="/app/labs" data-link>Student Labs</a>
     <a href="/app/chat" data-link>AI chat</a>
+    <a href="/app/showcase" data-link>Course results</a>
     <a href="/app/dashboard" data-link>Dashboard</a>
     <a href="/app/assets" data-link>My models</a>
     <a href="/app/gallery" data-link>Gallery</a>
@@ -46,21 +53,25 @@
 </header>
 
 <main id="main" class="page" role="main">
-  <div class="empty"><div class="spinner"></div><p class="mt16">Loading 3DFUN AI…</p></div>
+  <div class="empty"><div class="spinner"></div><p class="mt16">Loading 3D Computer Vision Lab…</p></div>
 </main>
 
 <footer class="app-footer" style="padding:16px 24px;border-top:1px solid var(--border-soft);font-size:12.5px;color:var(--text-2);display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;background:var(--panel);">
   <div>
-    <strong>3DFUN AI</strong> · Group 17 · 3D Computer Vision · <strong>IIIT Dharwad</strong><br>
+    <strong>3D Computer Vision Course Project</strong> · Group 17 · <strong>IIIT Dharwad</strong><br>
     <span>Team: <strong>J Ganesh</strong> (23BDS024) · <strong>M Jagadeshwar</strong> (23BDS033) · <strong>B Varshith</strong> (23BDS011) · <strong>Pranav Kashyap</strong> (23BCS098) · <strong>C Sai Aravind</strong> (23BDS075)</span><br>
     <span>Project Supervisor: <strong>Dr. Shirshendu Layek</strong>, Dept. of Data Science &amp; AI</span>
   </div>
   <div class="row wrap gap8">
-    <a class="btn sm" href="/app/team" data-link>About the Team</a>
+    <a class="btn sm" href="/app/architecture" data-link>Architecture</a>
+    <a class="btn sm" href="/app/mindmaps" data-link>Mindmaps</a>
+    <a class="btn sm" href="/app/optimization" data-link>Optimization</a>
+    <a class="btn sm" href="/app/deployment" data-link>Deployment</a>
     <a class="btn sm" href="/app/work" data-link>About the Work</a>
-    <a class="btn sm" href="/paper/main.pdf" target="_blank" rel="noopener">Earlier benchmark paper</a>
+    <a class="btn sm" href="/app/team" data-link>About the Team</a>
+    <a class="btn sm" href="/paper/main.pdf" target="_blank" rel="noopener">Benchmark paper</a>
     <a class="btn sm" href="/site/report-preview/">Course report</a>
-    <a class="btn" href="/demo.mp4" target="_blank" rel="noopener">Watch the course demo</a>
+    <a class="btn" href="/demo.mp4" target="_blank" rel="noopener">Watch course demo</a>
   </div>
 </footer>
 

@@ -1,13 +1,13 @@
 # Production Container Deployment & Orchestration Guide (Docker & Docker Compose)
 
 **Target System**: Linux (Ubuntu 22.04+ / Debian 12 / RHEL 9), Windows WSL2, Cloud VMs
-**Components**: 3DFUN AI Microservice, Nginx Reverse Proxy, SQLite WAL Storage
+**Components**: 3DCV Lab Group 17 Microservice, Nginx Reverse Proxy, SQLite WAL Storage
 
 ---
 
 ## 1. Overview & Architecture
 
-Deploying 3DFUN AI into production requires:
+Deploying 3DCV Lab Group 17 into production requires:
 1. Packaging the FastAPI application and ONNX Runtime CPU dependencies into an isolated container.
 2. Managing persistent storage volumes for uploaded photographs and generated 3D assets (`.glb`, `.obj`, `.ply`, `.stl`).
 3. Configuring a production reverse proxy (Nginx) to handle SSL/TLS termination, static asset caching, and **disabling proxy buffering for real-time Server-Sent Events (SSE)**.
@@ -31,7 +31,7 @@ Deploying 3DFUN AI into production requires:
 |               | Forward to Internal Network (Port 8000)                                          |
 |               v                                                                                  |
 |   +------------------------------------------------------------------------------------------+   |
-|   |  3DFUN AI Application Container (`3dfun-ai:latest`)                                      |   |
+|   |  3DCV Lab Group 17 Application Container (`3dfun-ai:latest`)                                      |   |
 |   |  * Python 3.12 Non-Root User (`appuser`, UID 1001)                                       |   |
 |   |  * FastAPI Uvicorn Server (Workers: 2-4)                                                 |   |
 |   |  * ONNX Runtime INT8 Inference Engine                                                    |   |
@@ -277,3 +277,94 @@ Response body:
   "database": "connected"
 }
 ```
+
+
+---
+
+## 7. Multi-Stage Production Docker Architecture Flowchart
+
+```
+┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                               MULTI-STAGE DOCKER BUILD FLOWCHART                                 │
+└────────────────────────────────────────────────┬─────────────────────────────────────────────────┘
+                                                 │
+    ┌────────────────────────┬───────────────────┴───────────────────┬────────────────────────┐
+    ▼                        ▼                                       ▼                        ▼
+[STAGE 1: BUILDER]       [STAGE 2: RUNTIME]                      [STAGE 3: REVERSE PROXY] [VOLUME MOUNTS]
+• Python 3.12-slim base  • Stripped build dependencies           • Nginx Alpine image     • SQLite WAL DB
+• Wheel compilations     • Non-root user: appuser                • SSL termination        • Uploads cache
+• ONNX Runtime INT8 libs • Read-only root filesystem             • Gzip / Brotli cache    • Model weights
+```
+
+---
+
+## 8. Production Docker Compose Specification with Nginx Reverse Proxy
+
+```yaml
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./web/static:/usr/share/nginx/html/static:ro
+      - certs:/etc/letsencrypt:ro
+    depends_on:
+      - app
+    restart: always
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=production
+      - DEBUG=False
+      - PORT=8010
+    volumes:
+      - app_data:/app/data
+      - model_cache:/app/engine/weights
+    expose:
+      - "8010"
+    restart: always
+
+volumes:
+  app_data:
+  model_cache:
+  certs:
+```
+
+---
+
+## 9. DirectML & CUDA Hardware Passthrough Container Recipes
+
+### NVIDIA CUDA Passthrough:
+```yaml
+deploy:
+  resources:
+    reservations:
+      devices:
+        - driver: nvidia
+          count: all
+          capabilities: [gpu]
+```
+
+### Windows DirectML Passthrough:
+When executing on Windows Server or Azure Windows Containers, DirectML interfaces with the host DirectX 12 driver directly via the Windows kernel display driver subsystem.
+
+---
+
+## 10. Health Checking & Graceful Container Shutdown Protocols
+
+```dockerfile
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl -f http://127.0.0.1:8010/api/v1/system/health || exit 1
+
+STOPSIGNAL SIGTERM
+```
+
+*Docker Deployment Manual documented by Group 17 · 3D Computer Vision Course Project · Department of Data Science & Artificial Intelligence · IIIT Dharwad.*

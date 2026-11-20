@@ -21,7 +21,7 @@ def pipeline_steps(args):
     stages = []
     if args.data_dir is None:
         stages.append(("render", [
-            "training.dataset_gen.synthetic_renderer", *source, "--output-dir", str(data),
+            "training.dataset_gen.course_render_3d_engine", *source, "--output-dir", str(data),
             "--num-views", str(args.views), "--resolution", str(args.size),
         ]))
     assignment = ["--assignment", str(args.mesh_split)] if args.mesh_split else []

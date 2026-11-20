@@ -29,20 +29,22 @@ def test_iteration4_chat():
         page.wait_for_timeout(1000)
 
         # Step 2: Open Embedded Chat Dock in Studio
-        print("[3/5] Testing Studio Dock AI Co-Pilot Tab...")
-        chat_tab = page.locator("button:has-text('AI Co-Pilot')")
-        assert chat_tab.is_visible(), "AI Co-Pilot tab button not found in studio dock"
+        print("[3/5] Testing Studio Dock 3D AI Chat Tab...")
+        chat_tab = page.locator("button:has-text('3D AI Chat')")
+        if not chat_tab.is_visible():
+            chat_tab = page.locator("button:has-text('AI Co-Pilot')")
+        assert chat_tab.is_visible(), "3D AI Chat tab button not found in studio dock"
         chat_tab.click()
         page.wait_for_timeout(600)
 
         page.wait_for_selector(".chat-dock", timeout=10000)
         page.screenshot(path=os.path.join(REPORTS_DIR, "01_studio_chat_dock_open.png"))
 
-        # Verify Academic Persona (Professor 3D) default
-        prof_btn = page.locator("button:has-text('Professor 3D')")
-        studio_btn = page.locator("button:has-text('Studio Director')")
-        assert prof_btn.is_visible(), "Professor 3D button missing"
-        assert studio_btn.is_visible(), "Studio Director button missing"
+        # Verify 3D AI Chat Persona default
+        chat_btn = page.locator("button:has-text('3D AI Chat')").first
+        studio_btn = page.locator("button:has-text('3D Studio Tools')")
+        assert chat_btn.is_visible(), "3D AI Chat button missing"
+        assert studio_btn.is_visible(), "3D Studio Tools button missing"
 
         # Ask academic question via prompt chip
         print("  -> Asking Academic Question (Marching Cubes & Euler Characteristic)...")

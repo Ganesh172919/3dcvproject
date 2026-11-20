@@ -156,7 +156,7 @@ def seed_sample(db, user: User, source: "object"):
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Seed 3DFUN AI development data")
+    parser = argparse.ArgumentParser(description="Seed 3DCV Lab Group 17 development data")
     parser.add_argument("--with-sample", action="store_true",
                         help="also run the engine to create one real demo asset")
     parser.add_argument("--reset-users", action="store_true",

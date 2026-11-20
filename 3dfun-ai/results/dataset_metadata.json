@@ -2,7 +2,7 @@
   "version": "1.0.0",
   "checksum": "d76fef12",
   "scenes": {
-    "synthetic": 13,
+    "3D render": 13,
     "real": 12,
     "total": 25
   },

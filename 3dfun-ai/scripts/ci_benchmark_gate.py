@@ -1,4 +1,4 @@
-"""CI Benchmark Regression Gate for 3DFUN AI.
+"""CI Benchmark Regression Gate for 3DCV Lab Group 17.
 
 Course: 3D Computer Vision Course Project · IIIT Dharwad
 Supervisor: Dr. Shirshendu Layek (Dept. of DSAI)
@@ -33,7 +33,7 @@ def read_csv(path: Path) -> list[dict]:
 
 def check_benchmark_gate() -> int:
     print("=" * 65)
-    print("3DFUN AI — CI Benchmark Regression Gate")
+    print("3DCV Lab Group 17 — CI Benchmark Regression Gate")
     print("=" * 65)
 
     if not MAIN_TABLE.exists():

@@ -20,12 +20,14 @@ def test_student_labs_catalog(client):
     assert res.status_code == 200
     data = res.json()["data"]
     assert "labs" in data
-    assert len(data["labs"]) == 4
+    assert len(data["labs"]) == 6
     lab_ids = {lab["id"] for lab in data["labs"]}
     assert "lab1_depth" in lab_ids
     assert "lab2_occupancy" in lab_ids
     assert "lab3_3dgs" in lab_ids
     assert "lab4_evaluator" in lab_ids
+    assert "lab5_triplane" in lab_ids
+    assert "lab6_pbr" in lab_ids
 
 
 def test_billing_wallet_and_coupon(client):
@@ -80,6 +82,56 @@ def test_student_lab_execution(client):
     assert report.json()["point_counts"] == {"prediction": 128, "reference": 128}
     other, _ = _register(client)
     assert client.get(artifact_url, headers=other).status_code == 404
+
+
+def test_student_lab6_pbr_execution(client):
+    auth, _ = _register(client)
+    before = client.get("/api/v1/billing/wallet", headers=auth).json()["data"]["available"]
+    res = client.post(
+        "/api/v1/student-labs/lab6_pbr/run",
+        headers=auth,
+        json={"config": {"filter_radius": 3, "roughness_base": 0.4, "metallic_factor": 0.1}},
+    )
+    assert res.status_code == 200
+    body = res.json()["data"]
+    run_id = body["run_id"]
+    assert body["credits_charged"] == 5
+    assert body["balance"] == before - 5
+
+    for _ in range(100):
+        run_res = client.get(f"/api/v1/student-labs/runs/{run_id}", headers=auth)
+        run = run_res.json()["data"]
+        if run["status"] in {"completed", "failed"}:
+            break
+        time.sleep(0.05)
+    assert run["status"] == "completed", run
+    assert "mean_albedo_luminance" in run["metrics"]
+    assert "albedo" in run["artifacts"]
+
+
+def test_student_lab5_triplane_execution(client):
+    auth, _ = _register(client)
+    before = client.get("/api/v1/billing/wallet", headers=auth).json()["data"]["available"]
+    res = client.post(
+        "/api/v1/student-labs/lab5_triplane/run",
+        headers=auth,
+        json={"config": {"primitive": "cube", "epochs": 1, "lr": 0.01, "plane_res": 16}},
+    )
+    assert res.status_code == 200
+    body = res.json()["data"]
+    run_id = body["run_id"]
+    assert body["credits_charged"] == 10
+    assert body["balance"] == before - 10
+
+    for _ in range(400):
+        run_res = client.get(f"/api/v1/student-labs/runs/{run_id}", headers=auth)
+        run = run_res.json()["data"]
+        if run["status"] in {"completed", "failed"}:
+            break
+        time.sleep(0.1)
+    assert run["status"] == "completed", run
+    assert "accuracy" in run["metrics"]
+    assert "mesh" in run["artifacts"]
 
 
 def test_invalid_lab_config_keeps_balance(client):

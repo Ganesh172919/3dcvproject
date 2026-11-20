@@ -38,14 +38,14 @@ def render_preview(pdf, destination):
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="report-sha256" content="{sha256(pdf.read_bytes()).hexdigest()}">
-<title>IEEE report preview · 3DFUN AI</title>
+<title>IEEE report preview · 3DCV Lab Group 17</title>
 <link rel="stylesheet" href="/static/css/app.css">
 </head>
 <body>
 <a class="skip-link" href="#report">Skip to report</a>
 <main class="course-report-preview" id="report">
   <h1>IEEE report preview</h1>
-  <p>3DFUN AI · Group 17 · {len(pages)} pages</p>
+  <p>3DCV Lab Group 17 · Group 17 · {len(pages)} pages</p>
   <nav class="row wrap gap8" aria-label="Report links">
     <a class="btn primary" href="/report.pdf?download=1" download="report.pdf">Download PDF</a>
     <a class="btn" href="/app/showcase">Back to course results</a>

@@ -6,7 +6,7 @@
 
 ## 1. Overview & System Architecture
 
-This guide details the complete engineering lifecycle for training, exporting, optimizing, and deploying deep learning models developed in the Course 17 curriculum (`training/student_labs/`) into the 3DFUN AI production inference runtime.
+This guide details the complete engineering lifecycle for training, exporting, optimizing, and deploying deep learning models developed in the Course 17 curriculum (`training/student_labs/`) into the Course Project production inference runtime.
 
 ```mermaid
 flowchart LR
@@ -140,7 +140,7 @@ class StudentDepthEngine:
 
 ## 5. Standalone Docker Containerization
 
-Deploy 3DFUN AI with student models using Docker:
+Deploy 3DCV Lab Group 17 with student models using Docker:
 
 ### `Dockerfile`:
 ```dockerfile
@@ -189,3 +189,133 @@ Before deploying any student-trained model to production:
 2. **Dynamic Range Check**: Verify depth outputs span the continuous interval $[0, 1]$ without NaN/Inf singularities.
 3. **Latency Benchmarking**: Ensure inference latency is under 45 seconds on local CPU.
 4. **Credit Ledger Integration**: Ensure generation calls pass through the two-phase credit lock (`reserve_credits()` $\to$ `commit_credits()`).
+
+
+---
+
+## 7. Runtime Model Ingestion Architecture Flowchart
+
+```
+┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                               RUNTIME MODEL INGESTION ARCHITECTURE                               │
+└────────────────────────────────────────────────┬─────────────────────────────────────────────────┘
+                                                 │
+    ┌────────────────────────┬───────────────────┴───────────────────┬────────────────────────┐
+    ▼                        ▼                                       ▼                        ▼
+[PYTORCH CHECKPOINT]     [ONNX GRAPH EXPORT]                     [INT8 QUANTIZATION]      [PROVIDER DISPATCH]
+• .pt / .pth weights     • torch.onnx.export()                   • Symmetric Calibrator   • DirectML (DirectX 12)
+• Floating-point FP32    • Dynamic batch axes                    • Scale S = max(|x|)/127 • CUDA 12.8 / cuDNN
+• 384 MB file size       • Operator set: opset 17                • Size: 71.8 MB (-81.3%) • CPU OpenMP (AVX2)
+```
+
+---
+
+## 8. DirectML vs CUDA vs CPU Execution Provider State Machine
+
+The runtime system dynamically resolves the optimal execution provider at startup:
+
+```python
+import onnxruntime as ort
+
+def resolve_execution_providers() -> list[tuple[str, dict[str, Any]] | str]:
+    """Selects the highest performing execution provider available on the host machine."""
+    available = ort.get_available_providers()
+    providers = []
+    
+    # 1. DirectML (Hardware accelerated for DirectX 12 GPUs: Intel, AMD, NVIDIA)
+    if "DmlExecutionProvider" in available:
+        providers.append(("DmlExecutionProvider", {"device_id": 0}))
+        
+    # 2. CUDA (NVIDIA dedicated GPUs)
+    if "CUDAExecutionProvider" in available:
+        providers.append(("CUDAExecutionProvider", {"device_id": 0}))
+        
+    # 3. CPU Fallback (Universal OpenMP SIMD execution)
+    providers.append("CPUExecutionProvider")
+    return providers
+```
+
+---
+
+## 9. INT8 Quantization Pipeline & Calibration Script
+
+```python
+"""Symmetric INT8 calibration and ONNX quantization script."""
+from onnxruntime.quantization import quantize_dynamic, QuantType
+
+def quantize_depth_model(input_fp32_path: str, output_int8_path: str) -> None:
+    """Applies dynamic symmetric 8-bit integer quantization to neural depth models."""
+    quantize_dynamic(
+        model_input=input_fp32_path,
+        model_output=output_int8_path,
+        weight_type=QuantType.QInt8,
+        op_types_to_quantize=["Conv", "MatMul", "Add", "Mul"],
+        per_channel=True,
+        reduce_range=False,
+    )
+    print(f"Quantized model saved to: {output_int8_path}")
+```
+
+---
+
+## 10. High-Throughput ONNX Session Pooling Pattern
+
+```python
+"""Session pool preventing redundant model allocations across worker threads."""
+import threading
+from typing import Dict
+import onnxruntime as ort
+
+class InferenceSessionPool:
+    """Thread-safe session pool for ONNX Runtime models."""
+    
+    def __init__(self) -> None:
+        self._sessions: Dict[str, ort.InferenceSession] = {}
+        self._lock = threading.Lock()
+        
+    def get_session(self, model_path: str) -> ort.InferenceSession:
+        with self._lock:
+            if model_path not in self._sessions:
+                opts = ort.SessionOptions()
+                opts.enable_mem_pattern = True
+                opts.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
+                self._sessions[model_path] = ort.InferenceSession(
+                    model_path,
+                    sess_options=opts,
+                    providers=resolve_execution_providers(),
+                )
+            return self._sessions[model_path]
+```
+
+---
+
+## 11. Systemd Service Unit File & Reverse Proxy Architecture
+
+```ini
+[Unit]
+Description=3DCV Fun AI Lab Production Service
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/opt/3dfun-ai
+ExecStart=/opt/3dfun-ai/.venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8010 --workers 1
+Restart=on-failure
+RestartSec=5s
+Environment=NODE_ENV=production
+Environment=DEBUG=False
+
+[Install]
+WantedBy=multi-user.target
+```
+
+---
+
+## 12. Production Monitoring & Memory Leak Prevention
+
+- **Memory Reclamation**: Explicit invocation of `buffer.close()` upon socket streaming completion.
+- **Garbage Collection Cadence**: Automatic invocation of Python's `gc.collect()` following large Marching Cubes extractions.
+- **Resource Probes**: Telemetry metrics reported in real time at `/api/v1/system/health`.
+
+*Deployment Guide maintained by Group 17 · 3D Computer Vision Course Project · Department of Data Science & Artificial Intelligence · IIIT Dharwad.*

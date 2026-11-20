@@ -21,7 +21,7 @@ def test_gpu_failure_reopens_session_on_cpu(monkeypatch, tmp_path):
 
         def run(self, outputs, feeds):
             if self.provider == runtime.DIRECTML:
-                raise RuntimeError("simulated device failure")
+                raise RuntimeError("rendered device failure")
             return [feeds["image"]]
 
     def open_session(_self, provider):

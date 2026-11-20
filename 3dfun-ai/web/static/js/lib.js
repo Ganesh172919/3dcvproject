@@ -152,11 +152,16 @@ export function setAuthUI(authed) {
     document.getElementById('wallet-value').textContent = fmt.n(state.user.credits ?? 0);
     wallet.style.cursor = 'pointer';
     wallet.title = 'Click to open Credit Wallet & Ledger';
-    wallet.onclick = () => {
+    wallet.onclick = async () => {
       if (typeof window.openCreditWalletModal === 'function') {
         window.openCreditWalletModal();
       } else {
-        navigate('/app/dashboard');
+        try {
+          const { openCreditWalletModal } = await import('./studio.js');
+          openCreditWalletModal();
+        } catch {
+          navigate('/app/dashboard');
+        }
       }
     };
   }
@@ -185,12 +190,77 @@ export function navigate(path, replace = false) {
   renderRoute();
 }
 
+export function renderMathInDOM(root = document.body) {
+  const tryRender = () => {
+    if (!root) return;
+    if (typeof window.renderMathInElement === 'function') {
+      try {
+        window.renderMathInElement(root, {
+          delimiters: [
+            { left: '$$', right: '$$', display: true },
+            { left: '$', right: '$', display: false },
+            { left: '\\(', right: '\\)', display: false },
+            { left: '\\[', right: '\\]', display: true }
+          ],
+          throwOnError: false
+        });
+      } catch (e) {
+        console.warn('KaTeX render warning:', e);
+      }
+    } else if (typeof window.katex === 'object' && window.katex.render) {
+      try {
+        const cards = root.querySelectorAll ? root.querySelectorAll('.formula-card, .katex-render') : [];
+        cards.forEach(el => {
+          const raw = el.textContent.trim();
+          if (raw.startsWith('$$') && raw.endsWith('$$')) {
+            const math = raw.slice(2, -2).trim();
+            window.katex.render(math, el, { displayMode: true, throwOnError: false });
+          }
+        });
+      } catch (e) {
+        console.warn('KaTeX fallback warning:', e);
+      }
+    }
+  };
+
+  tryRender();
+  if (typeof window.requestAnimationFrame === 'function') {
+    window.requestAnimationFrame(() => tryRender());
+  }
+}
+
 export async function renderRoute() {
   state.routeCleanup?.();
   state.routeCleanup = null;
   state._viewer?.dispose();
   state._viewer = null;
   const path = location.pathname.replace(/\/$/, '') || '/app';
+  const titles = {
+    '/app/studio': 'Studio · 3DCV Fun AI Lab · Group 17 · IIIT Dharwad',
+    '/app/work': 'Research & Architecture · 3DCV Fun AI Lab · Group 17',
+    '/app/architecture': 'Project Architecture & Mindmaps · 3DCV Fun AI Lab · Group 17 · IIIT Dharwad',
+    '/app/optimization': 'Performance Optimization · 3DCV Fun AI Lab · Group 17 · IIIT Dharwad',
+    '/app/deployment': 'Model Deployment Guide · 3DCV Fun AI Lab · Group 17 · IIIT Dharwad',
+    '/app/showcase': 'Course Results & Showcase · 3DCV Fun AI Lab · Group 17',
+    '/app/inspector': '8-Stage Pipeline Inspector · 3DCV Fun AI Lab · Group 17',
+    '/app/labs': 'Student Curriculum Labs · 3DCV Fun AI Lab · Group 17',
+    '/app/chat': '3D AI Chat · 3DCV Fun AI Lab · Group 17',
+    '/app/dashboard': 'Student Dashboard · 3DCV Fun AI Lab · Group 17',
+    '/app/assets': 'My 3D Models · 3DCV Fun AI Lab · Group 17',
+    '/app/gallery': '3D Asset Gallery · 3DCV Fun AI Lab · Group 17',
+    '/app/benchmark': 'Empirical Benchmarks · 3DCV Fun AI Lab · Group 17',
+    '/app/team': 'Project Team · Group 17 · IIIT Dharwad',
+    '/app/login': 'Sign In · 3DCV Fun AI Lab · Group 17',
+    '/app/register': 'Register Student Account · 3DCV Fun AI Lab · Group 17',
+    '/app/settings': 'Settings · 3DCV Fun AI Lab · Group 17',
+  };
+  if (titles[path]) {
+    document.title = titles[path];
+  } else if (path.startsWith('/app/assets/')) {
+    document.title = 'Model Details · 3DCV Fun AI Lab · Group 17';
+  } else {
+    document.title = '3DCV Fun AI Lab · Group 17 · IIIT Dharwad';
+  }
   const main = document.getElementById('main');
   $$('#nav a').forEach(a => {
     const selected = a.getAttribute('href') === path || path.startsWith(`${a.getAttribute('href')}/`);
@@ -207,6 +277,7 @@ export async function renderRoute() {
         console.error(err);
         renderError(main, err);
       }
+      renderMathInDOM(main);
       const anchor = document.getElementById(location.hash.slice(1));
       if (anchor) anchor.scrollIntoView({ block: 'start' });
       else window.scrollTo({ top: 0 });

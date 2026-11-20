@@ -1,7 +1,7 @@
 {
   "manifest_version": "1.0",
   "engine": {
-    "name": "3DFUN AI reconstruction engine",
+    "name": "3DCV Lab Group 17 reconstruction engine",
     "version": "1.0.0",
     "pipeline": "silhouette-constrained monocular depth inflation + marching cubes",
     "depth_model": "depth-anything-v2-small-int8",

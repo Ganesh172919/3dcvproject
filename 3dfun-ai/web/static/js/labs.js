@@ -1,4 +1,4 @@
-import { api, fmt, h, mount, refreshUser, state, statusBadge, toast } from './lib.js';
+import { api, fmt, h, mount, refreshUser, renderMathInDOM, state, statusBadge, toast } from './lib.js';
 
 const INPUTS = {
   lab1_depth: [
@@ -16,18 +16,30 @@ const INPUTS = {
     ['lr', 'Learning rate', 0.000001, 0.1, 'any'],
   ],
   lab4_evaluator: [['num_points', 'Sample points', 16, 100000, 1], ['seed', 'Seed', 0, 2 ** 32 - 1, 1]],
+  lab5_triplane: [
+    ['primitive', 'Shape', ['torus', 'sphere', 'cylinder', 'cube']],
+    ['epochs', 'Epochs', 1, 20, 1], ['lr', 'Learning rate', 0.0001, 0.1, 'any'],
+    ['plane_res', 'Triplane res', 16, 64, 16],
+  ],
+  lab6_pbr: [
+    ['filter_radius', 'Filter radius', 1, 15, 1],
+    ['roughness_base', 'Roughness base', 0.0, 1.0, 0.05],
+    ['metallic_factor', 'Metallic factor', 0.0, 1.0, 0.05],
+  ],
 };
 
 const METRICS = {
   mae: 'MAE', delta1: 'δ1', final_loss: 'Final loss', epochs: 'Epochs', accuracy: 'Accuracy', iou: 'IoU',
   vertices: 'Vertices', faces: 'Faces', num_gaussians: 'Gaussians', final_psnr: 'PSNR',
   chamfer_symmetric: 'Chamfer', f_score_tau_01: 'F-score (0.01)', f_score_tau_05: 'F-score (0.05)', emd: 'Approx. EMD',
+  mean_albedo_luminance: 'Albedo Lum', mean_roughness: 'Roughness', mean_metallic: 'Metallic', normal_flatness_ratio: 'Normal Flatness',
 };
 
 const active = run => run.status === 'queued' || run.status === 'running';
 const display = value => typeof value === 'number' && !Number.isInteger(value) ? value.toFixed(4) : (value ?? '—');
 
 export async function renderLabs(main) {
+  document.title = 'Student Curriculum Labs · 3DCV Fun AI Lab · Group 17 · IIIT Dharwad';
   const history = h('section', { class: 'card mt24', 'aria-labelledby': 'lab-history' },
     h('h2', { id: 'lab-history' }, 'Recent runs'));
   const historyBody = h('div', {});
@@ -60,7 +72,7 @@ export async function renderLabs(main) {
       return h('label', { class: 'field' }, h('span', {}, label), input);
     });
     const status = h('p', { class: 'form-error', role: 'status' });
-    const action = lab.id === 'lab4_evaluator' ? 'Run evaluation' : 'Start training';
+    const action = lab.id === 'lab4_evaluator' ? 'Run evaluation' : (lab.id === 'lab6_pbr' ? 'Decompose PBR' : 'Start training');
     const button = h('button', { class: 'btn primary sm', type: 'submit', disabled: !lab.available },
       `${action} · ${lab.cost_credits} credits`);
     return h('form', {
@@ -84,7 +96,9 @@ export async function renderLabs(main) {
         }
       },
     },
-    h('h2', { class: 'mb0' }, lab.title), h('p', { class: 'muted mb8' }, lab.description),
+    h('h2', { class: 'mb0' }, lab.title),
+    lab.math_formula ? h('div', { class: 'formula-card my8 p8', style: 'background: #f8fafc; border: 1px solid #e2e8f0; font-family: monospace; font-size: 12px; color: #312e81; border-radius: 4px;' }, `$$ ${lab.math_formula} $$`) : null,
+    h('p', { class: 'muted mb8' }, lab.description),
     h('div', { class: 'grid c2 gap8' }, fields),
     lab.available ? null : h('p', { class: 'muted' },
       'Install PyTorch to start this lab. ', h('a', { href: '/project-docs/reproducibility.md' }, 'Experiment guide')),
@@ -135,6 +149,7 @@ export async function renderLabs(main) {
     const { labs } = await api('/student-labs');
     if (closed) return;
     mount(catalog, labs.map(makeCard));
+    renderMathInDOM(catalog);
     await updateRuns();
   } catch (err) {
     if (!closed) mount(catalog, h('p', { role: 'alert' }, err.message));

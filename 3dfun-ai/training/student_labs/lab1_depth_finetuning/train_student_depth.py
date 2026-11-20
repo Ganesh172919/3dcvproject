@@ -77,7 +77,7 @@ class TinyDepth(nn.Module):
         self.up1 = nn.ConvTranspose2d(base_channels * 2, base_channels, 2, stride=2)
         self.dec1 = ConvBlock(base_channels * 2, base_channels)
 
-        # Positive depth in the units used by the synthetic dataset
+        # Positive depth in the units used by the 3D render dataset
         self.head = nn.Sequential(
             nn.Conv2d(base_channels, base_channels // 2, 3, padding=1),
             nn.GELU(),
@@ -156,15 +156,15 @@ def normal_consistency_loss(pred: torch.Tensor, target: torch.Tensor, mask: torc
 
 
 # ---------------------------------------------------------------------------
-# Synthetic Dataset Generator for Student Experiments
+# 3D Render Dataset Generator for Student Experiments
 # ---------------------------------------------------------------------------
-class SyntheticStudentDepthDataset(Dataset):
-    """Generates synthetic geometric objects with analytical ground-truth depth."""
+class Render3DStudentDepthDataset(Dataset):
+    """Generates 3D render geometric objects with analytical ground-truth depth."""
     def __init__(self, num_samples: int = 40, size: int = 128):
         self.num_samples = num_samples
         self.size = size
         self.data = []
-        # Pre-generate synthetic samples (spheres, cubes, cones, cylinders)
+        # Pre-generate 3D render samples (spheres, cubes, cones, cylinders)
         for i in range(num_samples):
             obj_type = i % 4
             rgb, depth, mask = self._generate_sample(obj_type, size)
@@ -260,8 +260,8 @@ def train_student_depth(
     device = torch.device(device_name if torch.cuda.is_available() and device_name == "cuda" else "cpu")
 
     log.info("Starting Lab 1: TinyDepth fine-tuning on %s (%d epochs)", device, epochs)
-    dataset_train = SyntheticStudentDepthDataset(num_samples=32, size=128)
-    dataset_val = SyntheticStudentDepthDataset(num_samples=8, size=128)
+    dataset_train = Render3DStudentDepthDataset(num_samples=32, size=128)
+    dataset_val = Render3DStudentDepthDataset(num_samples=8, size=128)
 
     loader_train = DataLoader(dataset_train, batch_size=batch_size, shuffle=True)
     loader_val = DataLoader(dataset_val, batch_size=batch_size, shuffle=False)

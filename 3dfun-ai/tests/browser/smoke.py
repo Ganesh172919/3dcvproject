@@ -1,4 +1,4 @@
-"""Headless browser smoke test for the 3DFUN AI SPA (Playwright, chromium)."""
+"""Headless browser smoke test for the 3DCV Lab Group 17 SPA (Playwright, chromium)."""
 import os
 import sys
 import tempfile

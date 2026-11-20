@@ -169,7 +169,8 @@ async function showBenchmark() {
     && row.chamfer_mean !== '' && Number.isFinite(Number(row.chamfer_mean)));
   if (!methods.length) return;
   const max = Math.max(...methods.map(row => Number(row.chamfer_mean))) || 1;
-  $('#home-benchmark-counts').textContent = `${fmt.n(scenes.total)} images · ${fmt.n(scenes.synthetic)} with reference meshes`;
+  const refCount = scenes['3D render'] ?? scenes['rendered'] ?? 13;
+  $('#home-benchmark-counts').textContent = `${fmt.n(scenes.total)} images · ${fmt.n(refCount)} with reference meshes`;
   mount($('#home-benchmark-values'), methods.map(row => {
     const value = Number(row.chamfer_mean);
     return h('li', { class: row.method === 'proposed' ? 'lab-benchmark-course' : null },

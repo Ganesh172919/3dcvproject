@@ -1,4 +1,4 @@
-// 3DFUN AI 3D Reconstruction Studio Controller.
+// 3D Computer Vision Lab Studio Controller · Group 17 · IIIT Dharwad
 // Course: 3D Computer Vision Course Project · IIIT Dharwad
 // Supervisor: Dr. Shirshendu Layek (Dept. of DSAI)
 // Authors: J Ganesh (23BDS024), M Jagadeshwar (23BDS033), B Varshith (23BDS011),
@@ -13,12 +13,54 @@ import { renderChat } from './chat.js';
 
 const DEPTH_STAGES = ['Matte', 'Depth', 'Volume', 'Mesh', 'Texture', 'Export'];
 const ENGINES = {
-  triposr: { name: ENGINE_NAMES.triposr, example: 'chair', stages: ['Matte', 'Encode', 'Density', 'Mesh', 'Colour', 'Export'],
-    description: 'Predicts a 3D shape and stores colour on the mesh vertices.' },
-  local: { name: ENGINE_NAMES.local, example: 'sneaker', stages: DEPTH_STAGES,
-    description: 'The course method uses estimated depth and silhouette to build a mesh with a texture atlas.' },
-  midas: { name: ENGINE_NAMES.midas, example: 'teapot', stages: DEPTH_STAGES,
-    description: 'Uses MiDaS depth with the same silhouette pipeline and texture atlas.' },
+  triposr: {
+    name: ENGINE_NAMES.triposr,
+    example: 'chair',
+    stages: ['Matte', 'Encode', 'Density', 'Mesh', 'Colour', 'Export'],
+    description: 'Fast feed-forward Large Reconstruction Model (LRM) predicting continuous triplane density fields.'
+  },
+  local: {
+    name: ENGINE_NAMES.local,
+    example: 'sneaker',
+    stages: DEPTH_STAGES,
+    description: 'Foundation monocular depth estimator with metric back-projection, silhouette voxel carving, and 1024² PBR atlas.'
+  },
+  midas: {
+    name: ENGINE_NAMES.midas,
+    example: 'teapot',
+    stages: DEPTH_STAGES,
+    description: 'Multi-scale relative depth transformer with calibrated affine metric scaling.'
+  },
+  tinydepth: {
+    name: ENGINE_NAMES.tinydepth,
+    example: 'sneaker',
+    stages: ['Matte', 'Depth CNN', 'Unproject', 'Mesh', 'Bake', 'Export'],
+    description: 'Student lightweight feed-forward depth CNN from Lab 1. Ultra-fast CPU inference with silhouette bounds.'
+  },
+  siren_sdf: {
+    name: ENGINE_NAMES.siren_sdf,
+    example: 'teapot',
+    stages: ['Matte', 'SIREN Fit', 'Implicit Field', 'Marching Cubes', 'Bake', 'Export'],
+    description: 'Student Lab 2 implicit periodic representation with sinusoidal activation functions sin(ω₀ Wx + b).'
+  },
+  gaussian_splat: {
+    name: ENGINE_NAMES.gaussian_splat,
+    example: 'chair',
+    stages: ['Matte', 'SfM Init', 'Splat Densify', 'Tile Rasterize', 'Mesh Extract', 'Export'],
+    description: 'Student Lab 3 3D Gaussian Splatting representation using anisotropic 3D ellipsoids and spherical harmonics.'
+  },
+  hybrid_triplane: {
+    name: ENGINE_NAMES.hybrid_triplane,
+    example: 'chair',
+    stages: ['Matte', 'Triplane Project', 'MLP Query', 'Marching Cubes', 'PBR Bake', 'Export'],
+    description: 'Student Lab 5 hybrid representation: 3 orthogonal planes (T_xy, T_xz, T_yz) with a lightweight coordinate MLP.'
+  },
+  instantmesh_dit: {
+    name: ENGINE_NAMES.instantmesh_dit,
+    example: 'sneaker',
+    stages: ['Multi-View DiT', 'Sparse Views', 'DMTet Grid', 'SDF Extract', 'Texture Bake', 'Export'],
+    description: 'State-of-the-art sparse-view diffusion transformer + deformable tetrahedral grid (DMTet) isosurface extraction.'
+  }
 };
 const LABELS = {
   QUEUED: 'Waiting in queue', VALIDATING: 'Checking the image', PREPROCESSING: 'Preparing the image',
@@ -29,6 +71,7 @@ const LABELS = {
 };
 const TERMINAL = ['COMPLETED', 'FAILED', 'CANCELLED'];
 export async function renderStudio(_params, main) {
+  document.title = 'Studio · 3DCV Fun AI Lab · Group 17 · IIIT Dharwad';
   const available = key => key === 'local' || Boolean(state.meta?.features?.[key]);
   const params = new URLSearchParams(location.search);
   const requestedEngine = params.get('engine');
@@ -418,20 +461,82 @@ export async function renderStudio(_params, main) {
     if (event.dataTransfer.files[0]) selectFile(() => event.dataTransfer.files[0]);
   });
 
-  const viewSizeBadge = h('span', { class: 'telemetry-badge', id: 'viewport-render-size' }, '📐 Render View: 640 × 540 px');
-  mount(output, h('div', { class: 'spread output-heading' },
-    h('div', { class: 'row gap8', style: 'align-items:center;' },
-      h('h2', { class: 'mb0' }, 'Reconstruction Viewport'),
-      viewSizeBadge
-    ),
-    h('a', { class: 'btn sm', href: '/#example-stage' }, 'Explore Examples')),
-    h('figure', { class: 'studio-demo' }, exampleImage, exampleCaption),
-    h('p', { class: 'hint mb0' }, 'Upload an image and hit Generate Model to watch real-time 3D geometry synthesis.'));
+  async function loadDemoMesh(exampleId = 'sneaker') {
+    const ex = EXAMPLES.find(e => e.id === exampleId) || EXAMPLES[3];
+    const { ModelViewer } = await import('./viewer.js');
+    clear(output);
+    const standardHost = h('div');
+    const heading = h('div', { class: 'spread wrap output-heading' },
+      h('div', {},
+        h('h2', { class: 'mb0' }, `${ex.label} · Demo 3D Model`),
+        h('small', {}, `${ex.method} · Interactive Three.js WebGL CAD Viewport`)
+      ),
+      h('div', { class: 'row gap8' },
+        h('button', {
+          class: 'btn sm',
+          type: 'button',
+          onclick: () => {
+            viewer?.dispose();
+            mountEmptyOutput();
+          }
+        }, '← Back to Upload'),
+        h('a', { class: 'btn sm primary', href: ex.glb, download: `${ex.id}.glb` }, 'Download GLB')
+      )
+    );
+    mount(output, heading, standardHost,
+      h('dl', { class: 'result-grid' }, [
+        ['Example', ex.label],
+        ['Method', ex.method],
+        ['Format', 'GLTF Binary (.glb)'],
+        ['Mesh Status', 'Watertight 2-Manifold'],
+      ].map(([label, value]) => h('div', { class: 'result-cell' }, h('dt', { class: 'k' }, label), h('dd', { class: 'v' }, value)))),
+      h('div', { class: 'row wrap gap8 mt16' }, [
+        h('a', { class: 'btn sm primary', href: ex.glb, download: `${ex.id}.glb` }, 'Download .GLB'),
+        h('a', { class: 'btn sm', href: '/#example-stage' }, 'Explore All Examples in Benchmark')
+      ])
+    );
+    viewer?.dispose();
+    viewer = new ModelViewer(standardHost, {
+      modelUrl: ex.glb,
+      previewUrl: ex.preview,
+      altText: `${ex.label} 3D Mesh`,
+      height: 540,
+      autoRotate: false
+    });
+    const statusTop = document.getElementById('status-topology');
+    if (statusTop) statusTop.textContent = `Demo Mesh · Watertight 2-Manifold`;
+  }
 
-  // Right Dock Setup: Tab A (Inspector) + Tab B (Agentic AI Co-Pilot)
+  function mountEmptyOutput() {
+    clear(output);
+    const viewSizeBadge = h('span', { class: 'telemetry-badge', id: 'viewport-render-size' }, '📐 Render View: 640 × 540 px');
+    const btnLoadDemo = h('button', {
+      class: 'btn sm primary',
+      id: 'btn-load-demo-model',
+      type: 'button',
+      onclick: () => loadDemoMesh('sneaker')
+    }, '🎮 Load Demo 3D Mesh in Viewport');
+
+    mount(output, h('div', { class: 'spread output-heading' },
+      h('div', { class: 'row gap8', style: 'align-items:center;' },
+        h('h2', { class: 'mb0' }, 'Reconstruction Viewport'),
+        viewSizeBadge
+      ),
+      h('div', { class: 'row gap8' },
+        btnLoadDemo,
+        h('a', { class: 'btn sm', href: '/#example-stage' }, 'Explore Examples')
+      )
+    ),
+    h('figure', { class: 'studio-demo' }, exampleImage, exampleCaption),
+    h('p', { class: 'hint mb0' }, 'Upload an image and hit Generate Model, or click "Load Demo 3D Mesh in Viewport" to inspect real-time 3D geometry.'));
+  }
+
+  mountEmptyOutput();
+
+  // Right Dock Setup: Tab A (Inspector) + Tab B (3D AI Chat)
   const tabSeg = h('div', { class: 'seg mb8', role: 'group', 'aria-label': 'Right Dock Tabs' });
   const btnInspectorTab = h('button', { class: 'active', type: 'button' }, '🔬 Inspector');
-  const btnChatTab = h('button', { type: 'button' }, '🤖 AI Co-Pilot');
+  const btnChatTab = h('button', { type: 'button' }, '💬 3D AI Chat');
   mount(tabSeg, btnInspectorTab, btnChatTab);
 
   const inspectorHost = h('div', { class: 'right-dock-tab' });
@@ -514,7 +619,25 @@ export async function renderStudio(_params, main) {
 
   updateEstimate();
   const id = params.get('generation');
-  if (id) watch(encodeURIComponent(id));
+  const assetId = params.get('asset');
+  if (assetId) {
+    try {
+      const asset = await api(`/assets/${encodeURIComponent(assetId)}`);
+      current = {
+        id: asset.generation_id || `gen_${asset.id}`,
+        asset_id: asset.id,
+        status: 'COMPLETED',
+        provider: asset.manifest?.engine?.name || 'local',
+        source_image_url: asset.preview_url,
+      };
+      state.currentAssetId = asset.id;
+      await renderResult(asset.id);
+    } catch (e) {
+      console.warn('Could not load requested asset into studio:', e);
+    }
+  } else if (id) {
+    watch(encodeURIComponent(id));
+  }
   const saved = params.get('upload');
   const draft = params.get('draft');
   if (saved) {

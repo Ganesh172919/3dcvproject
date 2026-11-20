@@ -1,4 +1,4 @@
-"""Compact RGB-to-depth network for the synthetic 3DFUN AI training experiment."""
+"""Compact RGB-to-depth network for the 3D render 3DCV Lab Group 17 training experiment."""
 import torch
 from torch import nn
 from torch.nn import functional as F

@@ -126,7 +126,7 @@ def build_space_carving(
 
     if angles_deg is None:
         if len(image_paths) == 1:
-            # Single image mode: use front (0 deg) and synthetic orthogonal profile (90 deg)
+            # Single image mode: use front (0 deg) and 3D render orthogonal profile (90 deg)
             angles_deg = [0.0, 90.0]
         else:
             angles_deg = [i * (360.0 / len(image_paths)) for i in range(len(image_paths))]

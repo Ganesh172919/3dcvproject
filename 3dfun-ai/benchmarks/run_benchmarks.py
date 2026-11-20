@@ -1,4 +1,4 @@
-"""Reproducible benchmark driver for 3DFUN AI.
+"""Reproducible benchmark driver for 3DCV Lab Group 17.
 
 Course: 3D Computer Vision Course Project · IIIT Dharwad
 Supervisor: Dr. Shirshendu Layek (Dept. of DSAI)
@@ -425,11 +425,11 @@ def run(quick: bool = False, repetitions: int = 3, quality: str = "draft",
         quiet: bool = False, resume: bool = True) -> dict:
     _seed_everything(SEED)
     dataset = load_dataset()
-    entries = [e for e in dataset["entries"] if e["split"] == "synthetic" or e.get("gt_mesh")]
+    entries = [e for e in dataset["entries"] if e["split"] == "3D render" or e.get("gt_mesh")]
     # all entries are evaluated; the real photographs simply have no geometry GT
     entries = dataset["entries"]
     if quick:
-        keep = {"synthetic/box", "synthetic/sphere", "synthetic/stairs", "real/sneaker"}
+        keep = {"3D render/box", "3D render/sphere", "3D render/stairs", "real/sneaker"}
         entries = [e for e in entries if e["id"] in keep]
         repetitions = 1
 
@@ -555,7 +555,7 @@ def summarise(rows: list[RunRow]) -> list[dict[str, Any]]:
         rec: dict[str, Any] = {
             "method": method,
             "n_runs": len(method_rows),
-            "n_synthetic": len(syn),
+            "n_3D render": len(syn),
             "n_real": len(real),
             "watertight_pct": 100.0 * sum(r.watertight for r in method_rows) / len(method_rows),
         }
@@ -833,7 +833,7 @@ def _write_timings(rows: list[RunRow], path: Path) -> None:
 
 
 def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(description="Run the 3DFUN AI benchmark suite.")
+    ap = argparse.ArgumentParser(description="Run the 3DCV Lab Group 17 benchmark suite.")
     ap.add_argument("--quick", action="store_true", help="4 scenes, 1 repetition")
     ap.add_argument("--repetitions", type=int, default=3)
     ap.add_argument("--quality", default="draft", choices=["draft", "standard", "high"])

@@ -1,0 +1,12 @@
+{
+  "name": "3dcv-lab-group17",
+  "version": "1.0.0",
+  "description": "3DCV Fun AI Lab · Group 17 · IIIT Dharwad Course Project",
+  "scripts": {
+    "dev": "cd 3dfun-ai && powershell -ExecutionPolicy Bypass -Command \"if (Test-Path .venv\\Scripts\\python.exe) { .\\.venv\\Scripts\\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8010 --reload } else { python -m uvicorn app.main:app --host 127.0.0.1 --port 8010 --reload }\"",
+    "start": "npm run dev",
+    "test": "cd 3dfun-ai && .\\.venv\\Scripts\\python.exe -m pytest tests/"
+  },
+  "author": "Group 17 (IIIT Dharwad)",
+  "license": "MIT"
+}

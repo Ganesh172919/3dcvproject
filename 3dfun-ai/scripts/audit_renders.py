@@ -77,9 +77,9 @@ def audit_pdf(path: Path, label: str, dpi: int = 90) -> dict:
 
 
 def audit_deck() -> dict:
-    deck = ROOT / "presentations" / "3DFUN-AI-Project.pptx"
+    deck = ROOT / "presentations" / "3DCV-Lab-Group17-Project.pptx"
     if not deck.exists():
-        return {"file": "presentations/3DFUN-AI-Project.pptx", "problems": ["deck missing"]}
+        return {"file": "presentations/3DCV-Lab-Group17-Project.pptx", "problems": ["deck missing"]}
     problems: list[str] = []
     rendered: list[str] = []
     soffice = shutil.which("soffice") or shutil.which("libreoffice")
@@ -110,7 +110,7 @@ def audit_deck() -> dict:
                         problems.append(f"deck s{i}: shapes {a} and {b} overlap by "
                                         f"{ox/914400:.2f} x {oy/914400:.2f} in")
                         break
-    return {"file": "presentations/3DFUN-AI-Project.pptx", "rendered": rendered,
+    return {"file": "presentations/3DCV-Lab-Group17-Project.pptx", "rendered": rendered,
             "problems": problems}
 
 

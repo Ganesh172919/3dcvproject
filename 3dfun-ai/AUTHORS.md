@@ -1,6 +1,6 @@
 # Authors
 
-**3DFUN AI: An End-to-End Image-to-3D Generation Framework**
+**3DCV Lab Group 17: An End-to-End Image-to-3D Generation Framework**
 3D Computer Vision course project — Indian Institute of Information Technology, Dharwad
 
 ## Project team
@@ -33,7 +33,7 @@ Indian Institute of Information Technology, Dharwad
 
 ```bibtex
 @misc{3dfunai2026,
-  title  = {3DFUN AI: An End-to-End Image-to-3D Generation Framework},
+  title  = {3DCV Lab Group 17: An End-to-End Image-to-3D Generation Framework},
   author = {Ganesh, J and Jagadeshwar, M and Varshith, B and Kashyap, Pranav and Aravind, C Sai},
   year   = {2026},
   note   = {3D Computer Vision course project, IIIT Dharwad. Guide: Dr. Shirshendu Layek}

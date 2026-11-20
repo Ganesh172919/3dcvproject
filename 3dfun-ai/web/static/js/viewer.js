@@ -231,18 +231,18 @@ export class ModelViewer {
     const modal = document.createElement('div');
     modal.className = 'viewer-print-modal';
     modal.innerHTML = `
-      <div class="card tight" style="background:#ffffff;border:1px solid #4f46e5;box-shadow:0 12px 32px rgba(0,0,0,0.12);min-width:320px;padding:16px;color:#0f172a;">
+      <div class="card tight" style="background:#ffffff;border:1px solid #cbd5e1;box-shadow:0 16px 40px rgba(0,0,0,0.12);min-width:320px;padding:16px;color:#0f172a;border-radius:12px;">
         <div class="spread mb8">
-          <strong style="color:#4f46e5;font-size:14px;">🖨 3D Print Readiness Check</strong>
+          <strong style="color:#6366f1;font-size:14px;display:flex;align-items:center;gap:6px;">🖨 3D Print Readiness Check</strong>
           <button class="btn sm ghost" onclick="this.closest('.viewer-print-modal').remove()">✕</button>
         </div>
-        <div class="col gap4" style="font-size:12.5px;color:#334155;">
-          <div class="spread"><span>Watertight Shell:</span> <strong style="color:#16a34a;">✓ Manifold Surface Topology (100% Watertight)</strong></div>
-          <div class="spread"><span>Non-manifold Edges:</span> <strong style="color:#16a34a;">0 edges</strong></div>
-          <div class="spread"><span>Degenerate Faces:</span> <strong style="color:#16a34a;">0</strong></div>
-          <div class="spread"><span>Dimensions:</span> <span class="mono" style="color:#0f172a;">${widthMm} × ${heightMm} × ${depthMm} mm</span></div>
-          <div class="spread"><span>Est. Filament Volume:</span> <span class="mono" style="color:#0f172a;">~${estVol} cm³</span></div>
-          <div class="spread"><span>Recommended Slicer:</span> <span style="color:#0f172a;">PrusaSlicer / Bambu Studio / Cura</span></div>
+        <div class="col gap4" style="font-size:12.5px;color:#cbd5e1;">
+          <div class="spread"><span>Watertight Shell:</span> <strong style="color:#10b981;">✓ Manifold Surface Topology (100% Watertight)</strong></div>
+          <div class="spread"><span>Non-manifold Edges:</span> <strong style="color:#10b981;">0 edges</strong></div>
+          <div class="spread"><span>Degenerate Faces:</span> <strong style="color:#10b981;">0</strong></div>
+          <div class="spread"><span>Dimensions:</span> <span class="mono" style="color:#f8fafc;">${widthMm} × ${heightMm} × ${depthMm} mm</span></div>
+          <div class="spread"><span>Est. Filament Volume:</span> <span class="mono" style="color:#f8fafc;">~${estVol} cm³</span></div>
+          <div class="spread"><span>Recommended Slicer:</span> <span style="color:#f8fafc;">PrusaSlicer / Bambu Studio / Cura</span></div>
         </div>
         <button class="btn sm primary block mt12" onclick="this.closest('.viewer-print-modal').remove()">Close</button>
       </div>
@@ -640,7 +640,7 @@ export class ModelViewer {
     const url = this.renderer.domElement.toDataURL('image/png');
     const a = document.createElement('a');
     a.href = url;
-    a.download = `3dfun-view-${Date.now()}.png`;
+    a.download = `3dcv-view-${Date.now()}.png`;
     a.click();
   }
 

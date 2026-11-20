@@ -1,6 +1,6 @@
 # Originality declaration template
 
-3DFUN AI · 3D Computer Vision · Indian Institute of Information Technology Dharwad
+3DCV Lab · 3D Computer Vision · Indian Institute of Information Technology Dharwad
 
 Use the institution's required form if it provides one. Each signer should review the project attribution, upstream references, and AI assistance disclosure before signing.
 

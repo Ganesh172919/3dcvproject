@@ -7,7 +7,7 @@
 | `engine/specialized_3d/` | Optional point cloud, surface of revolution, visual hull and SDF exercises. |
 | `web/` | Landing page, Studio, vendored Three.js modules and saved examples. |
 | `benchmarks/` | Analytic dataset builder, classical baselines, and mesh metrics. |
-| `training/` | Synthetic rendering, TinyDepth training, ONNX export, cloud evaluation, and volume calibration. |
+| `training/` | 3D Render rendering, TinyDepth training, ONNX export, cloud evaluation, and volume calibration. |
 | `tests/` | Pytest suite and Playwright browser smoke test. |
 | `results/` | Recorded CPU benchmark, depth and cloud results, and report figures. |
 | `submission/` | Course report source, demo generator, archive builder and verifier. |

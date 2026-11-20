@@ -161,7 +161,10 @@ PRESET = Literal["product", "character", "sculpt", "game_asset", "low_poly", "re
 
 
 class AdvancedOptions(BaseModel):
-    engine: Literal["local", "triposr", "midas"] | None = None
+    engine: Literal[
+        "local", "triposr", "midas", "tinydepth",
+        "siren_sdf", "gaussian_splat", "hybrid_triplane", "instantmesh_dit"
+    ] | None = None
     geometry_detail: int = Field(default=50, ge=0, le=100)
     texture_quality: Literal["512", "1024", "2048"] = "1024"
     symmetry: bool = True

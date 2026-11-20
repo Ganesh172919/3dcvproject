@@ -58,9 +58,26 @@ class EvaluationConfig(LabConfig):
     seed: int = Field(17, ge=0, le=2**32 - 1)
 
 
+class TriplaneConfig(LabConfig):
+    primitive: Literal["torus", "sphere", "cylinder", "cube"] = "torus"
+    epochs: int = Field(5, ge=1, le=20)
+    lr: float = Field(0.005, gt=0, le=0.1)
+    plane_res: int = Field(32, ge=16, le=64)
+
+
+class PbrConfig(LabConfig):
+    filter_radius: int = Field(5, ge=1, le=15)
+    roughness_base: float = Field(0.45, ge=0.0, le=1.0)
+    metallic_factor: float = Field(0.1, ge=0.0, le=1.0)
+
+
 CONFIG_TYPES = {
-    "lab1_depth": DepthConfig, "lab2_occupancy": OccupancyConfig,
-    "lab3_3dgs": SplatConfig, "lab4_evaluator": EvaluationConfig,
+    "lab1_depth": DepthConfig,
+    "lab2_occupancy": OccupancyConfig,
+    "lab3_3dgs": SplatConfig,
+    "lab4_evaluator": EvaluationConfig,
+    "lab5_triplane": TriplaneConfig,
+    "lab6_pbr": PbrConfig,
 }
 
 LABS_CATALOG = [
@@ -94,6 +111,22 @@ LABS_CATALOG = [
         "subtitle": "Symmetric Chamfer Distance, EMD, and F-Score at thresholds tau=0.01, 0.05",
         "math_formula": r"\text{CD}(S_1, S_2) = \frac{1}{2|S_1|} \sum_{x \in S_1} \min_{y \in S_2} \|x - y\| + \frac{1}{2|S_2|} \sum_{y \in S_2} \min_{x \in S_1} \|x - y\|",
         "description": "Rigorously benchmark reconstructed 3D meshes and point clouds against ground truth models using KD-Tree nearest neighbor queries and Earth Mover's Distance approximations.",
+        "cost_credits": 5,
+    },
+    {
+        "id": "lab5_triplane",
+        "title": "Lab 5: Feed-Forward Triplane Generator (LRM / TripoSR Mini)",
+        "subtitle": "Orthogonal feature planes (T_xy, T_xz, T_yz) and coordinate MLP decoder",
+        "math_formula": r"\mathbf{f}(\mathbf{x}) = [T_{xy}(x, y) \,\|\, T_{xz}(x, z) \,\|\, T_{yz}(y, z)], \quad p(\mathbf{x}) = \sigma(g_\theta(\mathbf{f}(\mathbf{x})))",
+        "description": "Train a miniature Large Reconstruction Model (LRM). Projects 2D image features into three orthogonal spatial planes and decodes continuous 3D occupancy for instantaneous inference.",
+        "cost_credits": 10,
+    },
+    {
+        "id": "lab6_pbr",
+        "title": "Lab 6: PBR Material Decomposition & Delighting",
+        "subtitle": "Cook-Torrance BRDF decomposition into Albedo, Normal, Roughness, and Metallic",
+        "math_formula": r"f_r = k_d \frac{\mathbf{A}}{\pi} + k_s \frac{D F G}{4(\mathbf{n} \cdot \mathbf{l})(\mathbf{n} \cdot \mathbf{v})}, \quad \mathbf{A}(u,v) = \frac{\mathbf{I}(u,v)}{\max(S(u,v), \epsilon)} \cdot \bar{S}",
+        "description": "Deconstruct a single photograph into game-engine ready Physically Based Rendering (PBR) texture atlases with bilateral delighting and tangent-space normal synthesis.",
         "cost_credits": 5,
     },
 ]
@@ -268,6 +301,58 @@ def _execute_lab(run_id: str, lab_id: str, cfg: dict[str, Any], cost: int):
                     "results_json": str(out_dir / "lab4_results.json"),
                 }
                 run.logs = f"3D Evaluation benchmarks computed.\nChamfer Distance: {run.metrics.get('chamfer_symmetric'):.5f}, EMD: {run.metrics.get('emd'):.5f}"
+
+            elif lab_id == "lab5_triplane":
+                from training.student_labs.lab5_triplane_lrm.train_triplane_lrm import train_triplane_lrm
+                epochs = cfg["epochs"]
+                primitive = cfg["primitive"]
+                res = train_triplane_lrm(
+                    epochs=epochs,
+                    lr=cfg["lr"],
+                    primitive=primitive,
+                    plane_res=cfg.get("plane_res", 32),
+                    out_dir=out_dir,
+                )
+                run.metrics = {
+                    "final_loss": res.get("final_loss"),
+                    "accuracy": res.get("final_accuracy"),
+                    "iou": res.get("final_iou"),
+                    "vertices": res.get("vertices"),
+                    "faces": res.get("faces"),
+                }
+                artifacts = {
+                    "mesh": res.get("mesh_path"),
+                    "checkpoint": res.get("checkpoint"),
+                    "results_json": str(out_dir / "lab5_results.json"),
+                }
+                if res.get("onnx"):
+                    artifacts["onnx"] = res["onnx"]
+                run.artifacts = artifacts
+                run.logs = f"Feed-Forward Triplane LRM trained for {primitive} in {epochs} epochs.\nIoU: {res.get('final_iou'):.3f}, Accuracy: {res.get('final_accuracy')*100:.1f}%, Faces: {res.get('faces')}"
+
+            elif lab_id == "lab6_pbr":
+                from training.student_labs.lab6_pbr_delighting.pbr_material_decomposition import decompose_pbr_material
+                res = decompose_pbr_material(
+                    filter_radius=cfg["filter_radius"],
+                    roughness_base=cfg["roughness_base"],
+                    metallic_factor=cfg["metallic_factor"],
+                    out_dir=out_dir,
+                )
+                run.metrics = {
+                    "mean_albedo_luminance": res.get("mean_albedo_luminance"),
+                    "mean_roughness": res.get("mean_roughness"),
+                    "mean_metallic": res.get("mean_metallic"),
+                    "normal_flatness_ratio": res.get("normal_flatness_ratio"),
+                }
+                run.artifacts = {
+                    "albedo": res["artifacts"].get("albedo"),
+                    "normal": res["artifacts"].get("normal"),
+                    "roughness": res["artifacts"].get("roughness"),
+                    "metallic": res["artifacts"].get("metallic"),
+                    "orm_packed": res["artifacts"].get("orm_packed"),
+                    "results_json": str(out_dir / "lab6_results.json"),
+                }
+                run.logs = f"PBR material decomposition completed.\nExtracted Albedo, Tangent-Space Normals, and packed ORM maps."
 
             run.status = "completed"
             run.completed_at = utcnow()

@@ -10,7 +10,7 @@ Benchmarking 3D reconstruction algorithms is fraught with evaluation ambiguities
 
 ## Decision
 We engineered a dual-track benchmark suite:
-1. **Analytic Synthetic Dataset (13 Procedural Scenes):** Geometric primitives (spheres, cylinders, cones, tori, capsules, ellipsoids) with exact closed mathematical surface formulations and zero topological noise.
+1. **Analytic 3D Render Dataset (13 Procedural Scenes):** Geometric primitives (spheres, cylinders, cones, tori, capsules, ellipsoids) with exact closed mathematical surface formulations and zero topological noise.
 2. **Real Photograph Dataset (12 CC0-1.0 Physical Objects):** Real-world items evaluating operational metrics (latency, memory, visual SSIM, watertightness) where metric ground truth cannot be honestly claimed.
 
 ## Consequences

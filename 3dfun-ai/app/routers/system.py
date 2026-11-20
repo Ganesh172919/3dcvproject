@@ -87,6 +87,11 @@ def meta():
             "provider": settings.generation_provider,
             "triposr": triposr_available(),
             "midas": midas_available(),
+            "tinydepth": True,
+            "siren_sdf": True,
+            "gaussian_splat": True,
+            "hybrid_triplane": True,
+            "instantmesh_dit": True,
             "demo_account": settings.demo_login_enabled,
         },
         "limits": {

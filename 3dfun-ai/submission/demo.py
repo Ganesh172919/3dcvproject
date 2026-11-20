@@ -61,7 +61,7 @@ def scene(index):
     img = Image.new("RGB", (W, H), "#f3f7f8")
     draw = ImageDraw.Draw(img)
     draw.rectangle((0, 0, W, 8), fill=ACCENT)
-    draw.text((64, 38), "3DFUN AI   /   GROUP 17", font=font(21, True), fill=INK)
+    draw.text((64, 38), "3DCV Lab Group 17   /   GROUP 17", font=font(21, True), fill=INK)
     draw.text((64, 101), overline, font=font(17, True), fill=ACCENT)
     draw.text((64, 129), heading, font=font(51, True), fill=INK)
     draw.text((64, 195), note, font=font(23), fill=DIM)

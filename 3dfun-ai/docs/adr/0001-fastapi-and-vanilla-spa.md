@@ -4,7 +4,7 @@
 Accepted
 
 ## Context
-3DFUN AI requires an interactive web interface allowing students and researchers to upload photographs, trigger 3D reconstructions, inspect geometric progress, and visualize 3D assets in a real-time WebGL canvas. Many contemporary research projects adopt heavy frontend frameworks (React, Next.js, Vue) requiring Node.js build pipelines (`npm install`, Webpack/Vite, node_modules containing thousands of dependencies).
+3DCV Lab Group 17 requires an interactive web interface allowing students and researchers to upload photographs, trigger 3D reconstructions, inspect geometric progress, and visualize 3D assets in a real-time WebGL canvas. Many contemporary research projects adopt heavy frontend frameworks (React, Next.js, Vue) requiring Node.js build pipelines (`npm install`, Webpack/Vite, node_modules containing thousands of dependencies).
 
 ## Decision
 We chose a high-performance **FastAPI** Python service paired with a **zero-dependency vanilla JavaScript SPA** utilizing standard Three.js via CDN:

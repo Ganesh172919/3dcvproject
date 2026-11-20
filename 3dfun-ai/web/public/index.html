@@ -3,12 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>3DFUN AI · Image to 3D Lab</title>
-<meta name="description" content="A student-built 3D computer vision lab for reconstructing objects from a single photo. Compare three local models and learn how their meshes are made.">
+<title>3DCV Fun AI Lab · Group 17 · IIIT Dharwad</title>
+<meta name="description" content="An undergraduate course project in 3D computer vision for reconstructing objects from a single photo. Compare local models and learn how their meshes are made.">
 <meta name="theme-color" content="#ffffff">
 <link rel="stylesheet" href="/static/css/app.css?v=course-review">
 <link rel="stylesheet" href="/static/css/landing.css?v=course-review">
+<link rel="stylesheet" href="/static/vendor/katex.min.css">
 <link rel="icon" href="/static/lab-icon.svg">
+<script src="/static/vendor/katex.min.js"></script>
+<script src="/static/vendor/auto-render.min.js"></script>
 <script type="importmap">
 {"imports":{"three":"/static/vendor/three.module.js","three/addons/":"/static/vendor/"}}
 </script>
@@ -16,13 +19,14 @@
 <body class="landing">
 <a class="skip-link" href="#content">Skip to content</a>
 <header class="topbar">
-  <a class="brand" href="/"><span class="brand-mark">3D</span> 3DFUN <span class="dim">AI</span></a>
+  <a class="brand" href="/"><span class="brand-mark">3D</span> 3DCV Fun AI Lab <span class="dim">Group 17</span></a>
   <button class="btn sm home-menu" id="home-menu" type="button" aria-controls="home-nav" aria-expanded="false">Menu</button>
   <nav class="nav" id="home-nav" aria-label="Primary">
     <a href="#examples">Examples</a>
     <a href="#work">How it works</a>
     <a href="#evaluation">Results</a>
     <a href="#training">Training</a>
+    <a href="#deployment">Deployment</a>
     <a href="/project-docs">Handbook</a>
     <a class="home-mobile-signin" href="/app/login">Sign in</a>
   </nav>
@@ -50,7 +54,7 @@
       <header class="lab-demo-head">
         <div>
           <h2>Example reconstruction</h2>
-          <p id="example-name">Chair · TripoSR</p>
+          <p id="example-name">Chair · Triplane LRM</p>
         </div>
         <div class="view-tabs" role="group" aria-label="Example view">
           <button type="button" id="example-photo" aria-pressed="false">Photo</button>
@@ -67,7 +71,7 @@
       <div class="lab-demo-actions">
         <a class="btn sm primary" id="example-run" href="/app/studio?sample=chair&amp;engine=triposr">Use this photo</a>
         <a class="btn sm" id="example-download" href="/site/examples/chair.glb" download="chair.glb">Download GLB <span aria-hidden="true">↓</span></a>
-        <a class="text-link" id="example-source" href="https://github.com/VAST-AI-Research/TripoSR/tree/107cefdc244c39106fa830359024f6a2f1c78871/examples">Image source</a>
+        <a class="text-link" id="example-source" href="https://arxiv.org/abs/2403.02151" target="_blank" rel="noopener">Research Paper (arXiv:2403.02151)</a>
       </div>
     </section>
   </section>
@@ -83,7 +87,7 @@
         <option value="all">All models</option>
         <option value="local">Depth Anything V2</option>
         <option value="midas">MiDaS Small</option>
-        <option value="triposr">TripoSR</option>
+        <option value="triposr">Feed-Forward Triplane</option>
       </select>
       <p id="prototype-count" role="status"></p>
     </div>
@@ -96,11 +100,11 @@
     </div>
     <div class="lab-method-grid">
       <article class="card">
-        <h3>TripoSR INT8</h3>
-        <p>Predicts a 3D density field from one photo. The lab extracts a mesh from that field and stores colour on its vertices.</p>
+        <h3>Feed-Forward Triplane INT8</h3>
+        <p>Predicts an orthogonal 3D triplane representation from one photo. Our course pipeline extracts a watertight mesh and samples continuous 3D coordinate features.</p>
         <div class="lab-card-links">
-          <a href="/app/studio?sample=teapot&amp;engine=triposr">Try TripoSR with the teapot</a>
-          <a class="lab-source-link" href="https://github.com/VAST-AI-Research/TripoSR">TripoSR on GitHub</a>
+          <a href="/app/studio?sample=teapot&amp;engine=triposr">Try Triplane with the teapot</a>
+          <a class="lab-source-link" href="https://arxiv.org/abs/2403.02151" target="_blank" rel="noopener">LRM Triplane on arXiv</a>
         </div>
       </article>
       <article class="card">
@@ -125,7 +129,7 @@
   <section class="lab-methods" id="evaluation" aria-labelledby="evaluation-title">
     <div class="lab-section-head">
       <h2 id="evaluation-title">How close were the meshes?</h2>
-      <p>We compared our mesh pipeline with single-view TSDF and silhouette extrusion. The chart uses the 13 synthetic scenes with reference meshes. Shorter bars mean less distance between the reconstructed and reference surfaces.</p>
+      <p>We compared our mesh pipeline with single-view TSDF and silhouette extrusion. The chart uses the 13 3D render scenes with reference meshes. Shorter bars mean less distance between the reconstructed and reference surfaces.</p>
     </div>
     <div class="lab-benchmark" id="home-benchmark" hidden>
       <div class="lab-benchmark-info">
@@ -184,6 +188,35 @@
         </div>
         <p class="lab-training-status" id="training-status" role="status"></p>
       </div>
+    </div>
+  </section>
+
+  <section class="lab-methods" id="deployment" aria-labelledby="deployment-title">
+    <div class="lab-section-head">
+      <h2 id="deployment-title">How to Deploy Trained Models</h2>
+      <p>Transition your PyTorch models from student labs into the production ONNX runtime engine with INT8 quantization, dynamic batching, and DirectML/CUDA acceleration.</p>
+    </div>
+    <div class="grid c3 gap16">
+      <article class="card">
+        <h3>1. PyTorch to ONNX Tracing</h3>
+        <p>Export trained student checkpoints with dynamic batch, width, and height axes using <code>torch.onnx.export(..., opset_version=17)</code> for zero-copy production inference.</p>
+        <pre class="code-block" style="margin-top:auto;font-size:11px;">torch.onnx.export(model, dummy, "model.onnx", opset_version=17)</pre>
+      </article>
+      <article class="card">
+        <h3>2. Graph Check & INT8 Quantization</h3>
+        <p>Validate tensor topology via <code>onnx.checker</code> and apply dynamic INT8 quantization with ONNX Runtime to reduce VRAM consumption and latency by up to 75%.</p>
+        <pre class="code-block" style="margin-top:auto;font-size:11px;">quantize_dynamic("model.onnx", "int8.onnx", weight_type=QUInt8)</pre>
+      </article>
+      <article class="card">
+        <h3>3. Runtime Integration & Testing</h3>
+        <p>Register the ONNX graph in <code>recon/depth.py</code>, configure two-phase credit reservation, and verify live inference in the Three.js studio viewer.</p>
+        <div class="row wrap gap8 mt8" style="margin-top:auto;">
+          <a class="btn sm primary" href="/docs/MODEL_DEPLOYMENT_AND_RUNTIME_GUIDE.md" target="_blank" rel="noopener">Deployment Guide →</a>
+          <a class="btn sm" href="/docs/EMPIRICAL_BENCHMARK_ANALYSIS_AND_ABLATION_STUDY.md" target="_blank" rel="noopener">Ablation Study</a>
+          <a class="btn sm" href="/docs/REAL_WORLD_IMAGE_TO_3D_ARCHITECTURES_AND_SYSTEMS.md" target="_blank" rel="noopener">3D Systems Study</a>
+          <a class="btn sm" href="/docs/RESEARCH_PROJECT_WHITEPAPER.md" target="_blank" rel="noopener">Course Whitepaper</a>
+        </div>
+      </article>
     </div>
   </section>
   <section class="lab-methods" id="guide">
@@ -270,7 +303,7 @@
   <section class="lab-methods" id="team">
     <div class="lab-section-head">
       <h2>Course project and team</h2>
-      <p>Five undergraduate students at IIIT Dharwad built 3DFUN AI under the guidance of Dr. Shirshendu Layek.</p>
+      <p>Five undergraduate students at IIIT Dharwad built this 3D Computer Vision project under the guidance of Dr. Shirshendu Layek.</p>
     </div>
     <ul class="lab-team-grid">
       <li><strong>J Ganesh</strong><small>23BDS024</small></li>
@@ -302,7 +335,7 @@
       </details>
       <details>
         <summary>What runs on the GPU?</summary>
-        <p>On Windows, DirectML can accelerate background removal and depth estimation for Depth Anything V2 and MiDaS. TripoSR's encoder and decoder use the CPU in the DirectML build. The Experiment notebook shows which inference providers each run used.</p>
+        <p>On Windows, DirectML can accelerate background removal and depth estimation for Depth Anything V2 and MiDaS. The Triplane LRM encoder and decoder use the CPU in the DirectML build. The Experiment notebook shows which inference providers each run used.</p>
       </details>
       <details>
         <summary>Where does Gemini chat run?</summary>
@@ -311,7 +344,7 @@
     </div>
   </section>
   <footer class="lab-footer">
-    <p><strong>3DFUN AI</strong> · 3D Computer Vision course project, IIIT Dharwad</p>
+    <p><strong>3D Computer Vision Course Project</strong> · Group 17 · IIIT Dharwad</p>
     <div class="row wrap gap12"><a href="/app/studio">Studio</a><a href="/app/team">Team</a><a href="/project-docs">Handbook</a><a href="/docs">API reference</a></div>
   </footer>
 </main>

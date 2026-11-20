@@ -1,16 +1,16 @@
-# Mathematical Foundations, Geometric Derivations & Algorithmic Proofs in 3DFUN AI
+# Mathematical Foundations, Geometric Derivations & Algorithmic Proofs in 3DCV Lab Group 17
 
 **Academic Institution:** Department of Data Science & Artificial Intelligence, IIIT Dharwad  
 **Course Project:** 3D Computer Vision (Course 17)  
 **Authors:** J Ganesh (23BDS024), M Jagadeshwar (23BDS033), B Varshith (23BDS011), Pranav Kashyap (23BCS098), C Sai Aravind (23BDS075)  
 **Supervisor:** Dr. Shirshendu Layek  
-**Repository:** [3DFUN AI Open Core](https://github.com/3dfun-ai/3dfun-ai)
+**Repository:** [3DCV Lab Group 17](https://github.com/3dfun-ai/3dfun-ai)
 
 ---
 
 ## 1. Scope & Theoretical Objectives
 
-This treatise provides the formal mathematical derivations, differential geometry proofs, topological invariance analyses, and computational complexity formulations that govern the **3DFUN AI** single-view 3D reconstruction platform.
+This treatise provides the formal mathematical derivations, differential geometry proofs, topological invariance analyses, and computational complexity formulations that govern the **3DCV Lab Group 17** single-view 3D reconstruction platform.
 
 ---
 
@@ -69,7 +69,7 @@ The tangent vectors spanning the tangent plane $T_{\mathbf{X}} \mathcal{M}$ are 
 $$\mathbf{n}_{\text{unnorm}} = \mathbf{t}_u \times \mathbf{t}_v = \begin{bmatrix} -\frac{Z}{f_y} \frac{\partial Z}{\partial u} \\ -\frac{Z}{f_x} \frac{\partial Z}{\partial v} \\ \frac{Z^2}{f_x f_y} \end{bmatrix} = \frac{Z}{f_x f_y} \begin{bmatrix} -f_x \frac{\partial Z}{\partial u} \\ -f_y \frac{\partial Z}{\partial v} \\ Z \end{bmatrix}$$
 Normalizing yields the exact unit surface normal:
 $$\hat{\mathbf{n}}(u, v) = \frac{\left( -f_x \frac{\partial Z}{\partial u}, -f_y \frac{\partial Z}{\partial v}, Z \right)^T}{\sqrt{f_x^2 \left(\frac{\partial Z}{\partial u}\right)^2 + f_y^2 \left(\frac{\partial Z}{\partial v}\right)^2 + Z^2}}$$
-In 3DFUN AI Stage 2, spatial Sobel kernels estimate $\frac{\partial Z}{\partial u}$ and $\frac{\partial Z}{\partial v}$ in real time on the GPU/CPU to compute normal orientation fields.
+In 3DCV Lab Group 17 Stage 2, spatial Sobel kernels estimate $\frac{\partial Z}{\partial u}$ and $\frac{\partial Z}{\partial v}$ in real time on the GPU/CPU to compute normal orientation fields.
 
 ---
 
@@ -138,7 +138,7 @@ $$\lambda + \mu < 0 \implies -(\lambda + \mu) > 0$$
 Thus, for small frequencies $k \in (0, k_{\text{threshold}})$, $f(k) > 1$.  
 For the high frequencies characteristic of voxel discretization staircasing ($k \approx 2/\lambda$), the product $(1 - \lambda k)(1 - \mu k)$ rapidly decays into the range $(-1, 1)$, effectively smoothing out voxel facets while maintaining the exact global metric caliper bounds $100.0 \times 70.7 \times 72.0 \text{ mm}$. $\quad \blacksquare$
 
-In 3DFUN AI Stage 7, we set $\lambda = 0.50$ and $\mu = -0.53$, satisfying $\frac{1}{0.50} + \frac{1}{-0.53} = 2.0 - 1.8868 = +0.1132$ (i.e. $\lambda < |\mu|$), achieving high surface smoothness with $< 0.2\%$ volume change.
+In 3DCV Lab Group 17 Stage 7, we set $\lambda = 0.50$ and $\mu = -0.53$, satisfying $\frac{1}{0.50} + \frac{1}{-0.53} = 2.0 - 1.8868 = +0.1132$ (i.e. $\lambda < |\mu|$), achieving high surface smoothness with $< 0.2\%$ volume change.
 
 ---
 
@@ -165,9 +165,9 @@ If the upper $3 \times 3$ block is invertible, $\bar{\mathbf{v}}$ is solved dire
 
 ---
 
-## 7. Comparative Computational Complexity: 3D CV Paradigms vs. 3DFUN AI Course Platform
+## 7. Comparative Computational Complexity: 3D CV Paradigms vs. 3DCV Lab Group 17 Course Platform
 
-| Algorithmic Stage | 3DFUN AI Course Platform | Feed-Forward LRM | Multi-View DMTet | 3D Gaussian Splatting (3DGS) |
+| Algorithmic Stage | 3DCV Lab Group 17 Course Platform | Feed-Forward LRM | Multi-View DMTet | 3D Gaussian Splatting (3DGS) |
 |---|---|---|---|---|
 | **Feature Extraction** | $O(HW \cdot C)$ (ViT/U²-Net) | $O(HW \cdot C + N_{\text{tokens}}^2)$ | $O(K \cdot N_{\text{diff\_steps}} \cdot HW)$ | $O(HW \cdot C)$ |
 | **Geometry Representation** | $O(N_{\text{vox}}^3)$ Voxel SDF Grid | $O(3 N_{\text{tri}}^2 C + N_{\text{queries}} \cdot \text{MLP})$ | $O(N_{\text{tet}} + N_{\text{steps}} \cdot \text{SDS})$ | $O(M_{\text{gauss}} \cdot D)$ |
@@ -180,9 +180,119 @@ If the upper $3 \times 3$ block is invertible, $\bar{\mathbf{v}}$ is solved dire
 
 ## 8. Summary of Mathematical Rigor
 
-The mathematical integrity of **3DFUN AI** rests upon deterministic foundations:
+The mathematical integrity of **3DCV Lab Group 17** rests upon deterministic foundations:
 1. Scale-Invariant Logarithmic loss eliminates arbitrary scaling bias during monocular depth prediction.
 2. Direct projective ray back-projection preserves metric camera intrinsic calibration.
 3. Euclidean signed distance field formulation with negative grid boundaries guarantees closed 2-manifold Euler characteristic $\chi = 2$.
 4. Taubin dual-pass polynomial filtering attenuates high-frequency discretization artifacts with provably zero global volume shrinkage.
 5. Quadric Error Metric (QEM) edge contraction decimation produces game-ready low-polygon assets while preserving geometric feature creases.
+
+
+---
+
+## 9. Mathematical Proof of Two-Phase Credit Conservation Theorem
+
+Let $B_t$ denote the user's available balance at time step $t$, $R_t$ denote the reserved balance held in escrow, $G_t$ denote the cumulative sum of all granted credits, and $S_t$ denote the cumulative sum of all settled compute deductions.
+
+**Theorem (Fund Invariance)**: For all discrete time steps $t \ge 0$,
+
+$$B_t + R_t = G_t - S_t$$
+
+### Proof by Mathematical Induction:
+- **Base Step ($t = 0$)**: Upon student account registration, $B_0 = 50$, $R_0 = 0$, $G_0 = 50$, and $S_0 = 0$.
+  $$B_0 + R_0 = 50 + 0 = 50 - 0 = G_0 - S_0 \quad (\text{Holds})$$
+- **Inductive Step (Hold Phase)**: At $t+1$, an operation requiring $C = 10$ credits is initiated:
+  $$B_{t+1} = B_t - C, \quad R_{t+1} = R_t + C$$
+  $$B_{t+1} + R_{t+1} = (B_t - C) + (R_t + C) = B_t + R_t = G_t - S_t \quad (\text{Holds})$$
+- **Inductive Step (Commit Phase)**: At $t+2$, the operation completes successfully:
+  $$B_{t+2} = B_{t+1}, \quad R_{t+2} = R_{t+1} - C, \quad S_{t+2} = S_t + C$$
+  $$B_{t+2} + R_{t+2} = B_{t+1} + R_{t+1} - C = (G_t - S_t) - C = G_{t+2} - S_{t+2} \quad (\text{Holds})$$
+- **Inductive Step (Rollback Phase)**: At $t+2$, the operation fails due to an exception:
+  $$B_{t+2} = B_{t+1} + C, \quad R_{t+2} = R_{t+1} - C, \quad S_{t+2} = S_t$$
+  $$B_{t+2} + R_{t+2} = (B_{t+1} + C) + (R_{t+1} - C) = B_t + R_t = G_t - S_t \quad (\text{Holds})$$
+
+Therefore, under all possible execution paths, credit assets are conserved exactly with zero drift. $\blacksquare$
+
+---
+
+## 10. Dirichlet Harmonic Energy Minimization for Conformal Parameterization
+
+To map a 3D triangulated surface mesh $\mathcal{M} = (\mathcal{V}, \mathcal{F})$ to a planar 2D texture atlas $\Omega \subset \mathbb{R}^2$ without angle distortion, we minimize the Dirichlet conformal harmonic energy functional:
+
+$$E_D(\phi) = \frac{1}{2} \int_{\mathcal{M}} \|\nabla \phi\|^2 \, dA = \frac{1}{2} \sum_{(i, j) \in \mathcal{E}} w_{ij} \|\phi(\mathbf{v}_i) - \phi(\mathbf{v}_j)\|^2$$
+
+Where $w_{ij}$ denotes the discrete cotangent weights:
+
+$$w_{ij} = \frac{1}{2} (\cot \alpha_{ij} + \cot \beta_{ij})$$
+
+Minimizing $E_D$ corresponds to solving the discrete Laplace-Beltrami equation $\Delta_{\mathcal{M}} \phi = 0$ with fixed boundary conditions, yielding conformal, angle-preserving parameterization across all surface triangles.
+
+---
+
+## 11. Cook-Torrance Microfacet BRDF Radiance Decomposition Proof
+
+The physically based reflectance equation describes surface radiance $L_o$ as:
+
+$$L_o(\mathbf{p}, \omega_o) = \int_{\Omega} \left( k_d \frac{\mathbf{A}}{\pi} + k_s \frac{D(\mathbf{h}) F(\mathbf{h}, \omega_o) G(\omega_i, \omega_o, \mathbf{n})}{4 (\mathbf{n} \cdot \omega_i) (\mathbf{n} \cdot \omega_o)} \right) L_i(\mathbf{p}, \omega_i) (\mathbf{n} \cdot \omega_i) \, d\omega_i$$
+
+Where:
+- $\mathbf{A} \in [0, 1]^3$ is the albedo diffuse base color.
+- $D(\mathbf{h}) = \frac{\alpha^2}{\pi ((\mathbf{n} \cdot \mathbf{h})^2 (\alpha^2 - 1) + 1)^2}$ is the Trowbridge-Reitz GGX normal distribution.
+- $F(\mathbf{h}, \omega_o) = F_0 + (1 - F_0)(1 - (\mathbf{h} \cdot \omega_o))^5$ is the Schlick Fresnel approximation.
+- $G(\omega_i, \omega_o, \mathbf{n}) = G_1(\omega_i) G_1(\omega_o)$ is the Smith geometric shadowing function.
+
+---
+
+## 12. Symmetric INT8 Quantization Deterministic Error Bound Theorem
+
+**Theorem**: For any real tensor $x \in [-\beta, \beta]$ quantized symmetrically to 8-bit signed integers $q \in [-128, 127]$ with scale $S = \beta / 127$:
+
+$$|x - \hat{x}| \le \frac{S}{2} = \frac{\beta}{254}$$
+
+### Proof:
+The round-to-nearest integer operator satisfies $|\lfloor z \rceil - z| \le \frac{1}{2}$ for all $z \in \mathbb{R}$.
+Substituting $z = x / S$:
+$$|x - \hat{x}| = |x - q \cdot S| = S \cdot \left| \frac{x}{S} - \left\lfloor \frac{x}{S} \right\rceil \right| \le S \cdot \frac{1}{2} = \frac{S}{2} \quad \blacksquare$$
+
+---
+
+## 13. Eikonal PDE and Dual Euclidean Distance Transform Formulation
+
+The continuous signed distance field $\Phi: \mathbb{R}^3 \to \mathbb{R}$ is the unique viscosity solution to the Eikonal boundary value problem:
+
+$$\begin{cases} \|\nabla \Phi(\mathbf{x})\| = 1 & \mathbf{x} \in \mathbb{R}^3 \setminus \partial \Omega \\ \Phi(\mathbf{x}) = 0 & \mathbf{x} \in \partial \Omega \end{cases}$$
+
+Discretized onto a $128^3$ grid via the dual Euclidean Distance Transform:
+
+$$\Phi(i, j, k) = \min_{(x,y,z) \notin \Omega} \sqrt{(i-x)^2 + (j-y)^2 + (k-z)^2} - \min_{(x,y,z) \in \Omega} \sqrt{(i-x)^2 + (j-y)^2 + (k-z)^2}$$
+
+---
+
+## 14. Euler-Poincaré Topological Invariant In Marching Cubes Isosurface
+
+For any closed, orientable 2-manifold surface extracted by Marching Cubes without boundary edges, the Euler characteristic $\chi$ is an invariant topological integer:
+
+$$\chi = V - E + F = 2(1 - g)$$
+
+Where $V$ is vertex count, $E$ is edge count, $F$ is triangular face count, and $g$ is the topological genus. For sphere-equivalent topologies ($g = 0$), the pipeline asserts:
+
+$$\chi = V - E + F = 2$$
+
+Any extracted mesh with $\chi \ne 2$ triggers automatic topological repair prior to texture baking.
+
+---
+
+## 15. Computational Complexity Trajectory Across 8 Pipeline Stages
+
+| Pipeline Stage | Algorithmic Mechanism | Time Complexity | Space Complexity |
+| :--- | :--- | :--- | :--- |
+| **Stage 1: Matting** | U2-Net Convolutional Saliency | $\mathcal{O}(H W \cdot C)$ | $\mathcal{O}(H W)$ |
+| **Stage 2: Depth** | Depth Anything V2 Vision Transformer | $\mathcal{O}(H W \cdot D + N_{\text{tokens}}^2)$ | $\mathcal{O}(H W)$ |
+| **Stage 3: Unproject** | Pinhole Backprojection Matrix $K$ | $\mathcal{O}(N)$ where $N \le H W$ | $\mathcal{O}(N)$ |
+| **Stage 4: Inflation** | Dual Euclidean Distance Transform (EDT) | $\mathcal{O}(M^3)$ where $M = 128$ | $\mathcal{O}(M^3)$ |
+| **Stage 5: Triangulation** | Marching Cubes Lookup Table | $\mathcal{O}(M^3)$ | $\mathcal{O}(V + F)$ |
+| **Stage 6: Smoothing** | Taubin Dual-Pass Laplacian Diffusion | $\mathcal{O}(k(V + E))$ | $\mathcal{O}(V)$ |
+| **Stage 7: UV Mapping** | Discrete Dirichlet Cotangent Solver | $\mathcal{O}(V \log V)$ | $\mathcal{O}(V)$ |
+| **Stage 8: Baking** | Bilateral Chrominance Delighter | $\mathcal{O}(H_{\text{tex}} W_{\text{tex}} \cdot r^2)$ | $\mathcal{O}(H_{\text{tex}} W_{\text{tex}})$ |
+
+*Mathematical Foundations verified by Group 17 · 3D Computer Vision Course Project · Department of Data Science & Artificial Intelligence · IIIT Dharwad.*

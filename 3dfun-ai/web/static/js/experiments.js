@@ -1,6 +1,15 @@
 import { fmt, h, mount, statusBadge } from './lib.js';
 
-export const ENGINE_NAMES = { local: 'Depth Anything V2', midas: 'MiDaS Small', triposr: 'TripoSR INT8' };
+export const ENGINE_NAMES = {
+  triposr: 'Triplane LRM INT8',
+  local: 'Depth Anything V2',
+  midas: 'MiDaS Small',
+  tinydepth: 'TinyDepth Student CNN (Lab 1)',
+  siren_sdf: 'SIREN Implicit Occupancy MLP (Lab 2)',
+  gaussian_splat: '3D Gaussian Splatting (3DGS / Lab 3)',
+  hybrid_triplane: 'Hybrid Triplane-SDF (Lab 5)',
+  instantmesh_dit: 'InstantMesh DiT (Multi-View + DMTet)'
+};
 export const PROVIDER_NAMES = { CPUExecutionProvider: 'CPU', CUDAExecutionProvider: 'CUDA', DmlExecutionProvider: 'DirectML' };
 
 export function inferenceLabel(hardware) {
@@ -30,7 +39,7 @@ function exportRuns(runs) {
     run.measurement?.bytes, inferenceLabel(run.measurement?.hardware), run.measurement?.config_hash,
   ])];
   const url = URL.createObjectURL(new Blob([rows.map(row => row.map(csvCell).join(',')).join('\r\n')], { type: 'text/csv;charset=utf-8' }));
-  h('a', { href: url, download: '3dfun-experiment-runs.csv' }).click();
+  h('a', { href: url, download: '3dcv-experiment-runs.csv' }).click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 

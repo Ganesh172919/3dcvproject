@@ -5,6 +5,7 @@ import os
 import secrets
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 from urllib.parse import urlsplit
 
 from dotenv import dotenv_values, load_dotenv
@@ -12,6 +13,8 @@ from dotenv import dotenv_values, load_dotenv
 ROOT = Path(__file__).resolve().parent.parent
 ENV_FILE = ROOT / ".env"
 _GEMINI_ENV = {name: os.environ[name] for name in ("GEMINI_API_KEY", "GEMINI_MODEL") if name in os.environ}
+_OPENROUTER_ENV = {name: os.environ[name] for name in ("OPENROUTER_API_KEY", "OPENROUTER_MODEL", "OPENROUTER_BASE_URL") if name in os.environ}
+_PROVIDER_KEYS = {name: os.environ[name] for name in ("GROQ_API_KEY", "GROQ_MODEL", "XAI_API_KEY", "TOGETHER_API_KEY", "FIREWORKS_API_KEY") if name in os.environ}
 load_dotenv(ENV_FILE, encoding="utf-8-sig")
 
 
@@ -19,7 +22,201 @@ def gemini_settings() -> tuple[str, str]:
     """Read the local chat settings so edits take effect without a restart."""
     values = dotenv_values(ENV_FILE, encoding="utf-8-sig", interpolate=False)
     values.update(_GEMINI_ENV)
-    return (values.get("GEMINI_API_KEY") or "").strip(), (values.get("GEMINI_MODEL") or "gemini-3.5-flash-lite").strip()
+    return (values.get("GEMINI_API_KEY") or os.getenv("GEMINI_API_KEY") or "").strip(), (values.get("GEMINI_MODEL") or os.getenv("GEMINI_MODEL") or "gemini-2.5-flash").strip()
+
+
+def openrouter_settings() -> tuple[str, str, str]:
+    """Read the OpenRouter chat settings dynamically from env and .env."""
+    values = dotenv_values(ENV_FILE, encoding="utf-8-sig", interpolate=False)
+    values.update(_OPENROUTER_ENV)
+    key = (values.get("OPENROUTER_API_KEY") or os.getenv("OPENROUTER_API_KEY") or "").strip()
+    model = (values.get("OPENROUTER_MODEL") or os.getenv("OPENROUTER_MODEL") or "nvidia/nemotron-3-ultra-550b-a55b:free").strip()
+    base_url = (values.get("OPENROUTER_BASE_URL") or os.getenv("OPENROUTER_BASE_URL") or "https://openrouter.ai/api/v1").strip()
+    return key, model, base_url
+
+
+def provider_api_keys() -> dict[str, str]:
+    """Return dictionary of configured LLM provider keys."""
+    values = dotenv_values(ENV_FILE, encoding="utf-8-sig", interpolate=False)
+    values.update(_PROVIDER_KEYS)
+    return {
+        "groq": (values.get("GROQ_API_KEY") or os.getenv("GROQ_API_KEY") or "").strip(),
+        "xai": (values.get("XAI_API_KEY") or os.getenv("XAI_API_KEY") or "").strip(),
+        "together": (values.get("TOGETHER_API_KEY") or os.getenv("TOGETHER_API_KEY") or "").strip(),
+        "fireworks": (values.get("FIREWORKS_API_KEY") or os.getenv("FIREWORKS_API_KEY") or "").strip(),
+    }
+
+
+OPENROUTER_FREE_MODELS: list[dict[str, Any]] = [
+    {
+        "id": "nvidia/nemotron-3-ultra-550b-a55b:free",
+        "name": "NVIDIA: Nemotron 3 Ultra (free)",
+        "provider": "NVIDIA",
+        "tokens": "3.3T tokens",
+        "ranking": "Programming (#39)",
+        "context_length": "1M context",
+        "pricing": "$0/M input · $0/M output",
+        "modalities": ["text"],
+        "category": "Reasoning & Orchestration",
+        "description": "Frontier-reasoning and orchestration MoE model (55B active / 550B total) on hybrid Transformer-Mamba architecture. Suited for multi-step agent pipelines.",
+    },
+    {
+        "id": "nvidia/nemotron-3.5-super-vl:free",
+        "name": "NVIDIA: Nemotron 3.5 Super VL (free)",
+        "provider": "NVIDIA",
+        "tokens": "3.04T tokens",
+        "ranking": "Programming (#38)",
+        "context_length": "1M context",
+        "pricing": "$0/M input · $0/M output",
+        "modalities": ["text", "image"],
+        "category": "Vision-Language Multimodal",
+        "description": "Multimodal mixture-of-experts model (12B active / 120B total) with 1M context. Supports text, image, GUI screenshots, and video reasoning.",
+    },
+    {
+        "id": "baidu/ernie-5.5-flash-preview:free",
+        "name": "Baidu: ERNIE 5.5 Flash Preview (free)",
+        "provider": "Baidu",
+        "tokens": "2.57T tokens",
+        "ranking": "Programming (#41)",
+        "context_length": "1.02M context",
+        "pricing": "$0/M input · $0/M output",
+        "modalities": ["text"],
+        "category": "General & Reasoning",
+        "description": "Baidu ERNIE 5.5 Flash Preview (280B total / 14B active parameters) with 1.02M context, delivering >200 tokens/sec.",
+    },
+    {
+        "id": "thinkingmachines/inkling-2-small:free",
+        "name": "Thinking Machines: Inkling 2 Small (free)",
+        "provider": "Thinking Machines",
+        "tokens": "1.32T tokens",
+        "ranking": "Programming (#47) · Trivia (#25)",
+        "context_length": "1.05M context",
+        "pricing": "$0/M input · $0/M output",
+        "modalities": ["text", "image"],
+        "category": "Lightweight Reasoning",
+        "description": "Multimodal mixture-of-experts reasoning model (17B active / 594B total) with 1.05M context for agentic coding and research.",
+    },
+    {
+        "id": "nvidia/nemotron-3.5-lightning:free",
+        "name": "NVIDIA: Nemotron 3.5 Lightning (free)",
+        "provider": "NVIDIA",
+        "tokens": "1.18T tokens",
+        "ranking": "Programming (#46)",
+        "context_length": "1M context",
+        "pricing": "$0/M input · $0/M output",
+        "modalities": ["text"],
+        "category": "Fast Reasoning",
+        "description": "High-throughput mixture-of-experts model (3B active / 30B total) with 1M context for accelerated agentic workflows.",
+    },
+    {
+        "id": "dots-studio/dots-3-note-preview:free",
+        "name": "Dots Studio: Dots 3 Note Preview (free)",
+        "provider": "Dots Studio",
+        "tokens": "755B tokens",
+        "ranking": "Synthesis",
+        "context_length": "512K context",
+        "pricing": "$0/M input · $0/M output",
+        "modalities": ["text"],
+        "category": "Note Synthesis",
+        "description": "Open-weight mixture-of-experts model (16B active / 280B total) with 512K context for reasoning, coding, and multi-step agents.",
+    },
+    {
+        "id": "particle-ai/particle-1:free",
+        "name": "Particle AI: Particle 1 (free)",
+        "provider": "Particle AI",
+        "tokens": "494B tokens",
+        "ranking": "Programming (#49) · Science (#32)",
+        "context_length": "1.05M context",
+        "pricing": "$0/M input · $0/M output",
+        "modalities": ["text"],
+        "category": "Agent Planning",
+        "description": "Token-efficient agentic coding model post-trained on DeepSeek V4.1 Flash with 1.05M context.",
+    },
+    {
+        "id": "cohere/north-mini-code:free",
+        "name": "Cohere: North Mini Code (free)",
+        "provider": "Cohere",
+        "tokens": "193B tokens",
+        "ranking": "Programming",
+        "context_length": "256K context",
+        "pricing": "$0/M input · $0/M output",
+        "modalities": ["text"],
+        "category": "Programming & Code",
+        "description": "Cohere sparse MoE agentic coding model (3B active / 30B total) with 256K context and up to 64K output tokens.",
+    },
+    {
+        "id": "inclusionai/ling-3.2-flash:free",
+        "name": "inclusionAI: Ling 3.2 Flash (free)",
+        "provider": "inclusionAI",
+        "tokens": "181B tokens",
+        "ranking": "Vision & Text",
+        "context_length": "1.05M context",
+        "pricing": "$0/M input · $0/M output",
+        "modalities": ["text", "image"],
+        "category": "Vision-Language Multimodal",
+        "description": "Hybrid reasoning model accepting text and images with 1.05M context and up to 200 images per request.",
+    },
+    {
+        "id": "recursive/flint-v1.0:free",
+        "name": "Recursive: Flint v1.0 (free)",
+        "provider": "Recursive",
+        "tokens": "139B tokens",
+        "ranking": "Deep Reasoning",
+        "context_length": "262K context",
+        "pricing": "$0/M input · $0/M output",
+        "modalities": ["text"],
+        "category": "Deep Reasoning",
+        "description": "Eureka Machine MoE coding model (2.5B active / 40B total) with 262K context for codebase changes and bug fixes.",
+    },
+    {
+        "id": "perplexity/pplx-decider-v1.3:free",
+        "name": "Perplexity: Decider V1.3 (free)",
+        "provider": "Perplexity",
+        "tokens": "131B tokens",
+        "ranking": "Academia (#14)",
+        "context_length": "Decision State",
+        "pricing": "$0/M input · $0/M output",
+        "modalities": ["text"],
+        "category": "Decider & Router",
+        "description": "Perplexity probabilistic decision model for classification, routing, and text state extraction.",
+    },
+    {
+        "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "name": "NVIDIA: Nemotron 3 Nano Omni (free)",
+        "provider": "NVIDIA",
+        "tokens": "101B tokens",
+        "ranking": "Omni Reasoning",
+        "context_length": "256K context",
+        "pricing": "$0/M input · $0/M output",
+        "modalities": ["text"],
+        "category": "Omni Reasoning",
+        "description": "Multimodal perception & context sub-agent (30B total / 3B active MoE) with 256K context and extended reasoning.",
+    },
+    {
+        "id": "liquid/lfm-3-1.7b:free",
+        "name": "LiquidAI: LFM 3 1.7B (free)",
+        "provider": "LiquidAI",
+        "tokens": "44.3B tokens",
+        "ranking": "Liquid Architecture",
+        "context_length": "256K context",
+        "pricing": "$0/M input · $0/M output",
+        "modalities": ["text"],
+        "category": "Dynamic Neural Architecture",
+        "description": "Compact 1.7B text model with 256K context post-trained for agents, tool calling, and structured outputs.",
+    },
+    {
+        "id": "3dfun/academic-autonomous:local",
+        "name": "Course Academic Core (Local Engine)",
+        "provider": "IIIT Dharwad CV Lab",
+        "tokens": "Local In-Memory",
+        "ranking": "Academic Core",
+        "context_length": "Unlimited",
+        "pricing": "100% Free · Zero API Keys Needed",
+        "modalities": ["text"],
+        "category": "Autonomous Academic Engine",
+        "description": "Local deterministic CV academic reasoning and autonomous tool execution engine for Group 17 3D Computer Vision course project.",
+    },
+]
 
 
 def _env(name: str, default: str | None = None) -> str:
@@ -44,7 +241,7 @@ def _env_int(name: str, default: int) -> int:
 
 @dataclass
 class Settings:
-    app_name: str = "3DFUN AI"
+    app_name: str = "3D Computer Vision Lab"
     app_url: str = field(default_factory=lambda: _env("APP_URL", "http://localhost:8000"))
     environment: str = field(default_factory=lambda: _env("NODE_ENV", "development"))
     version: str = "1.0.0"
@@ -86,9 +283,9 @@ class Settings:
     daily_streak_credits: int = field(default_factory=lambda: _env_int("DAILY_STREAK_CREDITS", 10))
     lab_run_credits: int = field(default_factory=lambda: _env_int("LAB_RUN_CREDITS", 10))
     credit_costs: dict[str, int] = field(default_factory=lambda: {
-        "draft": _env_int("CREDIT_COST_DRAFT", _env_int("CREDITS_DRAFT", 4)),
-        "standard": _env_int("CREDIT_COST_STANDARD", _env_int("CREDITS_STANDARD", 8)),
-        "high": _env_int("CREDIT_COST_HIGH", _env_int("CREDITS_HIGH", 12)),
+        "draft": _env_int("CREDIT_COST_DRAFT", _env_int("CREDITS_DRAFT", 1)),
+        "standard": _env_int("CREDIT_COST_STANDARD", _env_int("CREDITS_STANDARD", 3)),
+        "high": _env_int("CREDIT_COST_HIGH", _env_int("CREDITS_HIGH", 5)),
     })
 
     # ---- providers ---------------------------------------------------

@@ -1,6 +1,6 @@
 # Train TinyDepth on custom geometry
 
-TinyDepth predicts visible camera-axis depth on synthetic RGB images. Training uses foreground masks and a mesh-level split. The [point-cloud explanation](../explanations/tinydepth-and-pointcloud-evaluation.md) describes the camera geometry and the measured metrics.
+TinyDepth predicts visible camera-axis depth on 3D render RGB images. Training uses foreground masks and a mesh-level split. The [point-cloud explanation](../explanations/tinydepth-and-pointcloud-evaluation.md) describes the camera geometry and the measured metrics.
 
 Install the base and training requirements from the project source directory. Add the same PyTorch CPU build used in the training README.
 

@@ -1,6 +1,6 @@
-# 3DFUN AI — Group 17
+# 3DCV Lab Group 17 — Group 17
 
-A local 3D computer vision project for IIIT Dharwad. Upload a single object image in the Studio to reconstruct and inspect a textured 3D mesh. The separate TinyDepth program trains on known synthetic geometry and exports a visible-surface point cloud.
+A local 3D computer vision project for IIIT Dharwad. Upload a single object image in the Studio to reconstruct and inspect a textured 3D mesh. The separate TinyDepth program trains on known 3D render geometry and exports a visible-surface point cloud.
 
 **Group 17.** J Ganesh (23BDS024), M Jagadeshwar (23BDS033), B Varshith (23BDS011), Pranav Kashyap (23BCS098), and C Sai Aravind (23BDS075). See [project attribution](code/AUTHORS.md) for the contributors' roles. J Ganesh is the corresponding author at `23bds024@iiitdwd.ac.in`.
 
@@ -42,7 +42,7 @@ Keep the terminal in `code/` and start the site with the launcher for your syste
 On macOS or Linux, use `bash run.sh` with the environment activated.
 Open [the local Studio](http://127.0.0.1:8010/app/studio), use the demo sign-in or register a local account, and upload one of the two samples with Depth Anything V2 and Draft selected. The home page also has saved results you can inspect without signing in. Install optional providers with `python scripts/fetch_models.py --all` and restart the server. See the [local setup guide](code/docs/handbook/local-setup.md) for optional GPU and Gemini setup.
 
-The [course report](report.pdf) and [captioned demo](demo.mp4) accompany this README. The [benchmark slides](code/presentations/3DFUN-AI-Project.pptx) cover the earlier mesh evaluation.
+The [course report](report.pdf) and [captioned demo](demo.mp4) accompany this README. The [benchmark slides](code/presentations/3DCV-Lab-Group17-Project.pptx) cover the earlier mesh evaluation.
 
 ## Selected documentation
 

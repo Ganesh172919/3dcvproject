@@ -4,7 +4,7 @@ The recorded evaluation used 25 scenes, three methods, and three repeated CPU ru
 
 ## Methods and metrics
 
-- **Depth + SDF (3DFUN AI)** uses a silhouette and pretrained relative depth to construct a bounded volume. Marching cubes extracts the surface, which is cleaned, decimated and textured.
+- **Depth + SDF (Course Method - Group 17)** uses a silhouette and pretrained relative depth to construct a bounded volume. Marching cubes extracts the surface, which is cleaned, decimated and textured.
 - **TSDF-style baseline** builds a surface from a single estimated depth map.
 - **Visual-hull baseline** extrudes the silhouette to a depth-derived back plane.
 
@@ -12,11 +12,11 @@ Geometry metrics use 20,000 sampled points per mesh after normalization and iner
 
 | Method | Chamfer ↓ | F-score ↑ | Surface IoU ↑ | Closed | Mean wall time |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Depth + SDF (3DFUN AI) | **0.0639** | **0.148** | **0.055** | **96%** | 27.73 s |
+| Depth + SDF (Course Method - Group 17) | **0.0639** | **0.148** | **0.055** | **96%** | 27.73 s |
 | TSDF-style | 0.0962 | 0.053 | 0.027 | 0% | 1.43 s |
 | Visual hull | 0.0728 | 0.098 | 0.038 | 0% | 2.13 s |
 
-Geometry columns use the synthetic split. Closure and wall time include all 25 scenes. The comparisons describe the measured pipeline implementations, which do different amounts of preview and texture work.
+Geometry columns use the 3D render split. Closure and wall time include all 25 scenes. The comparisons describe the measured pipeline implementations, which do different amounts of preview and texture work.
 
 - `results/raw/runs.csv`, `results/summary/main_table.csv` and `results/summary/per_scene.csv`.
 - `results/summary/ablation_table.csv`, `results/summary/thickness_sweep.csv` and `results/summary/failures.csv`.

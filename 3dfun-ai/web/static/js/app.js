@@ -1,4 +1,4 @@
-// 3DFUN AI Single-Page Application: Router + Views.
+// 3D Computer Vision Lab Single-Page Application · Group 17 · IIIT Dharwad
 // Course: 3D Computer Vision Course Project · IIIT Dharwad
 // Supervisor: Dr. Shirshendu Layek (Dept. of DSAI)
 // Authors: J Ganesh (23BDS024), M Jagadeshwar (23BDS033), B Varshith (23BDS011),
@@ -15,6 +15,10 @@ import { renderStudio } from './studio.js';
 import { renderTeam } from './team.js';
 import { renderWork } from './work.js';
 import { renderShowcase } from './showcase.js';
+import { renderArchitecture } from './architecture.js';
+import { renderOptimization } from './optimization.js';
+import { renderDeployment } from './deployment.js';
+import { renderMindmapsPage } from './mindmaps.js';
 import { experimentsPanel, inferenceLabel } from './experiments.js';
 
 // ---------------------------------------------------------------------------
@@ -32,40 +36,26 @@ function scrollTable(label, ...sections) {
     h('table', { class: 'tbl' }, sections));
 }
 
-function requireAuth(main) {
-  if (!state.token) {
-    const next = new URLSearchParams({ next: location.pathname + location.search });
-    const demo = h('button', {
-      id: 'gate-demo-login',
-      class: 'btn block mt12',
-      style: 'background: linear-gradient(135deg, rgba(99, 102, 241, 0.16), rgba(6, 182, 212, 0.16)); border: 1px solid rgba(99, 102, 241, 0.4); font-weight: 600;',
-      type: 'button',
-      onclick: async () => {
-        demo.disabled = true;
-        demo.innerHTML = '<span class="spinner"></span> Signing in…';
-        try {
-          const data = await api('/auth/demo', { method: 'POST' });
-          localStorage.setItem('3dfun_token', data.access_token);
-          state.token = data.access_token;
-          await refreshUser();
-          toast('Signed in to the demo account');
-          renderRoute();
-        } catch (err) {
-          toast('Demo login failed: ' + err.message, 'error');
-          demo.disabled = false;
-          demo.textContent = 'Use demo account';
-        }
-      }
-    }, 'Use demo account');
+export async function ensureAuthOrDemo() {
+  if (state.token) return true;
+  try {
+    const data = await api('/auth/demo', { method: 'POST' });
+    if (data?.access_token) {
+      localStorage.setItem('3dfun_token', data.access_token);
+      state.token = data.access_token;
+      await refreshUser();
+      setAuthUI(state.user);
+      return true;
+    }
+  } catch (e) {
+    console.warn('Auto demo sign-in skipped:', e);
+  }
+  return false;
+}
 
-    mount(main, h('div', { class: 'card auth-card center' },
-      h('h2', {}, 'Sign in to continue'),
-      h('p', { class: 'muted' }, 'You need an account to generate, inspect, and train 3D models.'),
-      h('div', { class: 'row', style: 'justify-content:center' },
-        h('a', { class: 'btn primary', href: `/app/login?${next}`, 'data-link': '' }, 'Sign in'),
-        h('a', { class: 'btn', href: `/app/register?${next}`, 'data-link': '' }, 'Create account')),
-      state.meta?.features?.demo_account ? demo : null));
-    return false;
+async function requireAuth(main, allowGuest = true) {
+  if (!state.token) {
+    await ensureAuthOrDemo();
   }
   return true;
 }
@@ -278,26 +268,26 @@ route('/app/verify-email', async (_p, main) => {
 // studio
 // ---------------------------------------------------------------------------
 route('/app/studio', async (params, main) => {
-  if (requireAuth(main)) await renderStudio(params, main);
+  if (await requireAuth(main, true)) await renderStudio(params, main);
 });
 
 route('/app/labs', async (_p, main) => {
-  if (requireAuth(main)) await renderLabs(main);
+  if (await requireAuth(main, true)) await renderLabs(main);
 });
 
 route('/app/inspector', async (_p, main) => {
-  if (requireAuth(main)) await renderInspector(main);
+  if (await requireAuth(main, true)) await renderInspector(main);
 });
 
 route('/app/chat', async (params, main) => {
-  if (requireAuth(main)) await renderChat(params, main);
+  if (await requireAuth(main, true)) await renderChat(params, main);
 });
 
 // ---------------------------------------------------------------------------
 // dashboard
 // ---------------------------------------------------------------------------
 route('/app/dashboard', async (_p, main) => {
-  if (!requireAuth(main)) return;
+  if (!await requireAuth(main)) return;
   mount(main, h('div', { class: 'empty' }, h('div', { class: 'spinner' }), h('p', { class: 'mt16' }, 'Loading dashboard…')));
   const [gens, balance, tx] = await Promise.all([
     api('/generations?page_size=100'),
@@ -345,7 +335,7 @@ route('/app/dashboard', async (_p, main) => {
     experimentsPanel(items, gens.total, state.meta?.inference, scrollTable),
     h('section', { class: 'card mt16' },
       h('h2', {}, 'Custom depth training'),
-      h('p', {}, 'Work through synthetic rendering, held-out depth evaluation, and 3D point-cloud comparison.'),
+      h('p', {}, 'Work through 3D render rendering, held-out depth evaluation, and 3D point-cloud comparison.'),
       h('a', { class: 'btn', href: '/#training' }, 'Open training lab')),
     h('div', { class: 'grid c2 mt16' },
       h('div', { class: 'card' },
@@ -418,7 +408,7 @@ route('/app/dashboard', async (_p, main) => {
 // my models
 // ---------------------------------------------------------------------------
 route('/app/assets', async (_p, main) => {
-  if (!requireAuth(main)) return;
+  if (!await requireAuth(main, true)) return;
   const search = h('input', { type: 'search', placeholder: 'Search models…', style: 'max-width:280px' });
   const sort = h('select', { style: 'max-width:170px' },
     [['newest', 'Newest'], ['oldest', 'Oldest'], ['polygons', 'Polygons'], ['likes', 'Likes']]
@@ -467,7 +457,7 @@ function assetCard(asset) {
 // asset detail
 // ---------------------------------------------------------------------------
 route('/app/assets/:id', async function assetDetail({ id }, main) {
-  if (!requireAuth(main)) return;
+  if (!await requireAuth(main, true)) return;
   const asset = await api(`/assets/${id}`);
   const { ModelViewer } = await import('./viewer.js');
   if (state._viewer) { state._viewer.dispose(); state._viewer = null; }
@@ -646,7 +636,7 @@ route('/app/gallery', async (_p, main) => {
 // settings
 // ---------------------------------------------------------------------------
 route('/app/settings', async (_p, main) => {
-  if (!requireAuth(main)) return;
+  if (!await requireAuth(main)) return;
   const sessionsHost = h('div', { class: 'mt16' });
   const mfaHost = h('div', { class: 'mt16' });
   async function loadSessions() {
@@ -724,7 +714,7 @@ route('/app/settings', async (_p, main) => {
 // admin
 // ---------------------------------------------------------------------------
 route('/app/admin', async function adminConsole(_p, main) {
-  if (!requireAuth(main)) return;
+  if (!await requireAuth(main)) return;
   if (state.user?.role !== 'admin') {
     mount(main, emptyState('⛨', 'Administrators only', 'Your account does not have the admin role.'));
     return;
@@ -917,7 +907,7 @@ route('/app/benchmark', async (_p, main) => {
       emptyState('◇', 'results/ is empty', 'make benchmark runs 25 images x 3 methods x 3 repetitions.'));
     return;
   }
-  const METHOD_LABEL = { proposed: '3DFUN AI (ours)', tsdf: 'TSDF fusion', visual_hull: 'Visual hull' };
+  const METHOD_LABEL = { proposed: 'Course Method (ours)', tsdf: 'TSDF fusion', visual_hull: 'Visual hull' };
   const num = (v, digits = 3) => (v === undefined || v === null || v === '' || Number.isNaN(Number(v))
     ? '—' : Number(v).toFixed(digits));
   const methods = data.methods || [];
@@ -985,7 +975,7 @@ route('/app/benchmark', async (_p, main) => {
       statCard('Chamfer (CD)', num(cdBest, 4), 'lower is better · normalized coordinates'),
       statCard('F-score @ 1%', num(fsBest, 3), 'harmonic mean of precision/recall'),
       statCard('Best SSIM', num(ssimBest, 3), 'reference-view render'),
-      statCard('Winner', methods.find((m) => Number(m.chamfer_mean) === cdBest)?.method === 'proposed' ? '3DFUN AI' : 'baseline', 'by Chamfer distance')),
+      statCard('Winner', methods.find((m) => Number(m.chamfer_mean) === cdBest)?.method === 'proposed' ? 'Course Method' : 'baseline', 'by Chamfer distance')),
     h('div', { class: 'card mt16' }, h('div', { class: 'section-title' },
       h('h3', { class: 'mt0 mb0' }, 'Quantitative comparison'), h('span', { class: 'hint' }, 'mean ± std over repetitions')),
       table),
@@ -1036,6 +1026,10 @@ route('/app/benchmark', async (_p, main) => {
 
 route('/app/team', async (_p, main) => { renderTeam(main); });
 route('/app/work', async (_p, main) => { renderWork(main); });
+route('/app/architecture', async (_p, main) => { renderArchitecture(main); });
+route('/app/optimization', async (_p, main) => { renderOptimization(main); });
+route('/app/deployment', async (_p, main) => { renderDeployment(main); });
+route('/app/mindmaps', async (_p, main) => { renderMindmapsPage(main); });
 route('/app/showcase', async (_p, main) => { renderShowcase(main); });
 route('/app/research-hub', async (_p, main) => { renderShowcase(main); });
 
@@ -1049,7 +1043,11 @@ async function boot() {
   initRouter();
   document.getElementById('auth-logout').addEventListener('click', () => logout());
   try { state.meta = await api('/meta'); } catch { /* offline */ }
-  await refreshUser();
+  if (!state.token) {
+    await ensureAuthOrDemo();
+  } else {
+    await refreshUser();
+  }
   const path = location.pathname.replace(/\/$/, '');
   if (path === '' || path === '/app') navigate('/app/studio', true);
   else await renderRoute();

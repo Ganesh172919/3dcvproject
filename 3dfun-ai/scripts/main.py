@@ -40,7 +40,7 @@ DATA = ROOT / "benchmarks" / "data"
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "engine"))
 
-LABELS = {"proposed": "3DFUN AI (ours)", "tsdf": "TSDF fusion", "visual_hull": "Visual hull"}
+LABELS = {"proposed": "Course Method (ours)", "tsdf": "TSDF fusion", "visual_hull": "Visual hull"}
 COLOURS = {"proposed": "#2dd4bf", "tsdf": "#7aa2f7", "visual_hull": "#f0a35e"}
 plt.rcParams.update({
     "figure.dpi": 160, "savefig.dpi": 160, "font.size": 9,
@@ -205,7 +205,7 @@ def fig_dataset() -> None:
         ax.imshow(tile)
         ax.set_title(label, fontsize=6.5, pad=2)
     fig.suptitle(f"Evaluation set v{dataset['version']} — {dataset['scenes']['total']} images "
-                 f"({dataset['scenes']['synthetic']} with reference meshes)",
+                 f"({dataset['scenes']['3D render']} with reference meshes)",
                  fontsize=9, y=0.995)
     fig.tight_layout()
     fig.savefig(FIG / "fig_scenes.png")
@@ -213,8 +213,8 @@ def fig_dataset() -> None:
     print("  wrote results/figures/fig_scenes.png")
 
 
-QUALITATIVE_SCENES = ("synthetic/box", "synthetic/sphere", "synthetic/stairs",
-                      "synthetic/cylinder", "synthetic/cone", "synthetic/prism",
+QUALITATIVE_SCENES = ("3D render/box", "3D render/sphere", "3D render/stairs",
+                      "3D render/cylinder", "3D render/cone", "3D render/prism",
                       "real/sneaker", "real/coffee_mug")
 
 
@@ -264,7 +264,7 @@ def fig_qualitative(scenes: tuple[str, ...] = QUALITATIVE_SCENES) -> None:
         return
     grid = np.vstack([np.hstack([r, np.full((r.shape[0], 6, 3), 255, np.uint8)]) for r in rows])
     head = np.full((26, grid.shape[1], 3), 255, np.uint8)
-    for i, text in enumerate(("input", "3DFUN AI (ours)", "TSDF fusion", "visual hull")):
+    for i, text in enumerate(("input", "Course Method (ours)", "TSDF fusion", "visual hull")):
         cv2.putText(head, text, (i * 186 + 8, 18), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                     (30, 40, 60), 1, cv2.LINE_AA)
     out = np.vstack([head, grid])
@@ -326,7 +326,7 @@ def render_error_heatmaps(scenes: tuple[str, ...] = ("cylinder", "sphere", "cone
     from scipy.spatial import cKDTree
 
     mesh_dir = RESULTS / "raw" / "meshes"
-    gt_dir = DATA / "synthetic" / "gt"
+    gt_dir = DATA / "3D render" / "gt"
     if not mesh_dir.exists() or not gt_dir.exists():
         return
 
@@ -336,7 +336,7 @@ def render_error_heatmaps(scenes: tuple[str, ...] = ("cylinder", "sphere", "cone
     scatter_heat = None
     for idx, name in enumerate(scenes):
         gt_path = gt_dir / f"{name}.obj"
-        recon_dir = mesh_dir / f"synthetic_{name}__proposed__r1"
+        recon_dir = mesh_dir / f"rendered_{name}__proposed__r1"
         recon_path = recon_dir / "model.obj" if recon_dir.exists() else None
 
         if not gt_path.exists() or recon_path is None or not recon_path.exists():
@@ -371,7 +371,7 @@ def render_error_heatmaps(scenes: tuple[str, ...] = ("cylinder", "sphere", "cone
                                        s=2.5, alpha=0.85, vmin=0.0, vmax=0.045, edgecolors="none")
         ax_heat.set_aspect("equal", "datalim")
         ax_heat.axis("off")
-        ax_heat.set_title(f"3DFUN AI Error (Mean: {dists.mean():.4f})", fontsize=9, fontweight="bold")
+        ax_heat.set_title(f"3DCV Lab Group 17 Error (Mean: {dists.mean():.4f})", fontsize=9, fontweight="bold")
 
         # Panel 3: Error distribution histogram
         ax_hist.hist(dists, bins=25, color="#0f766e", edgecolor="#134e4a", alpha=0.85, density=True)

@@ -1,4 +1,4 @@
-# 3DFUN AI — deployment and operations
+# 3DCV Lab Group 17 — deployment and operations
 
 The benchmark reference environment is recorded in `results/environment.json`. The app also has
 a Windows PowerShell launcher for local use.
@@ -155,6 +155,152 @@ the origin root, or set the base in the import map.
 The renderer is the single most expensive component (24.56 s of the 27.70 s mean) because it
 rasterises 10 turntable frames plus previews in NumPy on 2 cores. That is a product decision, not a
 reconstruction cost, and both numbers are reported.
+
+---
+
+## 8. Multi-Target Edge Hardware Acceleration
+
+To maximize inference performance across heterogeneous hardware, the engine implements dynamic Execution Provider arbitration:
+
+```
+[ Inference Request ]
+         │
+         ├──> [ Check DirectML ] ──(Available?)──> [ DirectX 12 GPU (AMD/Intel/NVIDIA) ]
+         │
+         ├──> [ Check CUDA 12.8 ] ──(Available?)──> [ NVIDIA Tensor Cores / cuDNN ]
+         │
+         └──> [ Fallback ] ──────────────────────> [ Multi-Threaded CPU Execution ]
+```
+
+### DirectML (DirectX 12) Setup on Windows
+DirectML provides high-performance GPU acceleration across any DirectX 12 compatible GPU (AMD Radeon, Intel Arc/Iris Xe, NVIDIA GeForce):
+```powershell
+pip install onnxruntime-directml
+powershell -ExecutionPolicy Bypass -File .\run.ps1 -Device directml
+```
+
+### NVIDIA CUDA 12.8 Setup on Linux/Windows
+For dedicated NVIDIA GPU servers:
+```bash
+pip install onnxruntime-gpu --extra-index-url https://aiinfra.pkgs.visualstudio.com/PublicPackages/_packaging/onnxruntime-cuda-12/pypi/simple/
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8010
+```
+
+---
+
+## 9. Production Multi-Stage Docker Deployment
+
+```dockerfile
+# Multi-stage production container
+FROM python:3.12-slim-bookworm AS builder
+WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential git libgl1-mesa-glx libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN python -m venv /opt/venv && \
+    /opt/venv/bin/pip install --no-cache-dir --upgrade pip && \
+    /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
+
+FROM python:3.12-slim-bookworm AS runtime
+WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgl1-mesa-glx libglib2.0-0 curl \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH" \
+    PYTHONUNBUFFERED=1 \
+    NODE_ENV=production
+
+COPY . .
+
+EXPOSE 8010
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost:8010/api/v1/health || exit 1
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8010", "--workers", "1"]
+```
+
+Build and run:
+```bash
+docker build -t 3dcv-lab:latest .
+docker run -d -p 8010:8010 --name 3dcv-prod 3dcv-lab:latest
+```
+
+---
+
+## 10. High-Performance Nginx Reverse Proxy with Zero-Copy Streaming
+
+```nginx
+server {
+    listen 80;
+    server_name 3dcv.iiitdwd.ac.in;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name 3dcv.iiitdwd.ac.in;
+
+    ssl_certificate /etc/letsencrypt/live/3dcv.iiitdwd.ac.in/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/3dcv.iiitdwd.ac.in/privkey.pem;
+
+    client_max_body_size 25M;
+
+    # Static file caching
+    location /static/ {
+        alias /srv/3dfun-ai/web/static/;
+        expires 30d;
+        add_header Cache-Control "public, no-transform";
+    }
+
+    # Zero-Copy Binary Asset Streaming (Disable buffering for instant TTFB)
+    location /api/v1/assets/ {
+        proxy_pass http://127.0.0.1:8010;
+        proxy_buffering off;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    # Server-Sent Events (SSE) telemetry stream
+    location ~* /api/v1/generations/.*/events {
+        proxy_pass http://127.0.0.1:8010;
+        proxy_set_header Connection '';
+        proxy_http_version 1.1;
+        proxy_buffering off;
+        proxy_cache off;
+        chunked_transfer_encoding off;
+    }
+
+    # Main application gateway
+    location / {
+        proxy_pass http://127.0.0.1:8010;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+---
+
+## 11. Production Verification & Telemetry Health Checks
+
+```bash
+# 1. Check service liveness
+curl -fsS http://127.0.0.1:8010/api/v1/health
+
+# 2. Check complete hardware readiness (Models, Storage, DB)
+curl -fsS http://127.0.0.1:8010/api/v1/health/ready
+
+# 3. Pull Prometheus telemetry metrics
+curl -fsS http://127.0.0.1:8010/api/v1/metrics
+```
+
+---
 
 
 ---
